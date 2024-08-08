@@ -63,3 +63,17 @@ npx expo install react-native-screens react-native-safe-area-context
 ```
 npm install @react-navigation/native-stack
 ```
+
+<br>
+<b>Instale o pacote que fornecerá as dependências necessária para a animação de roleta:<b>
+
+```
+npx expo install react-native-reanimated
+```
+
+<br>
+<b>Instale o pacote de imagens:<b>
+
+```
+npx expo install expo-image
+```

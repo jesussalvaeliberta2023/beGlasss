@@ -4,6 +4,7 @@ const Styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#20202C',
+
   },
 
   test: {
