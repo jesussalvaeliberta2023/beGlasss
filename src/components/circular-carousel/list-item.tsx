@@ -1,18 +1,18 @@
-import { ImageProps, Image } from 'expo-image';
-import { Dimensions } from 'react-native';
+import { ImageProps, Image } from "expo-image";
+import { Dimensions } from "react-native";
 import Animated, {
   Extrapolate,
   interpolate,
-  useAnimatedStyle
-} from 'react-native-reanimated';
+  useAnimatedStyle,
+} from "react-native-reanimated";
 
 type CircularCarouselListItemProps = {
-  imageSrc: ImageProps['source'];
+  imageSrc: ImageProps["source"];
   index: number;
   contentOffset: Animated.SharedValue<number>;
 };
 
-const { width: windowWidth, height: windowHeight } = Dimensions.get('window');
+const { width: windowWidth, height: windowHeight } = Dimensions.get("window");
 
 // Define the width of the item
 export const ListItemWidth = windowWidth / 2;
@@ -27,7 +27,6 @@ const CircularCarouselListItem: React.FC<CircularCarouselListItemProps> = ({
 }) => {
   const roolStyle = useAnimatedStyle(() => {
     const inputRange = [
-      
       (index - 2) * ListItemHeight,
       (index - 1) * ListItemHeight,
       index * ListItemHeight,
@@ -40,10 +39,10 @@ const CircularCarouselListItem: React.FC<CircularCarouselListItemProps> = ({
       -ListItemHeight / 6,
       -ListItemHeight / 5,
       -ListItemHeight / 6,
-      
+
       0,
     ];
-    
+
     const opacityOutputRange = [0.7, 0.9, 1, 0.9, 0.7];
 
     const scaleOutputRange = [0.8, 0.8, 1, 0.8, 0.8];
@@ -71,7 +70,8 @@ const CircularCarouselListItem: React.FC<CircularCarouselListItemProps> = ({
 
     return {
       opacity,
-      transform: [ { scale },
+      transform: [
+        { scale },
         {
           translateX: translateX,
         },
@@ -84,7 +84,7 @@ const CircularCarouselListItem: React.FC<CircularCarouselListItemProps> = ({
 
   return (
     <Animated.View
-      style={[ 
+      style={[
         {
           width: ListItemWidth,
           height: ListItemHeight,
@@ -94,8 +94,7 @@ const CircularCarouselListItem: React.FC<CircularCarouselListItemProps> = ({
             width: 0,
             height: 0,
           },
-          shadowRadius: 20
-          
+          shadowRadius: 20,
         },
         roolStyle,
       ]}

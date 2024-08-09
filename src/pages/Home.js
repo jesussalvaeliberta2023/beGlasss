@@ -1,6 +1,6 @@
-import { StatusBar } from 'expo-status-bar';
+import React, { useState, useEffect } from 'react';
+import { StatusBar, View, ImageBackground, StyleSheet } from 'react-native';
 import styles from '../styles/StyleSheet';
-import { View } from 'react-native';
 import { CircularCarousel } from '../components/circular-carousel';
 
 const data = [
@@ -15,11 +15,19 @@ const data = [
   require('../assets/images/Frame.png'),
 ];
 
-export default function App({ scrollX }) {
+export default function App() {
+  const [activeImage, setActiveImage] = useState(data[0]);
+
   return (
     <View style={styles.container}>
       <StatusBar hidden />
-      <CircularCarousel data={data} />
+      <ImageBackground source={activeImage} style={StyleSheet.absoluteFillObject}>
+        <View style={{
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.75)', // Cor preta com 50% de opacidade
+  }} />
+        <CircularCarousel data={data} onImageChange={(image) => setActiveImage(image)} />
+      </ImageBackground>
     </View>
   );
 }

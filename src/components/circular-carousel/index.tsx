@@ -1,14 +1,22 @@
-import React from 'react';
-import { FlatList, ImageProps } from 'react-native';
-import { CircularCarouselListItem, ListItemWidth } from './list-item';
-import { useSharedValue } from 'react-native-reanimated';
+import { FlatList, View, ImageProps } from 'react-native';
+import { CircularCarouselListItem, ListItemHeight, ListItemWidth } from './list-item';
+import { useSharedValue, useAnimatedReaction, runOnJS } from 'react-native-reanimated';
 
 type CircularCarouselProps = {
   data: ImageProps['source'][];
+  onImageChange: (image: ImageProps['source']) => void;
 };
 
-const CircularCarousel: React.FC<CircularCarouselProps> = ({ data, onImageChange }) => {
+const CircularCarousel: React.FC<CircularCarouselProps> = ({ data, onImageChange  }) => {
   const contentOffset = useSharedValue(0);
+
+  useAnimatedReaction(() => contentOffset.value, (offset) => {
+      const index = Math.round(offset / ListItemHeight);
+      if (data[index]) {
+        runOnJS(onImageChange)(data[index]);
+      }
+    }
+  );
 
   return (
     <FlatList
