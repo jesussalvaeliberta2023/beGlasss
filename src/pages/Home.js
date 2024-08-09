@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import styles from '../styles/StyleSheet';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { CircularCarousel } from '../components/circular-carousel';
 
 const data = [
@@ -12,12 +12,13 @@ const data = [
   require('../assets/images/Mojito.png'),
   require('../assets/images/PinaColada.png'),
   require('../assets/images/BlueHawaiian.png'),
+  require('../assets/images/Frame.png'),
 ];
 
-export default function App() {
+export default function App({ scrollX }) {
   return (
     <View style={styles.container}>
-      <StatusBar style="auto" />
+      <StatusBar hidden />
       <CircularCarousel data={data} />
     </View>
   );

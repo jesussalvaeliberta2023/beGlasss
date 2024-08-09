@@ -1,75 +1,101 @@
-import { ImageProps, Image } from "expo-image";
-import { Dimensions, View } from "react-native";
+import { ImageProps, Image } from 'expo-image';
+import { Dimensions } from 'react-native';
 import Animated, {
-  Extrapolation,
+  Extrapolate,
   interpolate,
-  useAnimatedStyle,
-} from "react-native-reanimated";
+  useAnimatedStyle
+} from 'react-native-reanimated';
 
-type CircularCarouselListProps = {
-  imageSrc: ImageProps["source"];
+type CircularCarouselListItemProps = {
+  imageSrc: ImageProps['source'];
   index: number;
   contentOffset: Animated.SharedValue<number>;
 };
 
-const { width: windowWidth } = Dimensions.get("window");
-// const { height: windowHeight } = Dimensions.get("window");
+const { width: windowWidth, height: windowHeight } = Dimensions.get('window');
 
-export const ListItemWidht = windowWidth / 2 ;
-// export const ListItemWidhht = { windowWidth / 3, windowHeight / 2 }
+// Define the width of the item
+export const ListItemWidth = windowWidth / 2;
 
-const CircularCarouselListItem: React.FC<CircularCarouselListProps> = ({
+// Define the height of the item to be larger than its width
+export const ListItemHeight = ListItemWidth * 1.5; // Adjust this ratio as needed
+
+const CircularCarouselListItem: React.FC<CircularCarouselListItemProps> = ({
   imageSrc,
   index,
   contentOffset,
 }) => {
   const roolStyle = useAnimatedStyle(() => {
     const inputRange = [
-      index * ListItemWidht,
-      (index + 1) * ListItemWidht,
-      (index + 2) * ListItemWidht,
+      
+      (index - 2) * ListItemHeight,
+      (index - 1) * ListItemHeight,
+      index * ListItemHeight,
+      (index + 1) * ListItemHeight,
+      (index + 2) * ListItemHeight,
     ];
 
-    const outoutRange = [
+    const translateYOutputRange = [
       0,
-      -ListItemWidht / 3,
-      -ListItemWidht / 2,
-      -ListItemWidht / 3,
+      -ListItemHeight / 6,
+      -ListItemHeight / 5,
+      -ListItemHeight / 6,
+      
       0,
     ];
+    
+    const opacityOutputRange = [0.7, 0.9, 1, 0.9, 0.7];
+
+    const scaleOutputRange = [0.8, 0.8, 1, 0.8, 0.8];
 
     const translateX = interpolate(
       contentOffset.value,
       inputRange,
-      outoutRange,
-      Extrapolation.EXTEND
+      translateYOutputRange,
+      Extrapolate.EXTEND
+    );
+
+    const opacity = interpolate(
+      contentOffset.value,
+      inputRange,
+      opacityOutputRange,
+      Extrapolate.CLAMP
+    );
+
+    const scale = interpolate(
+      contentOffset.value,
+      inputRange,
+      scaleOutputRange,
+      Extrapolate.CLAMP
     );
 
     return {
-      transform: [
+      opacity,
+      transform: [ { scale },
         {
           translateX: translateX,
         },
-        {
-          translateY: ListItemWidht / 2 + ListItemWidht,
-        },
+        // {
+        //    translateY: ListItemWidth / 2 + ListItemWidth,
+        // },
       ],
     };
   });
 
   return (
     <Animated.View
-      style={[
+      style={[ 
         {
-          width: ListItemWidht,
-          aspectRatio: 1,
+          width: ListItemWidth,
+          height: ListItemHeight,
           elevation: 5,
           shadowOpacity: 0.2,
           shadowOffset: {
             width: 0,
             height: 0,
           },
-          shadowRadius: 20,
+          shadowRadius: 20
+          
         },
         roolStyle,
       ]}

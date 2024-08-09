@@ -1,13 +1,13 @@
-import { ImageProps } from "expo-image";
-import { FlatList, View } from "react-native";
-import { CircularCarouselListItem, ListItemWidht } from "./list-item";
-import { useSharedValue } from "react-native-reanimated";
+import React from 'react';
+import { FlatList, ImageProps } from 'react-native';
+import { CircularCarouselListItem, ListItemWidth } from './list-item';
+import { useSharedValue } from 'react-native-reanimated';
 
 type CircularCarouselProps = {
-  data: ImageProps["source"][];
+  data: ImageProps['source'][];
 };
 
-const CircularCarousel: React.FC<CircularCarouselProps> = ({ data }) => {
+const CircularCarousel: React.FC<CircularCarouselProps> = ({ data, onImageChange }) => {
   const contentOffset = useSharedValue(0);
 
   return (
@@ -16,17 +16,16 @@ const CircularCarousel: React.FC<CircularCarouselProps> = ({ data }) => {
       keyExtractor={(_, index) => index.toString()}
       scrollEventThrottle={16} // 60fps por 16 milisegundos
       onScroll={(event) => {
-        contentOffset.value = event.nativeEvent.contentOffset.x;
+        contentOffset.value = event.nativeEvent.contentOffset.y;
       }}
       style={{
-        position: "relative",
-        // left: "30%",
+        position: 'relative',
+        left: '36%',
       }}
       contentContainerStyle={{
         justifyContent: 'center',
         alignItems: 'center',
-        // paddingLeft: ListItemWidht / 2,
-      
+        paddingVertical: ListItemWidth / 2,
       }}
       horizontal={false}
       renderItem={({ item, index }) => {
