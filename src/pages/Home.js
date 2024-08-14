@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { StatusBar, View, ImageBackground, StyleSheet } from 'react-native';
-import styles from '../styles/StyleSheet';
 import { CircularCarousel } from '../components/circular-carousel';
+import { BlurView } from 'expo-blur';
+import styles from '../styles/StyleSheet';
 
 const data = [
   require('../assets/images/Caipirinha.png'),
@@ -21,13 +22,18 @@ export default function App() {
   return (
     <View style={styles.container}>
       <StatusBar hidden />
+      
+      {/* Camada de fundo com imagem */}
       <ImageBackground source={activeImage} style={StyleSheet.absoluteFillObject}>
-        <View style={{
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.75)', // Cor preta com 50% de opacidade
-  }} />
-        <CircularCarousel data={data} onImageChange={(image) => setActiveImage(image)} />
+        {/* Camada de desfoque */}
+        <BlurView intensity={100} style={StyleSheet.absoluteFillObject} />
       </ImageBackground>
+
+      {/* Camada escura para contraste */}
+      <View style={{ ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0, 0, 0, 0.80)' }} />
+
+      {/* Carrossel de imagens */}
+      <CircularCarousel data={data} onImageChange={(image) => setActiveImage(image)} />
     </View>
   );
 }

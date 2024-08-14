@@ -9,7 +9,7 @@ const BlurredBackground = ({ source }) => {
       style={styles.background}
       resizeMode="cover"
     >
-      <BlurView intensity={50} style={styles.blurView} />
+      <BlurView intensity={50} style={styles.blurView}/>
     </ImageBackground>
   );
 };
