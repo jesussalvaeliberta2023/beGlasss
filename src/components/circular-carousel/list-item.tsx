@@ -1,5 +1,5 @@
 import { ImageProps, Image } from "expo-image";
-import { Dimensions } from "react-native";
+import { Dimensions, Pressable } from "react-native";
 import Animated, {
   Extrapolate,
   interpolate,
@@ -10,6 +10,7 @@ type CircularCarouselListItemProps = {
   imageSrc: ImageProps["source"];
   index: number;
   contentOffset: Animated.SharedValue<number>;
+  onPress: () => void;  // Adicione a propriedade onPress
 };
 
 const { width: windowWidth, height: windowHeight } = Dimensions.get("window");
@@ -24,6 +25,7 @@ const CircularCarouselListItem: React.FC<CircularCarouselListItemProps> = ({
   imageSrc,
   index,
   contentOffset,
+  onPress,
 }) => {
   const roolStyle = useAnimatedStyle(() => {
     const inputRange = [
@@ -70,43 +72,37 @@ const CircularCarouselListItem: React.FC<CircularCarouselListItemProps> = ({
 
     return {
       opacity,
-      transform: [
-        { scale },
-        {
-          translateX: translateX,
-        },
-        // {
-        //    translateY: ListItemWidth / 2 + ListItemWidth,
-        // },
-      ],
+      transform: [ { scale }, { translateX: translateX } ],
     };
   });
 
   return (
-    <Animated.View
-      style={[
-        {
-          width: ListItemWidth,
-          height: ListItemHeight,
-          elevation: 5,
-          shadowOpacity: 0.2,
-          shadowOffset: {
-            width: 0,
-            height: 0,
+    <Pressable onPress={onPress}>
+      <Animated.View
+        style={[
+          {
+            width: ListItemWidth,
+            height: ListItemHeight,
+            elevation: 5,
+            shadowOpacity: 0.2,
+            shadowOffset: {
+              width: 0,
+              height: 0,
+            },
+            shadowRadius: 20,
           },
-          shadowRadius: 20,
-        },
-        roolStyle,
-      ]}
-    >
-      <Image
-        source={imageSrc}
-        style={{
-          flex: 1,
-          borderRadius: 20,
-        }}
-      />
-    </Animated.View>
+          roolStyle,
+        ]}
+      >
+        <Image
+          source={imageSrc}
+          style={{
+            flex: 1,
+            borderRadius: 20,
+          }}
+        />
+      </Animated.View>
+    </Pressable>
   );
 };
 

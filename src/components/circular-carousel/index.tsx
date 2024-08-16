@@ -1,6 +1,7 @@
 import { FlatList, View, ImageProps } from 'react-native';
 import { CircularCarouselListItem, ListItemHeight, ListItemWidth } from './list-item';
 import { useSharedValue, useAnimatedReaction, runOnJS } from 'react-native-reanimated';
+import { useNavigation } from '@react-navigation/native';
 
 type CircularCarouselProps = {
   data: ImageProps['source'][];
@@ -9,6 +10,7 @@ type CircularCarouselProps = {
 
 const CircularCarousel: React.FC<CircularCarouselProps> = ({ data, onImageChange  }) => {
   const contentOffset = useSharedValue(0);
+  const navigation = useNavigation();
 
   useAnimatedReaction(() => contentOffset.value, (offset) => {
       const index = Math.round(offset / ListItemHeight);
@@ -28,7 +30,8 @@ const CircularCarousel: React.FC<CircularCarouselProps> = ({ data, onImageChange
       }}
       style={{
         position: 'relative',
-        left: '36%',
+        left: '30%',
+        paddingTop: 100,
       }}
       contentContainerStyle={{
         justifyContent: 'center',
@@ -37,11 +40,15 @@ const CircularCarousel: React.FC<CircularCarouselProps> = ({ data, onImageChange
       }}
       horizontal={false}
       renderItem={({ item, index }) => {
+        const onPress = () => {
+          navigation.navigate('Drink', { index });
+        };
         return (
           <CircularCarouselListItem
             contentOffset={contentOffset}
             imageSrc={item}
             index={index}
+            onPress={onPress}
           />
         );
       }}

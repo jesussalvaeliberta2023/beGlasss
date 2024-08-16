@@ -10,15 +10,19 @@
   },
   "dependencies": {
     "@expo/metro-runtime": "~3.2.1",
+    "@react-native-community/blur": "^4.4.0",
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/native-stack": "^6.11.0",
     "@types/react": "~18.2.79",
     "expo": "~51.0.24",
     "expo-blur": "~13.0.2",
     "expo-image": "~1.12.13",
+    "expo-linear-gradient": "~13.0.2",
     "expo-status-bar": "~1.12.1",
+    "i18next": "^23.13.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-i18next": "^15.0.1",
     "react-native": "0.74.3",
     "react-native-image-filter-kit": "^0.8.0",
     "react-native-reanimated": "~3.10.1",
@@ -26,7 +30,7 @@
     "react-native-screens": "3.31.1",
     "react-native-web": "~0.19.10",
     "typescript": "~5.3.3",
-    "expo-linear-gradient": "~13.0.2"
+    "expo-font": "~12.0.9"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
