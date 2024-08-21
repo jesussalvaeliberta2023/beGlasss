@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur'; // Importando o BlurView
 import styles from '../styles/StyleSheet';
 
 // Lista de Imagens com Títulos
@@ -26,22 +27,21 @@ const imagenes = [
   { id: '8', title: 'Blue Hawaiian', image: require('../assets/images/Drinks/BlueHawaiian.png') },
 ];
 
-
-//Medindo o tamanho da Tela
+// Medindo o tamanho da Tela
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
-//Definindo tamanhos
-//Tamanho conteiner de imagem
+// Definindo tamanhos
+// Tamanho do container de imagem
 const CONTAINER_WIDTH = width * 0.7;
-//espaço de margem
+// Espaço de margem
 const CONTAINER_SPACE = (width - CONTAINER_WIDTH) / 2;
-//Espaço entre as caixas
+// Espaço entre as caixas
 const ESPACIO = 10;
-//Altura do fundo
+// Altura do fundo
 const ALTURA_BACKDROP = height * 1
 
-//Conf. das imgs p/ Fundo de tela
+// Conf. das imgs p/ Fundo de tela
 function Backdrop({ scrollX }) {
   return (
     <View
@@ -53,6 +53,7 @@ function Backdrop({ scrollX }) {
           width: width,
         },
         StyleSheet.absoluteFillObject,
+        { overflow: 'hidden' } // Garante que o desfoque não vazará
       ]}
     >
       {imagenes.map((imagen, index) => {
@@ -70,7 +71,7 @@ function Backdrop({ scrollX }) {
         return (
           <Animated.Image
             key={index}
-            source={imagen} // Aqui usa diretamente o `require`
+            source={imagen.image} // Usa a propriedade image do item
             style={[
               { width: width, height: ALTURA_BACKDROP, opacity },
               StyleSheet.absoluteFillObject,
@@ -78,7 +79,11 @@ function Backdrop({ scrollX }) {
           />
         );
       })}
-     {/* Efeito de Gradiente */}
+      <BlurView
+        style={StyleSheet.absoluteFillObject}
+        intensity={100} // Ajuste a intensidade do desfoque
+        tint="dark" // Ajuste o tom do desfoque se necessário
+      />
       <LinearGradient
         colors={['transparent', 'black']}
         style={{
@@ -88,7 +93,6 @@ function Backdrop({ scrollX }) {
           bottom: 0,
         }}
       />
-
     </View>
   );
 }
@@ -117,7 +121,7 @@ export default function App() {
         decelerationRate={0}
         scrollEventThrottle={16}
         data={imagenes}
-        keyExtractor={(item.id)}
+        keyExtractor={(item) => item.id} // Correção aqui
         renderItem={({ item, index }) => {
           const inputRange = [
             (index - 1) * CONTAINER_WIDTH,
@@ -141,9 +145,9 @@ export default function App() {
                   transform: [{ translateY: scrollY }],
                 }}
               >
-                <Image source={item} style={[styles.posterImage, { height: CONTAINER_WIDTH * 1.2 }]} />
-                <Text style={{ fontWeight: 'bold', fontSize: 26, color:'white',}}>
-                  {'item.title'}
+                <Image source={item.image} style={[styles.posterImage, { height: CONTAINER_WIDTH * 1.2 }]} />
+                <Text style={{ fontWeight: 'bold', fontSize: 26, color: 'white', }}>
+                  {item.title} {/* Correção aqui */}
                 </Text>
               </Animated.View>
             </View>
@@ -151,19 +155,19 @@ export default function App() {
         }}
       />
 
-      {/* //Botoes de rota */}
+      {/* Botoes de rota */}
       <View style={styles.tabs} >
         {/* HOME */}
         <Pressable style={styles.homeButton} onPress={() => navigation.navigate('Home')}>
-          <Image source={require('../assets/images/HomeNaked.png')} style={styles.literlyButton}/>
+          <Image source={require('../assets/images/HomeNaked.png')} style={styles.literlyButton} />
         </Pressable>
         {/* FAVORITOS */}
         <Pressable style={styles.favsButton} onPress={() => navigation.navigate('Favorites')}>
-          <Image source={require('../assets/images/HeartFilled.png')} style={[styles.literlyButton, {  marginTop: -9, }]}/>
+          <Image source={require('../assets/images/HeartFilled.png')} style={[styles.literlyButton, { marginTop: -9, }]} />
         </Pressable>
         {/* PERFIL */}
         <Pressable style={styles.perfButton} onPress={() => navigation.navigate('Perfil')}>
-          <Image source={require('../assets/images/PersonNaked.png')} style={[styles.literlyButton, {  marginTop: -9, }]}/>
+          <Image source={require('../assets/images/PersonNaked.png')} style={[styles.literlyButton, { marginTop: -9, }]} />
         </Pressable>
       </View>
     </SafeAreaView>

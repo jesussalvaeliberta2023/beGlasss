@@ -41,6 +41,10 @@ const Styles = StyleSheet.create({
     height: '14%',
   },
 
+  configPerfButton:{
+    width: '10%',
+    height: '14%',
+  },
   literlyButton:{
     width: 24, 
     height: 24,
@@ -55,7 +59,7 @@ const Styles = StyleSheet.create({
 
   drinkSelection:{
     width: '30%',
-    height: '100%',
+    height: '94%',
     position: 'absolute',
     justifyContent: 'center',
   },
@@ -63,13 +67,31 @@ const Styles = StyleSheet.create({
   choose: {
     color:'white',
     width: '50%',
-    fontSize: 40,
+    fontSize: 48,
     position: 'absolute',
-    marginTop: '20%',
-    marginLeft: '3%',
-    fontFamily: 'Prompt',
+    marginTop: '19%',
+    marginLeft: '4%',
   },
 
+  header: {
+    width: '100%',
+    height: '5%',
+    marginLeft: '3%',
+    marginTop: '8%',
+    flexDirection: 'row', 
+  },
+
+  headerOp: {
+    width: 40,
+    height: 20,
+    marginTop: '10%',
+  },
+ 
+  headerPe: {
+    width: 60, 
+    height: 60, 
+    marginLeft: '78%'
+  },
 
 
   // Aqui começa o Design da tela de Favoritos
@@ -87,6 +109,7 @@ const Styles = StyleSheet.create({
     margin: 0,
     marginBottom: 10,
     },
+
 
 
 

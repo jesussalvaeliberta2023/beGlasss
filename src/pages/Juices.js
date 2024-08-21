@@ -8,20 +8,20 @@ import { Image } from 'expo-image';
 import { useFonts } from '@expo-google-fonts/belleza';
 
 const data = [
-  require('../assets/images/Drinks/Caipirinha.png'),
-  require('../assets/images/Drinks/MoscowMule.png'),
-  require('../assets/images/Drinks/Sangria.png'),
-  require('../assets/images/Drinks/Margarita.png'),
-  require('../assets/images/Drinks/VirginOnTheBeach.png'),
-  require('../assets/images/Drinks/Mojito.png'),
-  require('../assets/images/Drinks/PinaColada.png'),
-  require('../assets/images/Drinks/BlueHawaiian.png'),
-  require('../assets/images/Drinks/Flower.png'),
-  require('../assets/images/Drinks/WattermelonSlushie.png'),
-  require('../assets/images/Drinks/Frame.png'),
+  require('../assets/images/Juices/GreenJuice.png'),
+  require('../assets/images/Juices/OrangeCarrotJuice.png'),
+  require('../assets/images/Juices/TropicalJuice.png'),
+  require('../assets/images/Juices/PineapplePassionJuice.png'),
+  require('../assets/images/Juices/MangoRedJuice.png'),
+  require('../assets/images/Juices/LemonTeaJuice.png'),
+  require('../assets/images/Juices/GrapeKiwiJuice.png'),
+  require('../assets/images/Juices/LemonBlackbarryJuice.png'),
+  require('../assets/images/Juices/PinkLemonJuice.png'),
+  require('../assets/images/Juices/DragonJuice.png'),
+  require('../assets/images/Juices/Frame.png'),
 ];
 
-export default function Drinks() {
+export default function Juices() {
   const [fontsLoaded] = useFonts({
     Belleza: require('../assets/fonts/Belleza/Belleza-Regular.ttf'),
   });
@@ -48,15 +48,15 @@ export default function Drinks() {
           </Pressable>
         </View>
         <Text style={[styles.choose, { fontFamily: 'Belleza' }]}>Escolha seu Drink</Text>
-        <View style={styles.drinkSelection}>
-          <Pressable>
-            <Image source={require('../assets/images/SelectTab.png')} style={styles.hexagon} />
+        <View style={styles.Juiceselection}>
+          <Pressable onPress={() => navigation.navigate('Drinks')}>
+            <Image source={require('../assets/images/FirstTab.png')} style={styles.hexagon} />
           </Pressable>
           <Pressable onPress={() => navigation.navigate('Coffes')}>
             <Image source={require('../assets/images/SecondTab.png')} style={styles.hexagon} />
           </Pressable>
-          <Pressable onPress={() => navigation.navigate('Juices')}>
-            <Image source={require('../assets/images/ThirdTab.png')} style={styles.hexagon} />
+          <Pressable>
+            <Image source={require('../assets/images/SelectTab.png')} style={styles.hexagon} />
           </Pressable>
         </View>
         <CircularCarousel data={data} onImageChange={(image) => setActiveImage(image)} />

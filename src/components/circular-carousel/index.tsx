@@ -13,11 +13,11 @@ const CircularCarousel: React.FC<CircularCarouselProps> = ({ data, onImageChange
   const navigation = useNavigation();
 
   useAnimatedReaction(() => contentOffset.value, (offset) => {
-      const index = Math.round(offset / ListItemHeight);
-      if (data[index]) {
-        runOnJS(onImageChange)(data[index]);
-      }
+    const index = Math.round(offset / ListItemHeight);
+    if (data[index]) {
+      runOnJS(onImageChange)(data[index]);
     }
+  }
   );
 
   return (

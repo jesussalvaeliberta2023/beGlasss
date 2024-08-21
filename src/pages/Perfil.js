@@ -11,15 +11,22 @@ import {
   Pressable,
   Image,
 } from 'react-native';
+
+// O i18next serve para gerenciamento de internacionalização para acessar recursos de linguagem.
 import i18next, {languageResources} from '../services/i18next';
+//Hook da biblioteca react-i18next para tradução.
 import {useTranslation} from 'react-i18next';
+// Importa uma lista de idiomas, contendo informações como nomes nativos dos idiomas.
 import languagesList from '../services/languagesList.json';
 import styles from '../styles/StyleSheet';
 
+//controla a visibilidade do modal
+//Desestrutura o método t do hook useTranslation, que é usado para traduzir textos de acordo com o idioma atual.
 const Perfil = () => {
   const [visible, setVisible] = useState(false);
   const {t} = useTranslation();
 
+  //changeLng: Função para alterar o idioma usando i18next. Recebe o código do idioma (lng), altera a linguagem e fecha o modal.
   const changeLng = lng => {
     i18next.changeLanguage(lng);
     setVisible(false);
@@ -32,6 +39,8 @@ const Perfil = () => {
       <Modal visible={visible} onRequestClose={() => setVisible(false)}>
         <View style={styles.languagesList}>
           <FlatList
+          // Lista de idiomas disponíveis. Usa Object.keys(languageResources) para obter a lista de chaves 
+          //(códigos dos idiomas) e renderItem para renderizar cada item.
             data={Object.keys(languageResources)}
             renderItem={({item}) => (
               <TouchableOpacity
@@ -47,6 +56,7 @@ const Perfil = () => {
       </Modal>
       <Text style={styles.text}>{t('welcome')}</Text>
       <TouchableOpacity style={styles.button} onPress={() => setVisible(true)}>
+        {/* Text exibe texto traduzido usando o método t. */}
         <Text style={styles.buttonText}>{t('change-language')}</Text>
       </TouchableOpacity>
       <View style={styles.tabs} >
@@ -59,9 +69,14 @@ const Perfil = () => {
         <Pressable style={styles.perfButton} onPress={() => navigation.navigate('Perfil')}>
           <Image source={require('../assets/images/PersonFilled.png')} style={[styles.literlyButton, {  marginTop: -9, }]}/>
         </Pressable>
+        <Pressable style={styles.configPerfButton} onPress={() => navigation.navigate('ConfiguracoesPerfil')}>
+          <Image source={require('../assets/images/PersonFilled.png')} style={[styles.literlyButton, {  marginTop: -9, }]}/>
+        </Pressable>
       </View>
     </SafeAreaView>
   );
 };
 
 export default Perfil;
+
+

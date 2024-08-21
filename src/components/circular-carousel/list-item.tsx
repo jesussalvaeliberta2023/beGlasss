@@ -41,7 +41,6 @@ const CircularCarouselListItem: React.FC<CircularCarouselListItemProps> = ({
       -ListItemHeight / 6,
       -ListItemHeight / 5,
       -ListItemHeight / 6,
-
       0,
     ];
 
@@ -55,14 +54,12 @@ const CircularCarouselListItem: React.FC<CircularCarouselListItemProps> = ({
       translateYOutputRange,
       Extrapolate.EXTEND
     );
-
     const opacity = interpolate(
       contentOffset.value,
       inputRange,
       opacityOutputRange,
       Extrapolate.CLAMP
     );
-
     const scale = interpolate(
       contentOffset.value,
       inputRange,
@@ -107,3 +104,4 @@ const CircularCarouselListItem: React.FC<CircularCarouselListItemProps> = ({
 };
 
 export { CircularCarouselListItem };
+

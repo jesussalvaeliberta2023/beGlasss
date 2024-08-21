@@ -8,20 +8,20 @@ import { Image } from 'expo-image';
 import { useFonts } from '@expo-google-fonts/belleza';
 
 const data = [
-  require('../assets/images/Drinks/Caipirinha.png'),
-  require('../assets/images/Drinks/MoscowMule.png'),
-  require('../assets/images/Drinks/Sangria.png'),
-  require('../assets/images/Drinks/Margarita.png'),
-  require('../assets/images/Drinks/VirginOnTheBeach.png'),
-  require('../assets/images/Drinks/Mojito.png'),
-  require('../assets/images/Drinks/PinaColada.png'),
-  require('../assets/images/Drinks/BlueHawaiian.png'),
-  require('../assets/images/Drinks/Flower.png'),
-  require('../assets/images/Drinks/WattermelonSlushie.png'),
-  require('../assets/images/Drinks/Frame.png'),
+  require('../assets/images/Coffes/Capuccino.png'),
+  require('../assets/images/Coffes/Affogato.png'),
+  require('../assets/images/Coffes/Mochaccino.png'),
+  require('../assets/images/Coffes/Machiatto.png'),
+  require('../assets/images/Coffes/Latte.png'),
+  require('../assets/images/Coffes/Frappe.png'),
+  require('../assets/images/Coffes/Smoothie.png'),
+  require('../assets/images/Coffes/IcedMocha.png'),
+  require('../assets/images/Coffes/Coffe.png'),
+  require('../assets/images/Coffes/IcedCoffe.png'),
+  require('../assets/images/Coffes/Frame.png'),
 ];
 
-export default function Drinks() {
+export default function Coffes() {
   const [fontsLoaded] = useFonts({
     Belleza: require('../assets/fonts/Belleza/Belleza-Regular.ttf'),
   });
@@ -48,12 +48,12 @@ export default function Drinks() {
           </Pressable>
         </View>
         <Text style={[styles.choose, { fontFamily: 'Belleza' }]}>Escolha seu Drink</Text>
-        <View style={styles.drinkSelection}>
+        <View style={styles.Coffeselection}>
+          <Pressable onPress={() => navigation.navigate('Drinks')}>
+            <Image source={require('../assets/images/FirstTab.png')} style={styles.hexagon} />
+          </Pressable>
           <Pressable>
             <Image source={require('../assets/images/SelectTab.png')} style={styles.hexagon} />
-          </Pressable>
-          <Pressable onPress={() => navigation.navigate('Coffes')}>
-            <Image source={require('../assets/images/SecondTab.png')} style={styles.hexagon} />
           </Pressable>
           <Pressable onPress={() => navigation.navigate('Juices')}>
             <Image source={require('../assets/images/ThirdTab.png')} style={styles.hexagon} />
