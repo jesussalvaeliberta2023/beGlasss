@@ -72,8 +72,36 @@ npx expo install react-native-reanimated
 ```
 
 <br>
-<b>Instale o pacote de imagens:<b>
+<b>Instale o pacote para o uso de imagens:<b>
 
 ```
 npx expo install expo-image
+```
+
+<br>
+<b>Instale o pacote que renderiza uma visão desfocada nativa no iOS:<b>
+
+```
+npx expo install expo-blur
+```
+
+<br>
+<b>Instale o pacote para que as traduções necessárias sejam carregadas ou que seu conteúdo seja renderizado quando o idioma for alterado:<b>
+
+```
+npm install react-i18next
+```
+
+<br>
+<b>Instale o pacote de fontes para usar a fonte Belleza:<b>
+
+```
+npx expo install expo-font @expo-google-fonts/belleza
+```
+
+<br>
+<b>Instale o pacote que fornece uma visualização que faz a transição entre várias cores em uma direção linear:<b>
+
+```
+npx expo install expo-linear-gradient
 ```
