@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-const Styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#20202C',
@@ -33,18 +33,8 @@ const Styles = StyleSheet.create({
   favsButton: {
     width: '10%',
     height: '14%',
-    marginRight: 65,
-  },
-  
-  perfButton:{
-    width: '10%',
-    height: '14%',
   },
 
-  configPerfButton:{
-    width: '10%',
-    height: '14%',
-  },
   literlyButton:{
     width: 24, 
     height: 24,
@@ -156,6 +146,34 @@ const Styles = StyleSheet.create({
     fontSize: 16,
     color: 'white',
   },
+
+
+  // Aqui começa o Design da tela list-item
+
+  overlay: {
+    position: 'absolute',
+    bottom: 10,
+    left: 10,
+    right: 10,
+    top: '-80%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+
+  characteristic: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+    fontFamily: 'Belleza',
+  },
+
+  icon: {
+    width: 24,
+    height: 24,
+    tintColor: '#fff',  
+  },
 });
 
-export default Styles;
+
+export default styles;

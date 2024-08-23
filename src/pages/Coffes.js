@@ -8,18 +8,29 @@ import { Image } from 'expo-image';
 import { useFonts } from '@expo-google-fonts/belleza';
 
 const data = [
-  require('../assets/images/Coffes/Capuccino.png'),
-  require('../assets/images/Coffes/Affogato.png'),
-  require('../assets/images/Coffes/Mochaccino.png'),
-  require('../assets/images/Coffes/Machiatto.png'),
-  require('../assets/images/Coffes/Latte.png'),
-  require('../assets/images/Coffes/Frappe.png'),
-  require('../assets/images/Coffes/Smoothie.png'),
-  require('../assets/images/Coffes/IcedMocha.png'),
-  require('../assets/images/Coffes/Coffe.png'),
-  require('../assets/images/Coffes/IcedCoffe.png'),
-  require('../assets/images/Coffes/Frame.png'),
+  { image: require('../assets/images/Coffes/Capuccino.png'), characteristic: 'Capuccino', icon: require('../assets/images/HeartNaked.png') },
+  { image: require('../assets/images/Coffes/Affogato.png'), characteristic: 'Affogato', icon: require('../assets/images/HeartNaked.png') },
+  { image: require('../assets/images/Coffes/Mochaccino.png'), characteristic: 'Mochaccino', icon: require('../assets/images/HeartNaked.png') },
+  { image: require('../assets/images/Coffes/Machiatto.png'), characteristic: 'Machiatto', icon: require('../assets/images/HeartNaked.png') },
+  { image: require('../assets/images/Coffes/Latte.png'), characteristic: 'Latte', icon: require('../assets/images/HeartNaked.png') },
+  { image: require('../assets/images/Coffes/Frappe.png'), characteristic: 'Frappe', icon: require('../assets/images/HeartNaked.png') },
+  { image: require('../assets/images/Coffes/Smoothie.png'), characteristic: 'Smoothie', icon: require('../assets/images/HeartNaked.png') },
+  { image: require('../assets/images/Coffes/IcedMocha.png'), characteristic: 'Mocha Gelado', icon: require('../assets/images/HeartNaked.png') },
+  { image: require('../assets/images/Coffes/Coffe.png'), characteristic: 'Café', icon: require('../assets/images/HeartNaked.png') },
+  { image: require('../assets/images/Coffes/IcedCoffe.png'), characteristic: 'Café Gelado', icon: require('../assets/images/HeartNaked.png') },
+  { image: require('../assets/images/Coffes/Frame.png') }
 ];
+
+// characteristic: 'Capuccino', icon: require('../assets/images/HeartNaked.png') },
+// characteristic: 'Affogato', icon: require('../assets/images/HeartNaked.png') },
+// characteristic: 'Mochaccino', icon: require('../assets/images/HeartNaked.png') },
+// characteristic: 'Machiatto', icon: require('../assets/images/HeartNaked.png') },
+// characteristic: 'Latte', icon: require('../assets/images/HeartNaked.png') },
+// characteristic: 'Mojito', icon: require('../assets/images/HeartNaked.png') },
+// characteristic: 'Pina Colada', icon: require('../assets/images/HeartNaked.png') },
+// characteristic: 'Blue Hawaiian', icon: require('../assets/images/HeartNaked.png') },
+// characteristic: 'Flower', icon: require('../assets/images/HeartNaked.png') },
+// characteristic: 'Wattermelon Slushie', icon: require('../assets/images/HeartNaked.png') },
 
 export default function Coffes() {
   const [fontsLoaded] = useFonts({
@@ -48,12 +59,12 @@ export default function Coffes() {
           </Pressable>
         </View>
         <Text style={[styles.choose, { fontFamily: 'Belleza' }]}>Escolha seu Drink</Text>
-        <View style={styles.Coffeselection}>
+        <View style={styles.drinkSelection}>
           <Pressable onPress={() => navigation.navigate('Drinks')}>
             <Image source={require('../assets/images/FirstTab.png')} style={styles.hexagon} />
           </Pressable>
           <Pressable>
-            <Image source={require('../assets/images/SelectTab.png')} style={styles.hexagon} />
+            <Image source={require('../assets/images/SecondTabSec.png')} style={styles.hexagon} />
           </Pressable>
           <Pressable onPress={() => navigation.navigate('Juices')}>
             <Image source={require('../assets/images/ThirdTab.png')} style={styles.hexagon} />
@@ -66,9 +77,6 @@ export default function Coffes() {
           </Pressable>
           <Pressable style={styles.favsButton} onPress={() => navigation.navigate('Favorites')}>
             <Image source={require('../assets/images/HeartNaked.png')} style={[styles.literlyButton, { marginTop: -9 }]} />
-          </Pressable>
-          <Pressable style={styles.perfButton} onPress={() => navigation.navigate('Perfil')}>
-            <Image source={require('../assets/images/PersonNaked.png')} style={[styles.literlyButton, { marginTop: -9 }]} />
           </Pressable>
         </View>
       </ImageBackground>

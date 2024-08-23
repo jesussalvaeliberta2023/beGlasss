@@ -1,21 +1,23 @@
+import React from 'react';
 import { FlatList, View, ImageProps } from 'react-native';
 import { CircularCarouselListItem, ListItemHeight, ListItemWidth } from './list-item';
 import { useSharedValue, useAnimatedReaction, runOnJS } from 'react-native-reanimated';
 import { useNavigation } from '@react-navigation/native';
 
 type CircularCarouselProps = {
-  data: ImageProps['source'][];
+  data: { image: ImageProps['source']; characteristic: string; icon: ImageProps['source'] }[];
   onImageChange: (image: ImageProps['source']) => void;
+  fontFamily?: string
 };
 
-const CircularCarousel: React.FC<CircularCarouselProps> = ({ data, onImageChange  }) => {
+const CircularCarousel: React.FC<CircularCarouselProps> = ({ data, onImageChange, fontFamily  }) => {
   const contentOffset = useSharedValue(0);
   const navigation = useNavigation();
 
   useAnimatedReaction(() => contentOffset.value, (offset) => {
     const index = Math.round(offset / ListItemHeight);
     if (data[index]) {
-      runOnJS(onImageChange)(data[index]);
+      runOnJS(onImageChange)(data[index].image);
     }
   }
   );
@@ -46,9 +48,12 @@ const CircularCarousel: React.FC<CircularCarouselProps> = ({ data, onImageChange
         return (
           <CircularCarouselListItem
             contentOffset={contentOffset}
-            imageSrc={item}
+            imageSrc={item.image}
             index={index}
             onPress={onPress}
+            characteristic={item.characteristic}
+            iconSrc={item.icon}
+            fontFamily={fontFamily} 
           />
         );
       }}

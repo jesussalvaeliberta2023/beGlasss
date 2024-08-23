@@ -158,7 +158,7 @@ export default function App() {
       {/* Botoes de rota */}
       <View style={styles.tabs} >
         {/* HOME */}
-        <Pressable style={styles.homeButton} onPress={() => navigation.navigate('Home')}>
+        <Pressable style={styles.homeButton} onPress={() => navigation.navigate('Drinks')}>
           <Image source={require('../assets/images/HomeNaked.png')} style={styles.literlyButton} />
         </Pressable>
         {/* FAVORITOS */}

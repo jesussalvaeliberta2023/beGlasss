@@ -1,32 +1,35 @@
-import { ImageProps, Image } from "expo-image";
-import { Dimensions, Pressable } from "react-native";
-import Animated, {
-  Extrapolate,
-  interpolate,
-  useAnimatedStyle,
-} from "react-native-reanimated";
+import { ImageProps, Image} from 'expo-image';
+import { Text, View, ActivityIndicator } from 'react-native';
+import { Dimensions, Pressable } from 'react-native';
+import Animated, { Extrapolate, interpolate, useAnimatedStyle,} from 'react-native-reanimated';
+import { Belleza_400Regular, useFonts } from '@expo-google-fonts/belleza';
+import styles from '../../styles/StyleSheet';
 
 type CircularCarouselListItemProps = {
-  imageSrc: ImageProps["source"];
+  imageSrc: ImageProps['source'];
   index: number;
   contentOffset: Animated.SharedValue<number>;
-  onPress: () => void;  // Adicione a propriedade onPress
+  onPress: () => void;
+  characteristic: string;
+  iconSrc: ImageProps['source'];
+  fontFamily?: string;
 };
 
-const { width: windowWidth, height: windowHeight } = Dimensions.get("window");
+const { width: windowWidth, height: windowHeight } = Dimensions.get('window');
 
-// Define the width of the item
 export const ListItemWidth = windowWidth / 2;
-
-// Define the height of the item to be larger than its width
-export const ListItemHeight = ListItemWidth * 1.5; // Adjust this ratio as needed
+export const ListItemHeight = ListItemWidth * 1.5; 
 
 const CircularCarouselListItem: React.FC<CircularCarouselListItemProps> = ({
   imageSrc,
   index,
   contentOffset,
   onPress,
+  characteristic,
+  iconSrc,
+  fontFamily,
 }) => {
+
   const roolStyle = useAnimatedStyle(() => {
     const inputRange = [
       (index - 2) * ListItemHeight,
@@ -98,10 +101,13 @@ const CircularCarouselListItem: React.FC<CircularCarouselListItemProps> = ({
             borderRadius: 20,
           }}
         />
+        <View style={styles.overlay}>
+          <Text style={[styles.characteristic, fontFamily ? { fontFamily } : {}]}>{characteristic}</Text>
+          <Image source={iconSrc} style={styles.icon} />
+        </View>
       </Animated.View>
     </Pressable>
   );
 };
 
 export { CircularCarouselListItem };
-
