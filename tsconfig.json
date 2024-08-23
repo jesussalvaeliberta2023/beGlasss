@@ -1,4 +1,17 @@
 {
-  "compilerOptions": {},
-  "extends": "expo/tsconfig.base"
+  "compilerOptions": {
+    "strict": true, // Ativa várias verificações de tipo rigorosas
+    "noImplicitAny": true, // Evita o uso de 'any' implícito
+    "strictNullChecks": true, // Garante que null e undefined são tratados explicitamente
+    "esModuleInterop": true, // Permite a interoperabilidade com módulos ES6
+    "skipLibCheck": true, // Ignora verificação de tipos em arquivos de declaração, pode ajudar a evitar conflitos com bibliotecas externas
+    "forceConsistentCasingInFileNames": true, // Garante que o uso de letras maiúsculas/minúsculas nos nomes de arquivos seja consistente
+    "allowSyntheticDefaultImports": true, // Permite a importação de módulos com um padrão sintético
+    "resolveJsonModule": true, // Permite a importação de módulos JSON
+    "jsx": "react-native", // Define que o JSX será utilizado em React Native
+    "lib": ["esnext"], // Inclui bibliotecas ES6+, que pode ser útil em React Native
+    "moduleResolution": "node" // Especifica como os módulos são resolvidos
+  },
+  "extends": "expo/tsconfig.base",
+  "exclude": ["node_modules"] // Exclui node_modules da verificação do TypeScript
 }

@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur'; // Importando o BlurView
+import { BlurView } from 'expo-blur';
 import styles from '../styles/StyleSheet';
 
 // Lista de Imagens com Títulos
@@ -30,14 +30,15 @@ const imagenes = [
 // Medindo o tamanho da Tela
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
+0
 
 // Definindo tamanhos
 // Tamanho do container de imagem
-const CONTAINER_WIDTH = width * 0.7;
+const CONTAINER_WIDTH = width * 0.6;
 // Espaço de margem
 const CONTAINER_SPACE = (width - CONTAINER_WIDTH) / 2;
 // Espaço entre as caixas
-const ESPACIO = 10;
+const ESPACIO = 4;
 // Altura do fundo
 const ALTURA_BACKDROP = height * 1
 
@@ -53,7 +54,7 @@ function Backdrop({ scrollX }) {
           width: width,
         },
         StyleSheet.absoluteFillObject,
-        { overflow: 'hidden' } // Garante que o desfoque não vazará
+        { overflow: 'hidden' } 
       ]}
     >
       {imagenes.map((imagen, index) => {
@@ -71,7 +72,7 @@ function Backdrop({ scrollX }) {
         return (
           <Animated.Image
             key={index}
-            source={imagen.image} // Usa a propriedade image do item
+            source={imagen.image}
             style={[
               { width: width, height: ALTURA_BACKDROP, opacity },
               StyleSheet.absoluteFillObject,
@@ -81,8 +82,8 @@ function Backdrop({ scrollX }) {
       })}
       <BlurView
         style={StyleSheet.absoluteFillObject}
-        intensity={100} // Ajuste a intensidade do desfoque
-        tint="dark" // Ajuste o tom do desfoque se necessário
+        intensity={100} //intensidade do desfoque
+        tint="dark" // tom do desfoque
       />
       <LinearGradient
         colors={['transparent', 'black']}
@@ -103,7 +104,8 @@ export default function App() {
   const navigation = useNavigation();
   return (
     <SafeAreaView style={styles.containerII}>
-      <StatusBar hidden />
+    <StatusBar hidden />
+
       <Backdrop scrollX={scrollX} />
       <Animated.FlatList
         onScroll={Animated.event(
@@ -121,7 +123,7 @@ export default function App() {
         decelerationRate={0}
         scrollEventThrottle={16}
         data={imagenes}
-        keyExtractor={(item) => item.id} // Correção aqui
+        keyExtractor={(item) => item.id} 
         renderItem={({ item, index }) => {
           const inputRange = [
             (index - 1) * CONTAINER_WIDTH,
@@ -135,11 +137,22 @@ export default function App() {
           });
           return (
             <View style={{ width: CONTAINER_WIDTH }}>
+              <View style={styles.buttonContainer}>
+        <Pressable style={styles.squareButton} onPress={() => navigation.navigate('Drinks')}>
+          <Text style={styles.buttonText}>Drinks</Text>
+        </Pressable>
+        <Pressable style={styles.squareButton} onPress={() => navigation.navigate('Favorites')}>
+          <Text style={styles.buttonText}>Favorites</Text>
+        </Pressable>
+        <Pressable style={styles.squareButton} onPress={() => navigation.navigate('Language')}>
+          <Text style={styles.buttonText}>Language</Text>
+        </Pressable>
+      </View>
               <Animated.View
                 style={{
                   marginHorizontal: ESPACIO,
                   padding: ESPACIO,
-                  borderRadius: 34,
+                  borderRadius: 30,
                   backgroundColor: 'black',
                   alignItems: 'center',
                   transform: [{ translateY: scrollY }],
@@ -147,7 +160,7 @@ export default function App() {
               >
                 <Image source={item.image} style={[styles.posterImage, { height: CONTAINER_WIDTH * 1.2 }]} />
                 <Text style={{ fontWeight: 'bold', fontSize: 26, color: 'white', }}>
-                  {item.title} {/* Correção aqui */}
+                  {item.title}
                 </Text>
               </Animated.View>
             </View>
@@ -164,10 +177,6 @@ export default function App() {
         {/* FAVORITOS */}
         <Pressable style={styles.favsButton} onPress={() => navigation.navigate('Favorites')}>
           <Image source={require('../assets/images/HeartFilled.png')} style={[styles.literlyButton, { marginTop: -9, }]} />
-        </Pressable>
-        {/* PERFIL */}
-        <Pressable style={styles.perfButton} onPress={() => navigation.navigate('Perfil')}>
-          <Image source={require('../assets/images/PersonNaked.png')} style={[styles.literlyButton, { marginTop: -9, }]} />
         </Pressable>
       </View>
     </SafeAreaView>

@@ -1,8 +1,7 @@
 import { ImageProps, Image} from 'expo-image';
-import { Text, View, ActivityIndicator } from 'react-native';
+import { Text, View } from 'react-native';
 import { Dimensions, Pressable } from 'react-native';
 import Animated, { Extrapolate, interpolate, useAnimatedStyle,} from 'react-native-reanimated';
-import { Belleza_400Regular, useFonts } from '@expo-google-fonts/belleza';
 import styles from '../../styles/StyleSheet';
 
 type CircularCarouselListItemProps = {
@@ -11,8 +10,7 @@ type CircularCarouselListItemProps = {
   contentOffset: Animated.SharedValue<number>;
   onPress: () => void;
   characteristic: string;
-  iconSrc: ImageProps['source'];
-  fontFamily?: string;
+  iconSrc: ImageProps['source']
 };
 
 const { width: windowWidth, height: windowHeight } = Dimensions.get('window');
@@ -27,7 +25,6 @@ const CircularCarouselListItem: React.FC<CircularCarouselListItemProps> = ({
   onPress,
   characteristic,
   iconSrc,
-  fontFamily,
 }) => {
 
   const roolStyle = useAnimatedStyle(() => {
@@ -78,31 +75,13 @@ const CircularCarouselListItem: React.FC<CircularCarouselListItemProps> = ({
 
   return (
     <Pressable onPress={onPress}>
-      <Animated.View
-        style={[
-          {
-            width: ListItemWidth,
-            height: ListItemHeight,
-            elevation: 5,
-            shadowOpacity: 0.2,
-            shadowOffset: {
-              width: 0,
-              height: 0,
-            },
-            shadowRadius: 20,
-          },
-          roolStyle,
-        ]}
-      >
+      <Animated.View style={[styles.animatedView, roolStyle]}>
         <Image
           source={imageSrc}
-          style={{
-            flex: 1,
-            borderRadius: 20,
-          }}
+          style={styles.imageD}
         />
         <View style={styles.overlay}>
-          <Text style={[styles.characteristic, fontFamily ? { fontFamily } : {}]}>{characteristic}</Text>
+          <Text style={[styles.characteristic]}>{characteristic}</Text>
           <Image source={iconSrc} style={styles.icon} />
         </View>
       </Animated.View>

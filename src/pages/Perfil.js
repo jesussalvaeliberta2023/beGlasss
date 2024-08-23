@@ -1,82 +1,58 @@
-import React, {useState} from 'react';
-import { useNavigation } from '@react-navigation/native';
-import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  Modal,
-  View,
-  FlatList,
-  Pressable,
-  Image,
-} from 'react-native';
+import { View } from 'react-native';
 
-// O i18next serve para gerenciamento de internacionalização para acessar recursos de linguagem.
-import i18next, {languageResources} from '../services/i18next';
-//Hook da biblioteca react-i18next para tradução.
-import {useTranslation} from 'react-i18next';
-// Importa uma lista de idiomas, contendo informações como nomes nativos dos idiomas.
-import languagesList from '../services/languagesList.json';
-import styles from '../styles/StyleSheet';
-
-//controla a visibilidade do modal
-//Desestrutura o método t do hook useTranslation, que é usado para traduzir textos de acordo com o idioma atual.
-const Perfil = () => {
-  const [visible, setVisible] = useState(false);
-  const {t} = useTranslation();
-
-  //changeLng: Função para alterar o idioma usando i18next. Recebe o código do idioma (lng), altera a linguagem e fecha o modal.
-  const changeLng = lng => {
-    i18next.changeLanguage(lng);
-    setVisible(false);
-  };
-
-  const navigation = useNavigation();
-
+export default function Perfil() {
   return (
-    <SafeAreaView style={styles.containerIII}>
-      <Modal visible={visible} onRequestClose={() => setVisible(false)}>
-        <View style={styles.languagesList}>
-          <FlatList
-          // Lista de idiomas disponíveis. Usa Object.keys(languageResources) para obter a lista de chaves 
-          //(códigos dos idiomas) e renderItem para renderizar cada item.
-            data={Object.keys(languageResources)}
-            renderItem={({item}) => (
-              <TouchableOpacity
-                style={styles.languageButton}
-                onPress={() => changeLng(item)}>
-                <Text style={styles.lngName}>
-                  {languagesList[item].nativeName}
-                </Text>
-              </TouchableOpacity>
-            )}
-          />
-        </View>
-      </Modal>
-      <Text style={styles.text}>{t('welcome')}</Text>
-      <TouchableOpacity style={styles.button} onPress={() => setVisible(true)}>
-        {/* Text exibe texto traduzido usando o método t. */}
-        <Text style={styles.buttonText}>{t('change-language')}</Text>
-      </TouchableOpacity>
-      <View style={styles.tabs} >
-        <Pressable style={styles.homeButton} onPress={() => navigation.navigate('Home')}>
-          <Image source={require('../assets/images/HomeNaked.png')} style={styles.literlyButton}/>
-        </Pressable>
-        <Pressable style={styles.favsButton} onPress={() => navigation.navigate('Favorites')}>
-          <Image source={require('../assets/images/HeartNaked.png')} style={[styles.literlyButton, {  marginTop: -9, }]}/>
-        </Pressable>
-        <Pressable style={styles.perfButton} onPress={() => navigation.navigate('Perfil')}>
-          <Image source={require('../assets/images/PersonFilled.png')} style={[styles.literlyButton, {  marginTop: -9, }]}/>
-        </Pressable>
-        <Pressable style={styles.configPerfButton} onPress={() => navigation.navigate('ConfiguracoesPerfil')}>
-          <Image source={require('../assets/images/PersonFilled.png')} style={[styles.literlyButton, {  marginTop: -9, }]}/>
-        </Pressable>
+      <View>
+          <Text>Perfil</Text>
       </View>
-    </SafeAreaView>
   );
-};
-
-export default Perfil;
+}
 
 
+
+// import { StatusBar } from 'expo-status-bar';
+// import React, { useCallback, useRef } from 'react';
+// import { StyleSheet, TouchableOpacity, View } from 'react-native';
+// import { GestureHandlerRootView } from 'react-native-gesture-handler';
+// import BottomSheet, { BottomSheetRefProps } from './components/BottomSheet';
+
+// export default function Perfil() {
+//   const ref = useRef<BottomSheetRefProps>(null);
+
+//   const onPress = useCallback(() => {
+//     const isActive = ref?.current?.isActive();
+//     if (isActive) {
+//       ref?.current?.scrollTo(0);
+//     } else {
+//       ref?.current?.scrollTo(-200);
+//     }
+//   }, []);
+
+//   return (
+//     <GestureHandlerRootView style={{ flex: 1 }}>
+//       <View style={styles.container}>
+//         <StatusBar style="light" />
+//         <TouchableOpacity style={styles.button} onPress={onPress} />
+//         <BottomSheet ref={ref}>
+//           <View style={{ flex: 1, backgroundColor: 'orange' }} />
+//         </BottomSheet>
+//       </View>
+//     </GestureHandlerRootView>
+//   );
+// }
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: '#111',
+//     alignItems: 'center',
+//     justifyContent: 'center',
+//   },
+//   button: {
+//     height: 50,
+//     borderRadius: 25,
+//     aspectRatio: 1,
+//     backgroundColor: 'white',
+//     opacity: 0.6,
+//   },
+// });

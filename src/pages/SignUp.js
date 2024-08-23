@@ -27,7 +27,7 @@ export default function SignUp() {
 
 const estilos = StyleSheet.create({
     inputs: {
-        width: 400,
+        width: 375,
         height: 45,
         borderBottomWidth: 2,
         borderColor: 'white',
