@@ -21,17 +21,6 @@ const data = [
   { image: require('../assets/images/Coffes/Frame.png') }
 ];
 
-// characteristic: 'Capuccino', icon: require('../assets/images/HeartNaked.png') },
-// characteristic: 'Affogato', icon: require('../assets/images/HeartNaked.png') },
-// characteristic: 'Mochaccino', icon: require('../assets/images/HeartNaked.png') },
-// characteristic: 'Machiatto', icon: require('../assets/images/HeartNaked.png') },
-// characteristic: 'Latte', icon: require('../assets/images/HeartNaked.png') },
-// characteristic: 'Mojito', icon: require('../assets/images/HeartNaked.png') },
-// characteristic: 'Pina Colada', icon: require('../assets/images/HeartNaked.png') },
-// characteristic: 'Blue Hawaiian', icon: require('../assets/images/HeartNaked.png') },
-// characteristic: 'Flower', icon: require('../assets/images/HeartNaked.png') },
-// characteristic: 'Wattermelon Slushie', icon: require('../assets/images/HeartNaked.png') },
-
 export default function Coffes() {
   const [fontsLoaded] = useFonts({
     Belleza: require('../assets/fonts/Belleza/Belleza-Regular.ttf'),
