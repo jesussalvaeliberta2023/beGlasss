@@ -6,6 +6,7 @@ import { CircularCarousel } from '../components/CircularCarousel/CircularCarouse
 import { useFonts } from '@expo-google-fonts/belleza';
 import styles from '../styles/StyleSheet';
 import PressComponent from '../components/PressableComponent';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
 const data = [
   { image: require('../assets/images/Drinks/Caipirinha.png'), characteristic: 'Caipirinha', icon: require('../assets/images/HeartNaked.png') },
@@ -24,6 +25,24 @@ const data = [
 export default function Drinks() {
   const [activeImage, setActiveImage] = useState(data[0].image);
   const navigation = useNavigation();
+  const translateX = useSharedValue(0);
+
+  const textoAnimated = useAnimatedStyle(() => {
+    return { transform: [{ translateX: withSpring(translateX.value) }]};
+  });
+
+  const iconeAnimated = useAnimatedStyle(() => {
+    return { transform: [{ translateX: withSpring(-translateX.value) }]};
+  });
+
+  const changeRoleta = (image, direction) => {
+    setActiveImage(image);
+    if (direction === "up") { translateX.value = -300 }
+  };
+
+  const resetRoleta = () => {
+    translateX.value = 0;
+  };
 
   const [fontsLoaded] = useFonts({
     Belleza: require('../assets/fonts/Belleza/Belleza-Regular.ttf'),
@@ -39,12 +58,14 @@ export default function Drinks() {
       <ImageBackground source={activeImage} style={StyleSheet.absoluteFillObject} blurRadius={20}>
         <View style={{ ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0, 0, 0, 0.60)' }} />
 
-        <View  style={styles.headerD}>
+        <View style={styles.headerD}>
           <PressComponent onPress={() => navigation.navigate('Login')} source={require('../assets/images/Bars.png')} styleI={styles.headerOp}/>
-          <PressComponent onPress={() => navigation.navigate('SignUp')} source={require('../assets/images/Person.png')} styleI={styles.headerPe}/>
+          <Animated.View style={iconeAnimated}>
+            <PressComponent onPress={() => navigation.navigate('SignUp')} source={require('../assets/images/Person.png')} styleI={styles.headerPe}/>
+          </Animated.View>
         </View>
 
-        <Text style={[styles.choose, { fontFamily: 'Belleza' }]}>Escolha seu Drink</Text>
+        <Animated.Text style={[styles.choose, textoAnimated, { fontFamily: 'Belleza' }]}>Escolha seu Drink</Animated.Text>
 
         <View style={styles.drinkSelection}>
           <PressComponent source={require('../assets/images/FirstTabSec.png')} styleI={styles.hexagon}/>
@@ -52,7 +73,12 @@ export default function Drinks() {
           <PressComponent onPress={() => navigation.navigate('Juices')} source={require('../assets/images/ThirdTab.png')} styleI={styles.hexagon}/>
         </View>
 
-        <CircularCarousel data={data} onImageChange={(image) => setActiveImage(image)} fontFamily="Belleza" />
+        <CircularCarousel 
+          data={data} 
+          onImageChange={changeRoleta} 
+          onReset={resetRoleta} 
+          fontFamily="Belleza" 
+        />
 
         <View style={styles.tabss}>
           <PressComponent onPress={() => navigation.navigate('Home')} source={require('../assets/images/HomeFilled.png')} styleI={[styles.literlyButton, { marginTop: -9 }]} styleP={styles.homeButton}/>

@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
   choose: {
     color:'white',
     width: '65%',
-    fontSize: 48,
+    fontSize: 47,
     position: 'absolute',
     marginTop: '20%',
     marginLeft: '4%',

@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { FlatList, ImageProps } from "react-native";
-import { CircularCarouselListItem, ListItemHeight, ListItemWidth } from "./ListItem";
+import { CircularCarouselListItem, ListItemHeight } from "./ListItem";
 import { useSharedValue, useAnimatedReaction, runOnJS } from "react-native-reanimated";
 import { useNavigation } from "@react-navigation/native";
 import styles from "../../styles/StyleSheet";
@@ -11,11 +11,13 @@ type CircularCarouselProps = {
     characteristic: string;
     icon: ImageProps["source"];
   }[];
-  onImageChange: (image: ImageProps["source"]) => void;
+  onImageChange: (image: ImageProps["source"], direction: "up" | "down") => void;
+  onReset: () => void;
 };
 
-const CircularCarousel: React.FC<CircularCarouselProps> = ({ data, onImageChange }) => {
+const CircularCarousel: React.FC<CircularCarouselProps> = ({ data, onImageChange, onReset }) => {
   const contentOffset = useSharedValue(0);
+  const [prevOffset, setPrevOffset] = useState(0); // Estado para armazenar o valor anterior
   const navigation = useNavigation<any>();
 
   useAnimatedReaction(
@@ -23,7 +25,14 @@ const CircularCarousel: React.FC<CircularCarouselProps> = ({ data, onImageChange
     (offset) => {
       const index = Math.round(offset / ListItemHeight);
       if (data[index]) {
-        runOnJS(onImageChange)(data[index].image);
+        const direction = offset > prevOffset ? "up" : "down";
+        runOnJS(onImageChange)(data[index].image, direction);
+        runOnJS(setPrevOffset)(offset);
+      }
+      
+      // Notificar quando o carrossel voltar à posição inicial
+      if (Math.round(offset / ListItemHeight) === 0) {
+        runOnJS(onReset)();
       }
     }
   );
@@ -32,7 +41,7 @@ const CircularCarousel: React.FC<CircularCarouselProps> = ({ data, onImageChange
     <FlatList
       data={data}
       keyExtractor={(_, index) => index.toString()}
-      scrollEventThrottle={16} // 60fps por 16 milisegundos
+      scrollEventThrottle={16}
       onScroll={(event) => { contentOffset.value = event.nativeEvent.contentOffset.y; }}
       style={styles.listPosition}
       contentContainerStyle={styles.conConStyle}
@@ -42,7 +51,6 @@ const CircularCarousel: React.FC<CircularCarouselProps> = ({ data, onImageChange
           navigation.navigate('DrinkDetails', { index } as any);
         };
         
-        
         return (
           <CircularCarouselListItem
             contentOffset={contentOffset}
@@ -51,6 +59,7 @@ const CircularCarousel: React.FC<CircularCarouselProps> = ({ data, onImageChange
             onPress={onPress}
             characteristic={item.characteristic}
             iconSrc={item.icon}
+            
           />
         );
       }}

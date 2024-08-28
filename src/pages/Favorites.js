@@ -83,7 +83,7 @@ function Backdrop({ scrollX }) {
       <BlurView
         style={StyleSheet.absoluteFillObject}
         intensity={100} //intensidade do desfoque
-        tint="dark" // tom do desfoque
+        tint="dark" 
       />
       <LinearGradient
         colors={['transparent', 'black']}
