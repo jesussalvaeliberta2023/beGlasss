@@ -7,7 +7,8 @@ import Favorites from './src/pages/Favorites';
 import Language from './src/pages/Language';
 import DrinkDetails from './src/pages/DrinkDetails';
 import LoginPage from './src/pages/Login';
-//import Perfil from './src/pages/Perfil';
+import Perfil from './src/pages/Perfil';
+import configuracoesPerfil from './src/pages/configuracoesPerfil';
 import SignUp from './src/pages/SignUp'
 
 const Stack = createNativeStackNavigator();
@@ -24,7 +25,8 @@ export default function App() {
         <Stack.Screen name='DrinkDetails' component={DrinkDetails} options={{ headerShown: false }} />
         <Stack.Screen name='Login' component={LoginPage} options={{ headerShown: false }} />
         <Stack.Screen name='SignUp' component={SignUp} options={{ headerShown: false }} />
-        {/* <Stack.Screen name='Perfil' component={Perfil} options={{ headerShown: false }} /> */}
+        <Stack.Screen name='Perfil' component={Perfil} options={{ headerShown: false }} />
+        <Stack.Screen name='configuracoesPerfil' component={configuracoesPerfil} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

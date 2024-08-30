@@ -7,7 +7,7 @@ Project Owner & Front-end developer: Milena Basso;
 -
 Front-end developer: Giovanna Varjão;
 -
-Front-end developer: Matheus Diniz
+Front-end developer: Matheus Diniza
 -
 Back-end developer: Paulo Cesar;
 -

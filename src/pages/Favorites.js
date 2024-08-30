@@ -30,17 +30,12 @@ const imagenes = [
 // Medindo o tamanho da Tela
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
-0
 
 // Definindo tamanhos
-// Tamanho do container de imagem
 const CONTAINER_WIDTH = width * 0.6;
-// Espaço de margem
 const CONTAINER_SPACE = (width - CONTAINER_WIDTH) / 2;
-// Espaço entre as caixas
 const ESPACIO = 4;
-// Altura do fundo
-const ALTURA_BACKDROP = height * 1
+const ALTURA_BACKDROP = height * 1;
 
 // Conf. das imgs p/ Fundo de tela
 function Backdrop({ scrollX }) {
@@ -82,7 +77,7 @@ function Backdrop({ scrollX }) {
       })}
       <BlurView
         style={StyleSheet.absoluteFillObject}
-        intensity={100} //intensidade do desfoque
+        intensity={100} // intensidade do desfoque
         tint="dark" 
       />
       <LinearGradient
@@ -104,7 +99,7 @@ export default function App() {
   const navigation = useNavigation();
   return (
     <SafeAreaView style={styles.containerII}>
-    <StatusBar hidden />
+      <StatusBar hidden />
 
       <Backdrop scrollX={scrollX} />
       <Animated.FlatList
@@ -130,24 +125,15 @@ export default function App() {
             index * CONTAINER_WIDTH,
             (index + 1) * CONTAINER_WIDTH,
           ];
-
+        
           const scrollY = scrollX.interpolate({
             inputRange,
             outputRange: [0, -50, 0],
           });
+
           return (
-            <View style={{ width: CONTAINER_WIDTH }}>
-              <View style={styles.buttonContainer}>
-        <Pressable style={styles.squareButton} onPress={() => navigation.navigate('Drinks')}>
-          <Text style={styles.buttonText}>Drinks</Text>
-        </Pressable>
-        <Pressable style={styles.squareButton} onPress={() => navigation.navigate('Favorites')}>
-          <Text style={styles.buttonText}>Favorites</Text>
-        </Pressable>
-        <Pressable style={styles.squareButton} onPress={() => navigation.navigate('Language')}>
-          <Text style={styles.buttonText}>Language</Text>
-        </Pressable>
-      </View>
+            <View>
+              
               <Animated.View
                 style={{
                   marginHorizontal: ESPACIO,
@@ -159,7 +145,7 @@ export default function App() {
                 }}
               >
                 <Image source={item.image} style={[styles.posterImage, { height: CONTAINER_WIDTH * 1.2 }]} />
-                <Text style={{ fontWeight: 'bold', fontSize: 26, color: 'white', }}>
+                <Text style={{ fontWeight: 'bold', fontSize: 26, color: 'white' }}>
                   {item.title}
                 </Text>
               </Animated.View>

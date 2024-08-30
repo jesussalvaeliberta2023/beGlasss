@@ -66,6 +66,9 @@ const Language = () => {
         <Pressable style={styles.favsButton} onPress={() => navigation.navigate('Favorites')}>
           <Image source={require('../assets/images/HeartNaked.png')} style={[styles.literlyButton, {  marginTop: -9, }]}/>
         </Pressable>
+        <Pressable style={styles.favsButton} onPress={() => navigation.navigate('Perfil')}>
+          <Image source={require('../assets/images/HeartNaked.png')} style={[styles.literlyButton, {  marginTop: -9, }]}/>
+        </Pressable>
       </View>
     </SafeAreaView>
   );
