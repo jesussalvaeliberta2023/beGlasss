@@ -164,6 +164,9 @@ export default function App() {
         <Pressable style={styles.favsButton} onPress={() => navigation.navigate('Favorites')}>
           <Image source={require('../assets/images/HeartFilled.png')} style={[styles.literlyButton, { marginTop: -9, }]} />
         </Pressable>
+        <Pressable style={styles.favsButton} onPress={() => navigation.navigate('Perfil')}>
+          <Image source={require('../assets/images/HeartFilled.png')} style={[styles.literlyButton, { marginTop: -15, }]} />
+        </Pressable>
       </View>
     </SafeAreaView>
   );

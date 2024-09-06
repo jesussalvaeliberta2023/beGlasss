@@ -54,9 +54,9 @@ const CircularCarousel: React.FC<CircularCarouselProps> = ({ data, onImageChange
         return (
           <CircularCarouselListItem
             contentOffset={contentOffset}
-            imageSrc={item.image, item.image}
+            imageSrc={item.image}
             index={index}
-            onPress={onPress}
+            onPress={() => onPress(item.id, item.image)}
             characteristic={item.characteristic}
             iconSrc={item.icon}
             
