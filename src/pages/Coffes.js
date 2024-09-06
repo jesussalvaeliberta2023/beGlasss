@@ -9,18 +9,19 @@ import PressComponent from '../components/PressableComponent';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
 const data = [
-  { image: require('../assets/images/Coffes/Capuccino.png'), characteristic: 'Capuccino', icon: require('../assets/images/HeartNaked.png') },
-  { image: require('../assets/images/Coffes/Affogato.png'), characteristic: 'Affogato', icon: require('../assets/images/HeartNaked.png') },
-  { image: require('../assets/images/Coffes/Mochaccino.png'), characteristic: 'Mochaccino', icon: require('../assets/images/HeartNaked.png') },
-  { image: require('../assets/images/Coffes/Machiatto.png'), characteristic: 'Machiatto', icon: require('../assets/images/HeartNaked.png') },
-  { image: require('../assets/images/Coffes/Latte.png'), characteristic: 'Latte', icon: require('../assets/images/HeartNaked.png') },
-  { image: require('../assets/images/Coffes/Frappe.png'), characteristic: 'Frappe', icon: require('../assets/images/HeartNaked.png') },
-  { image: require('../assets/images/Coffes/Smoothie.png'), characteristic: 'Smoothie', icon: require('../assets/images/HeartNaked.png') },
-  { image: require('../assets/images/Coffes/IcedMocha.png'), characteristic: 'Mocha Gelado', icon: require('../assets/images/HeartNaked.png') },
-  { image: require('../assets/images/Coffes/Coffe.png'), characteristic: 'Café', icon: require('../assets/images/HeartNaked.png') },
-  { image: require('../assets/images/Coffes/IcedCoffe.png'), characteristic: 'Café Gelado', icon: require('../assets/images/HeartNaked.png') },
-  { image: require('../assets/images/Coffes/Frame.png') }
+  { id: 12, image: require('../assets/images/Coffes/Capuccino.png'), characteristic: 'Capuccino', icon: require('../assets/images/HeartNaked.png') },
+  { id: 13, image: require('../assets/images/Coffes/Affogato.png'), characteristic: 'Affogato', icon: require('../assets/images/HeartNaked.png') },
+  { id: 14, image: require('../assets/images/Coffes/Mochaccino.png'), characteristic: 'Mochaccino', icon: require('../assets/images/HeartNaked.png') },
+  { id: 15, image: require('../assets/images/Coffes/Machiatto.png'), characteristic: 'Machiatto', icon: require('../assets/images/HeartNaked.png') },
+  { id: 16, image: require('../assets/images/Coffes/Latte.png'), characteristic: 'Latte', icon: require('../assets/images/HeartNaked.png') },
+  { id: 17, image: require('../assets/images/Coffes/Frappe.png'), characteristic: 'Frappe', icon: require('../assets/images/HeartNaked.png') },
+  { id: 18, image: require('../assets/images/Coffes/Smoothie.png'), characteristic: 'Smoothie', icon: require('../assets/images/HeartNaked.png') },
+  { id: 19, image: require('../assets/images/Coffes/IcedMocha.png'), characteristic: 'Mocha Gelado', icon: require('../assets/images/HeartNaked.png') },
+  { id: 20, image: require('../assets/images/Coffes/Coffe.png'), characteristic: 'Café', icon: require('../assets/images/HeartNaked.png') },
+  { id: 21, image: require('../assets/images/Coffes/IcedCoffe.png'), characteristic: 'Café Gelado', icon: require('../assets/images/HeartNaked.png') },
+  { id: 22, image: require('../assets/images/Coffes/Frame.png') }
 ];
+
 
 export default function Coffes() {
   const [activeImage, setActiveImage] = useState(data[0].image);
