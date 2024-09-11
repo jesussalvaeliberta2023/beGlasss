@@ -1,22 +1,94 @@
-import React from 'react';
-import { View, Text, Image, StyleSheet, FlatList, ScrollView } from 'react-native';
+import React, { useState, useEffect } from "react";
+import { View, Text, Image, StyleSheet, FlatList, ScrollView, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
-const Pefil = () => {
+const Perfil = () => {
+  const IP_URL = "192.168.20.192";
+  const [username, setUsername] = useState(null); 
+  const [user, setUser] = useState(null); 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  // Primeiro useEffect: Recupera o token e o username do AsyncStorage
+  // Primeiro useEffect: Recupera o token e o username do AsyncStorage
+  useEffect(() => {
+    const getTokenAndUsername = async () => {
+      try {
+        const savedToken = await AsyncStorage.getItem('userToken');
+        const savedUsername = await AsyncStorage.getItem('username');
+        
+        if (savedToken && savedUsername) {
+          setUsername(savedUsername); // Apenas definir o username
+        } else {
+          setError("Token ou username não encontrados");
+        }
+      } catch (err) {
+        console.error("Erro ao recuperar token ou username:", err);
+        setError("Erro ao recuperar dados");
+      } finally {
+        setLoading(false);
+      }
+    };
+    getTokenAndUsername();
+  }, []);
+
+  // Segundo useEffect: Busca o usuário do backend com base no username
+  useEffect(() => {
+    if (username) {
+      setLoading(true);
+      axios
+        .get(`http://${IP_URL}:3000/usuarios/${username}`)
+        .then((response) => {
+          if (response.status === 200) {
+            setUser(response.data); // Define os dados do usuário
+          } else {
+            setError("Usuário não encontrado");
+          }
+        })
+        .catch((error) => {
+          console.error("Erro ao buscar usuário:", error);
+          setError("Erro ao carregar o usuário");
+        })
+        .finally(() => {
+          setLoading(false); // Para a animação de carregamento
+        });
+    }
+  }, [username]);
+
+  // Renderização enquanto os dados ainda estão carregando
+  if (loading) {
+    return (
+      <View style={{ justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#0000ff" />
+        <Text>Carregando...</Text>
+      </View>
+    );
+  }
+
+  // Renderização em caso de erro
+  if (error) {
+    return <Text>{error}</Text>;
+  }
+
+  // Renderização caso o usuário não seja encontrado
+  if (!user) {
+    return <Text>Usuário não encontrado</Text>;
+  }
   const reviews = [
     {
       id: '1',
       drink: 'Caipirinha',
       rating: 3.5,
       review: 'A caipirinha é refrescante e equilibrada, mas a qualidade da cachaça e a mistura dos ingredientes podem variar. Boa, mas pode melhorar.',
-      image: 'https://linkparaimagemdacaipirinha.com' 
+      
     },
     {
       id: '2',
       drink: 'Sangria',
       rating: 4,
       review: 'A sangria é uma opção saborosa e refrescante, mas pode ser um pouco doce para alguns paladares.',
-      image: 'https://linkparaimagemdasangria.com'
+      
     },
   ];
 
@@ -39,8 +111,8 @@ const Pefil = () => {
           style={styles.profileImage}
         />
         <View style={styles.userInfo}>
-          <Text style={styles.userName}>Ameinda Ferraez</Text>
-          <Text style={styles.email}>ameinda.ferraez@gmail.com</Text>
+          <Text style={styles.userName}>{user.username}</Text>
+          <Text style={styles.email}>{user.email}</Text>
           <Text style={styles.rating}>4.5 ★</Text>
         </View>
       </View>
@@ -122,4 +194,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Pefil;
+export default Perfil;

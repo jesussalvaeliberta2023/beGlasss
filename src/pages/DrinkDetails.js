@@ -1,16 +1,24 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, ActivityIndicator, ScrollView, Image } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  ScrollView,
+  Image,
+  Pressable,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useRoute } from "@react-navigation/native";
 import axios from "axios";
 
 export default function Drink() {
-  const IP_URL = "10.144.170.34";  // Variável de URL definida como constante
+  const IP_URL = "192.168.20.192"; // Variável de URL definida como constante
 
   // Hooks devem ser usados no topo do componente, sem condicional
   const navigation = useNavigation();
   const route = useRoute();
-  const { id, image, data } = route.params;  // Recebe os parâmetros da rota
+  const { id, image, data } = route.params; // Recebe os parâmetros da rota
 
   const [drink, setDrink] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -18,7 +26,8 @@ export default function Drink() {
   useEffect(() => {
     console.log("ID recebido:", id);
 
-    axios.get(`http://${IP_URL}:3000/produtos/${id}`)
+    axios
+      .get(`http://${IP_URL}:3000/produtos/${id}`)
       .then((response) => {
         setDrink(response.data);
         setLoading(false);
@@ -30,7 +39,12 @@ export default function Drink() {
   }, [id]);
 
   if (loading) {
-    return <ActivityIndicator size="large" color="#0000ff" />;
+    return (
+      <View style={{ justifyContent: "center", alignContent: "center" }}>
+        <ActivityIndicator size="large" color="#0000ff" />
+        <Text>Carregando</Text>
+      </View>
+    );
   }
 
   if (!drink) {
@@ -40,6 +54,13 @@ export default function Drink() {
   return (
     <ScrollView style={styles.ScrollView}>
       <View style={styles.container}>
+        {/* Botão no canto superior esquerdo */}
+        <Pressable
+          style={[styles.backButton,{paddingTop: 15}]}
+          onPress={() => navigation.navigate("Login")}
+        >
+          <Text style={styles.backButtonText}>Ir para a Login</Text>
+        </Pressable>
         <Image source={image} style={styles.image} />
         <Text style={styles.name}>{drink.name}</Text>
         <Text style={styles.description}>{drink.description}</Text>
