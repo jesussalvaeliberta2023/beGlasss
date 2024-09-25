@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState, useEffect } from "react";
 import {
   View,
   TextInput,
@@ -11,50 +11,105 @@ import {
 import { BlurView } from "expo-blur";
 import styles from "../styles/StyleSheet";
 
-export default function SignUp() {
+export default function SignUp({ navigation }) {
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [passcode, setPasscode] = useState('');
+  const [confirmPasscode, setConfirmPasscode] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const IP_URL = '192.168.20.192'; // Substitua com seu IP ou URL
+
+  const handleSignUp = async () => {
+    if (!username || !email || !passcode || !confirmPasscode) {
+      Alert.alert('Erro', 'Todos os campos são obrigatórios.');
+      return;
+    }
+
+    if (passcode !== confirmPasscode) {
+      Alert.alert('Erro', 'As senhas não coincidem.');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await axios.post(`http://${IP_URL}:3000/usuarios`, {
+        username,
+        email,
+        passcode,
+      });
+
+      if (response.status === 201) {
+        Alert.alert('Sucesso', 'Usuário cadastrado com sucesso');
+        navigation.navigate('Login'); // Redireciona para a tela de login após o cadastro
+      }
+    } catch (error) {
+      console.error('Erro ao registrar usuário:', error);
+      Alert.alert('Erro', 'Não foi possível cadastrar o usuário. Tente novamente.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <ImageBackground
-        blurRadius={10}
-        style={{ flex: 1 }}
-        source={require("../assets/images/Drinks/Sangria.png")}
-      >
-        <Image
-          source={require("../assets/images/Logo.png")}
-          style={estilos.imagens}
-        />
-        <BlurView intensity={100} style={estilos.absolute} tint="dark">
-          <View style={estilos.corpao}>
-            <Text style={estilos.titulous}>Faça seu Cadastro</Text>
-            <TextInput
-              placeholder="Nome de Usuário:"
-              placeholderTextColor={"white"}
-              style={estilos.inputs}
-            />
-            <TextInput
-              placeholder="Email:"
-              placeholderTextColor={"white"}
-              style={estilos.inputs}
-            />
-            <TextInput
-              placeholder="Senha:"
-              placeholderTextColor={"white"}
-              style={estilos.inputs}
-            />
-            <TextInput
-              placeholder="Confirmar Senha:"
-              placeholderTextColor={"white"}
-              style={estilos.inputs}
-            />
-            <TouchableOpacity style={estilos.botatudo}>
-              <Text style={{ textAlign: "center" }}>Cadastrar</Text>
-            </TouchableOpacity>
-          </View>
-        </BlurView>
-      </ImageBackground>
-    </View>
-  );
-}
+    <ImageBackground
+      blurRadius={10}
+      style={{ flex: 1 }}
+      source={require("../assets/images/Drinks/Sangria.png")}
+    >
+      <Image
+        source={require("../assets/images/Logo.png")}
+        style={estilos.imagens}
+      />
+      <BlurView intensity={100} style={estilos.absolute} tint="dark">
+        <View style={estilos.corpao}>
+          <Text style={estilos.titulous}>Faça seu Cadastro</Text>
+          <TextInput
+            placeholder="Nome de Usuário:"
+            placeholderTextColor={"white"}
+            value={username}
+            onChangeText={setUsername}
+            style={estilos.inputs}
+          />
+          <TextInput
+            placeholder="Email:"
+            placeholderTextColor={"white"}
+            style={estilos.inputs}
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+          />
+          <TextInput
+            placeholder="Senha:"
+            placeholderTextColor={"white"}
+            style={estilos.inputs}
+            value={passcode}
+            onChangeText={setPasscode}
+            secureTextEntry
+          />
+          <TextInput
+            placeholder="Confirmar Senha:"
+            placeholderTextColor={"white"}
+            style={estilos.inputs}
+            value={confirmPasscode}
+            onChangeText={setConfirmPasscode}
+            secureTextEntry
+          />
+          <TouchableOpacity
+            style={estilos.botatudo}
+            onPress={handleSignUp}
+            disabled={loading}
+          >
+            <Text style={estilos.botatudoText}>{loading ? "Carregando..." : "Registrar"}</Text>
+          </TouchableOpacity>
+        </View>
+      </BlurView>
+    </ImageBackground>
+  </View>
+);
+};
 
 const estilos = StyleSheet.create({
   inputs: {

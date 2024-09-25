@@ -5,7 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
 const Perfil = () => {
-  const IP_URL = "192.168.20.192";
+  const IP_URL = "10.144.163.26";
   const [username, setUsername] = useState(null); 
   const [user, setUser] = useState(null); 
   const [loading, setLoading] = useState(true);

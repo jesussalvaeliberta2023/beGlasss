@@ -23,7 +23,7 @@ export default function LoginPage() {
     const [token, setToken] = useState(null);
     const navigation = useNavigation();
 
-    const IP_URL = "192.168.20.192"; // Variável de URL definida como constante
+    const IP_URL = "10.144.170.16"; // Variável de URL definida como constante
     const handleLogin = async () => {
         try {
           const response = await axios.post(`http://${IP_URL}:3000/login`, {
@@ -84,7 +84,7 @@ export default function LoginPage() {
             </TouchableOpacity>
             <Pressable
               style={estilos.botaun2}
-              onPress={() => navigation.navigate("Language")}
+              onPress={() => navigation.navigate("SignUp")}
             >
               <Text style={{ textAlign: "center", color: "white" }}>
                 Cadastrar-se

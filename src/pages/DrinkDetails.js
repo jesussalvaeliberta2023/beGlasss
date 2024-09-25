@@ -13,7 +13,7 @@ import { useRoute } from "@react-navigation/native";
 import axios from "axios";
 
 export default function Drink() {
-  const IP_URL = "192.168.20.192"; // Variável de URL definida como constante
+  const IP_URL = "10.144.170.16"; // Variável de URL definida como constante
 
   // Hooks devem ser usados no topo do componente, sem condicional
   const navigation = useNavigation();
