@@ -6,10 +6,12 @@ import {
   Text,
   ImageBackground,
   Image,
+  Alert,
   TouchableOpacity,
 } from "react-native";
 import { BlurView } from "expo-blur";
 import styles from "../styles/StyleSheet";
+import axios from "axios";
 
 export default function SignUp({ navigation }) {
   const [username, setUsername] = useState('');
@@ -18,11 +20,12 @@ export default function SignUp({ navigation }) {
   const [confirmPasscode, setConfirmPasscode] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const IP_URL = '192.168.20.192'; // Substitua com seu IP ou URL
+  const IP_URL = '10.144.170.57'; // Substitua com seu IP ou URL
 
   const handleSignUp = async () => {
     if (!username || !email || !passcode || !confirmPasscode) {
-      Alert.alert('Erro', 'Todos os campos são obrigatórios.');
+      Alert.alert('Erro', 'Todos os campos são obrigatórios.')
+      console.log('Todos campos são necessários.');
       return;
     }
 
@@ -115,6 +118,8 @@ const estilos = StyleSheet.create({
   inputs: {
     width: 375,
     height: 45,
+    fontStyle: 'italic',
+    color: 'white',
     borderBottomWidth: 2,
     borderColor: "white",
     fontSize: 20,

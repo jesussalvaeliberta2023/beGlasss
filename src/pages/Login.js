@@ -8,6 +8,7 @@ import {
   Image,
   TouchableOpacity,
   Pressable,
+  Switch,  // Importa o Switch para o lembrar-me
 } from "react-native";
 import { BlurView } from "expo-blur";
 import styles from "../styles/StyleSheet";
@@ -16,43 +17,61 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function LoginPage() {
+  const [username, setUsername] = useState("");
+  const [passcode, setPasscode] = useState("");
+  const [rememberMe, setRememberMe] = useState(false); // Estado para lembrar-me
+  const [token, setToken] = useState(null);
+  const navigation = useNavigation();
 
+  const IP_URL = "10.144.170.57"; // Variável de URL definida como constante
 
-    const [username, setUsername] = useState("");
-    const [passcode, setPasscode] = useState("");
-    const [token, setToken] = useState(null);
-    const navigation = useNavigation();
-
-    const IP_URL = "10.144.170.16"; // Variável de URL definida como constante
-    const handleLogin = async () => {
-        try {
-          const response = await axios.post(`http://${IP_URL}:3000/login`, {
-            username: username,
-            passcode: passcode,
-          });
-      
-          if (response.status === 200) {
-            const token = response.data.token;
-            alert("Login bem-sucedido");
-      
-            // Salva o token e o username no AsyncStorage
-            await AsyncStorage.setItem('userToken', token);
-            await AsyncStorage.setItem('username', username);
-      
-            console.log("Token e username salvos:", token, username);
-            navigation.navigate("Perfil"); // Não precisa passar token e username aqui
-          } else {
-            alert("Usuário ou senha incorretos");
-          }
-        } catch (error) {
-          console.error("Erro ao fazer login:", error.message);
-          alert("Erro ao fazer login");
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post(`http://${IP_URL}:3000/login`, {
+        username: username,
+        passcode: passcode,
+        rememberMe: rememberMe, // Envia rememberMe para o backend
+      });
+  
+      if (response.status === 200) {
+        const token = response.data.token;
+  
+        // Verifica se o token existe antes de prosseguir
+        if (!token) {
+          alert("Token não recebido. Verifique as credenciais.");
+          return;
         }
-      };
-      
-
-
-      
+  
+        alert("Login bem-sucedido");
+  
+        // Salva o token e o username no AsyncStorage se rememberMe estiver ativo
+        if (rememberMe) {
+          await AsyncStorage.setItem('userToken', token);
+          await AsyncStorage.setItem('username', username);
+          console.log("Token e username salvos:", token, username);
+        }
+  
+        navigation.navigate("Perfil");
+      } else {
+        alert("Usuário ou senha incorretos");
+      }
+    } catch (error) {
+      // Melhora a mensagem de erro exibida
+      if (error.response) {
+        // O servidor respondeu com um código de status fora da faixa 2xx
+        console.error("Erro ao fazer login:", error.response.data);
+        alert("Usuário ou senha incorretos");
+      } else if (error.request) {
+        // A requisição foi feita, mas não houve resposta
+        console.error("Erro ao fazer login: Sem resposta do servidor", error.request);
+        alert("Erro ao conectar ao servidor");
+      } else {
+        // Algo aconteceu ao configurar a requisição
+        console.error("Erro ao fazer login:", error.message);
+        alert("Erro ao fazer login");
+      }
+    }
+  };
   return (
     <View style={styles.container}>
       <ImageBackground
@@ -77,8 +96,16 @@ export default function LoginPage() {
               placeholder="Senha:"
               placeholderTextColor={"white"}
               onChangeText={(passcode) => setPasscode(passcode)}
+              secureTextEntry={true} // Adiciona ocultação da senha
               style={estilos.inputs}
             />
+            <View style={estilos.rememberMe}>
+              <Text style={{ color: "white" }}>Lembrar-me</Text>
+              <Switch
+                value={rememberMe}
+                onValueChange={(value) => setRememberMe(value)}
+              />
+            </View>
             <TouchableOpacity style={estilos.botaun} onPress={handleLogin}>
               <Text style={{ textAlign: "center" }}>Press Me</Text>
             </TouchableOpacity>
@@ -99,8 +126,10 @@ export default function LoginPage() {
 
 const estilos = StyleSheet.create({
   inputs: {
-    width: 400,
+    width: 375,
     height: 45,
+    fontStyle: 'italic',
+    color: 'white',
     borderBottomWidth: 2,
     borderColor: "white",
     fontSize: 20,
@@ -147,5 +176,10 @@ const estilos = StyleSheet.create({
     width: 85,
     height: 25,
     justifyContent: "center",
+  },
+  rememberMe: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 10,
   },
 });

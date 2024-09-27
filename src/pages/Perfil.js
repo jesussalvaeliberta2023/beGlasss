@@ -1,94 +1,74 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Image, StyleSheet, FlatList, ScrollView, ActivityIndicator } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  FlatList,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
 const Perfil = () => {
-  const IP_URL = "10.144.163.26";
-  const [username, setUsername] = useState(null); 
-  const [user, setUser] = useState(null); 
+  const IP_URL = "10.144.170.57";
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  // Primeiro useEffect: Recupera o token e o username do AsyncStorage
-  // Primeiro useEffect: Recupera o token e o username do AsyncStorage
-  useEffect(() => {
-    const getTokenAndUsername = async () => {
-      try {
-        const savedToken = await AsyncStorage.getItem('userToken');
-        const savedUsername = await AsyncStorage.getItem('username');
-        
-        if (savedToken && savedUsername) {
-          setUsername(savedUsername); // Apenas definir o username
-        } else {
-          setError("Token ou username não encontrados");
-        }
-      } catch (err) {
-        console.error("Erro ao recuperar token ou username:", err);
-        setError("Erro ao recuperar dados");
-      } finally {
-        setLoading(false);
-      }
-    };
-    getTokenAndUsername();
-  }, []);
 
-  // Segundo useEffect: Busca o usuário do backend com base no username
   useEffect(() => {
-    if (username) {
-      setLoading(true);
-      axios
-        .get(`http://${IP_URL}:3000/usuarios/${username}`)
-        .then((response) => {
+    const fetchUser = async () => {
+      try {
+        const savedToken = await AsyncStorage.getItem('userToken'); // Pega o token do AsyncStorage
+
+        if (savedToken) {
+          const response = await axios.get(`http://${IP_URL}:3000/perfil`, {
+            headers: {
+              Authorization: `Bearer ${savedToken}`, // Passa o token no cabeçalho
+            },
+          });
+
           if (response.status === 200) {
             setUser(response.data); // Define os dados do usuário
           } else {
             setError("Usuário não encontrado");
           }
-        })
-        .catch((error) => {
-          console.error("Erro ao buscar usuário:", error);
-          setError("Erro ao carregar o usuário");
-        })
-        .finally(() => {
-          setLoading(false); // Para a animação de carregamento
-        });
-    }
-  }, [username]);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar o perfil:", error);
+        setError("Erro ao carregar o perfil");
+      } finally {
+        setLoading(false); // Para a animação de carregamento
+      }
+    };
 
-  // Renderização enquanto os dados ainda estão carregando
+    fetchUser();
+  }, []);
+
   if (loading) {
-    return (
-      <View style={{ justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="#0000ff" />
-        <Text>Carregando...</Text>
-      </View>
-    );
+    return <ActivityIndicator size="large" />;
   }
 
-  // Renderização em caso de erro
   if (error) {
     return <Text>{error}</Text>;
   }
 
-  // Renderização caso o usuário não seja encontrado
-  if (!user) {
-    return <Text>Usuário não encontrado</Text>;
-  }
-  const reviews = [
+  const reviews = [ 
     {
-      id: '1',
-      drink: 'Caipirinha',
+      id: "1",
+      drink: "Caipirinha",
       rating: 3.5,
-      review: 'A caipirinha é refrescante e equilibrada, mas a qualidade da cachaça e a mistura dos ingredientes podem variar. Boa, mas pode melhorar.',
-      
+      review:
+        "A caipirinha é refrescante e equilibrada, mas a qualidade da cachaça e a mistura dos ingredientes podem variar. Boa, mas pode melhorar.",
     },
     {
-      id: '2',
-      drink: 'Sangria',
+      id: "2",
+      drink: "Sangria",
       rating: 4,
-      review: 'A sangria é uma opção saborosa e refrescante, mas pode ser um pouco doce para alguns paladares.',
-      
+      review:
+        "A sangria é uma opção saborosa e refrescante, mas pode ser um pouco doce para alguns paladares.",
     },
   ];
 
@@ -102,26 +82,30 @@ const Perfil = () => {
       </View>
     </View>
   );
-
+console.log(username)
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <Image 
-          source={{ uri: 'https://linkparaafotodapessoa.com' }} 
+        <Image
+          source={require('../assets/images/Drinks/PinaColada.png')}
           style={styles.profileImage}
         />
         <View style={styles.userInfo}>
-          <Text style={styles.userName}>{user.username}</Text>
-          <Text style={styles.email}>{user.email}</Text>
+          <Text style={styles.userName}>
+            {user ? user.username : "Carregando..."}
+          </Text>
+          <Text style={styles.email}>
+            {user ? user.email : "Carregando email..."}
+          </Text>
           <Text style={styles.rating}>4.5 ★</Text>
         </View>
       </View>
-      
+
       <Text style={styles.sectionTitle}>Suas avaliações</Text>
-      <FlatList 
+      <FlatList
         data={reviews}
         renderItem={renderReview}
-        keyExtractor={item => item.id}
+        keyExtractor={(item) => item.id}
         style={styles.reviewList}
       />
     </ScrollView>
@@ -131,13 +115,13 @@ const Perfil = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1c1b29',
+    backgroundColor: "#1c1b29",
   },
   header: {
-    flexDirection: 'row',
+    flexDirection: "row",
     padding: 20,
-    alignItems: 'center',
-    backgroundColor: '#252239',
+    alignItems: "center",
+    backgroundColor: "#252239",
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
   },
@@ -150,19 +134,19 @@ const styles = StyleSheet.create({
     marginLeft: 20,
   },
   userName: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 22,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   email: {
-    color: '#ccc',
+    color: "#ccc",
   },
   rating: {
-    color: '#ffd700',
+    color: "#ffd700",
     marginTop: 5,
   },
   sectionTitle: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 18,
     marginTop: 20,
     marginBottom: 10,
@@ -172,8 +156,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   reviewCard: {
-    flexDirection: 'row',
-    backgroundColor: '#2c2b39',
+    flexDirection: "row",
+    backgroundColor: "#2c2b39",
     padding: 10,
     borderRadius: 10,
     marginBottom: 10,
@@ -188,8 +172,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   drinkTitle: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: "#fff",
+    fontWeight: "bold",
     fontSize: 16,
   },
 });

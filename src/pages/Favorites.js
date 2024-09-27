@@ -62,8 +62,8 @@ const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
 
 // Definindo Tamanhos
-const CONTAINER_WIDTH = width * 0.7;
-const ESPACIO_CONTENEDOR = (width - CONTAINER_WIDTH) / 2;
+const CONTAINER_WIDTH = width * 0.8;
+const SPACE_CONTAINER = (width - CONTAINER_WIDTH) / 2;
 const ESPACIO = 10;
 const ALTURA_BACKDROP = height * 1;
 
@@ -134,7 +134,7 @@ export default function App() {
         snapToAlignment="start"
         contentContainerStyle={{
           paddingTop: 200,
-          paddingHorizontal: ESPACIO_CONTENEDOR,
+          paddingHorizontal: SPACE_CONTAINER,
         }}
         snapToInterval={CONTAINER_WIDTH}
         decelerationRate={0}
@@ -159,7 +159,7 @@ export default function App() {
                   marginHorizontal: ESPACIO,
                   padding: ESPACIO,
                   borderRadius: 34,
-                  backgroundColor: "#fff",
+                  backgroundColor: "transparent",
                   alignItems: "center",
                   transform: [{ translateY: scrollY }],
                 }}
@@ -202,6 +202,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     justifyContent: "center",
   },
+
   posterImage: {
     width: "100%",
     height: CONTAINER_WIDTH * 1.2,
@@ -210,10 +211,18 @@ const styles = StyleSheet.create({
     margin: 0,
     marginBottom: 10,
   },
+
   tabss: {
     flexDirection: "row",
     justifyContent: "space-around",
     marginVertical: 20,
+    position: "absolute", 
+    bottom: 0, 
+    left: 0,
+    right: 0,
+    backgroundColor: "white",
+    paddingVertical: 10, 
   },
- 
+  
+
 });

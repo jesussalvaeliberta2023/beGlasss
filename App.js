@@ -10,6 +10,7 @@ import LoginPage from "./src/pages/Login";
 import Perfil from "./src/pages/Perfil";
 import configuracoesPerfil from "./src/pages/configuracoesPerfil";
 import SignUp from "./src/pages/SignUp";
+import Testes from "./src/pages/Testes";
 
 const Stack = createNativeStackNavigator();
 
@@ -70,6 +71,11 @@ export default function App() {
         <Stack.Screen
           name="configuracoesPerfil"
           component={configuracoesPerfil}
+          options={{ headerShown: false }}
+        />
+         <Stack.Screen
+          name="Testes"
+          component={Testes}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

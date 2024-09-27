@@ -77,8 +77,8 @@ const data = [
   },
   {
     id: 10,
-    image: require("../assets/images/Drinks/WattermelonSlushie.png"),
-    characteristic: "Wattermelon Slushie",
+    image: require("../assets/images/Drinks/MelanciaFizz.png"),
+    characteristic: "Melancia Fizz",
     icon: require("../assets/images/HeartNaked.png"),
   },
   { id: 11, image: require("../assets/images/Drinks/Frame.png") },
@@ -170,7 +170,7 @@ export default function Drinks() {
             styleI={styles.hexagon}
           />
           <PressComponent
-            onPress={() => navigation.navigate("Juices")}
+            onPress={() => navigation.navigate("Testes")}
             source={require("../assets/images/ThirdTab.png")}
             styleI={styles.hexagon}
           />
