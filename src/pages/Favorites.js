@@ -9,6 +9,7 @@ import {
   SafeAreaView,
   Animated,
 } from "react-native";
+import { TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import PressComponent from "../components/PressableComponent";
 import { useNavigation } from "@react-navigation/native";
@@ -62,9 +63,9 @@ const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
 
 // Definindo Tamanhos
-const CONTAINER_WIDTH = width * 0.8;
+const CONTAINER_WIDTH = width * 0.6;
 const SPACE_CONTAINER = (width - CONTAINER_WIDTH) / 2;
-const ESPACIO = 10;
+const ESPACIO = 8;
 const ALTURA_BACKDROP = height * 1;
 
 function Backdrop({ scrollX }) {
@@ -111,18 +112,63 @@ function Backdrop({ scrollX }) {
           bottom: 0,
         }}
       />
+       {/* Barra inferior de navegação */}
+       <View style={styles.tabss}>
+                <PressComponent
+                  onPress={() => navigation.navigate("Home")}
+                  source={require("../assets/images/HomeFilled.png")}
+                  styleI={[styles.literlyButton, { marginTop: -9 }]}
+                  styleP={styles.homeButton}
+                />
+                <PressComponent
+                  onPress={() => navigation.navigate("Favorites")}
+                  source={require("../assets/images/HeartNaked.png")}
+                  styleI={[
+                    styles.literlyButton,
+                    { marginTop: -11, tintColor: "#ffffff" },
+                  ]}
+                  styleP={styles.favsButton}
+                />
+              </View>
     </View>
   );
 }
 
 export default function App() {
   const scrollX = React.useRef(new Animated.Value(0)).current;
-
   const navigation = useNavigation();
+
+  const textoAnimated = useAnimatedStyle(() => {
+    return { transform: [{ translateX: withSpring(translateX.value) }] };
+  });
+
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar hidden />
+
+       {/* Botões na parte superior */}
+       <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          onPress={() => console.log("Botão 1")}
+          style={styles.squareButton}
+        >
+          <Text style={styles.buttonText}>Cafés</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => console.log("Botão 2")}
+          style={styles.squareButton}
+        >
+          <Text style={styles.buttonText}>Drinks</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => console.log("Botão 3")}
+          style={styles.squareButton}
+        >
+          <Text style={styles.buttonText}>Sucos</Text>
+        </TouchableOpacity>
+      </View>
+
       <Backdrop scrollX={scrollX} />
       <Animated.FlatList
         onScroll={Animated.event(
@@ -133,7 +179,7 @@ export default function App() {
         horizontal={true}
         snapToAlignment="start"
         contentContainerStyle={{
-          paddingTop: 200,
+          paddingTop: 350,
           paddingHorizontal: SPACE_CONTAINER,
         }}
         snapToInterval={CONTAINER_WIDTH}
@@ -164,31 +210,19 @@ export default function App() {
                   transform: [{ translateY: scrollY }],
                 }}
               >
-                <Image source={item.image} style={styles.posterImage} />
-                <Text style={{ fontWeight: "bold", fontSize: 26 }}>
-                  {item.title}
-                </Text>
+                <View style={{ position: 'relative', width: '100%' }}>
+          <Image source={item.image} style={styles.posterImage} />
+          <Text style={styles.titleText}>{item.title}</Text>
+        </View>
               </Animated.View>
-
-              {/* Barra inferior de navegação */}
-              <View style={styles.tabss}>
-                <PressComponent
-                  onPress={() => navigation.navigate("Home")}
-                  source={require("../assets/images/HomeFilled.png")}
-                  styleI={[styles.literlyButton, { marginTop: -9 }]}
-                  styleP={styles.homeButton}
-                />
-                <PressComponent
-                  onPress={() => navigation.navigate("Favorites")}
-                  source={require("../assets/images/HeartNaked.png")}
-                  styleI={[
-                    styles.literlyButton,
-                    { marginTop: -11, tintColor: "#ffffff" },
-                  ]}
-                  styleP={styles.favsButton}
-                />
-              </View>
+              {/* Título */}
+        <Animated.Text
+          style={[styles.choose, textoAnimated, { fontFamily: "Belleza" }]}
+        >
+          Escolha seu Drink
+        </Animated.Text>
             </View>
+            
           );
         }}
       />
@@ -220,9 +254,39 @@ const styles = StyleSheet.create({
     bottom: 0, 
     left: 0,
     right: 0,
-    backgroundColor: "white",
+    backgroundColor: "black",
     paddingVertical: 10, 
   },
-  
 
+  titleText: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    color: 'white',
+    fontSize: 16,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    padding: 5,
+    borderRadius: 5,
+  },
+
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 30,
+    paddingTop: 200,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1,
+  },
+  squareButton: {
+    width: 60,
+    height: 60,
+    backgroundColor: '#007AFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 6,
+  },
+  
 });

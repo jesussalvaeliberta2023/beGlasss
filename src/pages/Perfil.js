@@ -1,3 +1,4 @@
+import {jwtDecode} from 'jwt-decode'
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -6,56 +7,96 @@ import {
   StyleSheet,
   FlatList,
   ScrollView,
+  Button,
+  Alert,
   ActivityIndicator,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import IP_URL from "../components/IP";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
-const Perfil = () => {
-  const IP_URL = "10.144.170.57";
+
+const Perfil = ({ route }) => {
+  const username = route?.params?.username;
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigation = useNavigation();
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const savedToken = await AsyncStorage.getItem('userToken'); // Pega o token do AsyncStorage
+        const savedToken = await AsyncStorage.getItem("userToken"); // Recupera o token do AsyncStorage
+        console.log("Token recuperado:", savedToken);
 
-        if (savedToken) {
-          const response = await axios.get(`http://${IP_URL}:3000/perfil`, {
+        if (!savedToken) {
+          // Exibe um alerta se não houver token e mantém o usuário na mesma página
+          navigation.goBack();
+          console.log("Acesso Negado");
+          Alert.alert(
+            "Acesso negado",
+            "Você deve realizar o login para poder entrar.",
+
+            [{ text: "OK", onPress: () => navigation.goBack() }]
+          );
+          setLoading(false); // Interrompe o carregamento
+          return;
+        }
+
+        // Decodificar o token
+      const decodedToken = jwtDecode(savedToken);
+      console.log("Token decodificado:", decodedToken);
+      
+      // Extrair o nome do usuário do token
+      const usernameFromToken = decodedToken.username; // Acesse a propriedade correta
+      console.log("Nome de usuário do token:", usernameFromToken);
+
+        const response = await axios.get(
+          `http://${IP_URL}:3000/perfil/${username}`,
+          {
             headers: {
-              Authorization: `Bearer ${savedToken}`, // Passa o token no cabeçalho
+              Authorization: `Bearer ${savedToken}`,
             },
-          });
-
-          if (response.status === 200) {
-            setUser(response.data); // Define os dados do usuário
-          } else {
-            setError("Usuário não encontrado");
           }
+        );
+
+        if (response.status === 200) {
+          setUser(response.data); // Define os dados do usuário
+        } else {
+          setError("Usuário não encontrado");
         }
       } catch (error) {
         console.error("Erro ao buscar o perfil:", error);
-        setError("Erro ao carregar o perfil");
+        if (error.response?.status === 403 || error.response?.status === 401) {
+          // Token inválido ou expirado
+          setError("Sessão expirada, faça login novamente.");
+        } else {
+          setError("Erro ao carregar o perfil");
+        }
       } finally {
         setLoading(false); // Para a animação de carregamento
       }
     };
 
     fetchUser();
-  }, []);
+  }, [username]);
 
-  if (loading) {
-    return <ActivityIndicator size="large" />;
-  }
+  //Função de Logout:
+  const handleLogout = async () => {
+    try {
+      // Remover o token de AsyncStorage
+      await AsyncStorage.removeItem("userToken");
+      Alert.alert("Logout", "Você foi desconectado com sucesso.");
+      // Redirecionar para a página de login
+      navigation.navigate("Login"); // Altere 'Login' para o nome da sua tela de login
+    } catch (error) {
+      console.error("Erro ao tentar fazer logout:", error);
+      Alert.alert("Erro", "Não foi possível desconectar.");
+    }
+  };
 
-  if (error) {
-    return <Text>{error}</Text>;
-  }
-
-  const reviews = [ 
+  const reviews = [
     {
       id: "1",
       drink: "Caipirinha",
@@ -82,14 +123,14 @@ const Perfil = () => {
       </View>
     </View>
   );
-console.log(username)
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <Image
-          source={require('../assets/images/Drinks/PinaColada.png')}
+          source={require("../assets/images/Drinks/PinaColada.png")}
           style={styles.profileImage}
         />
+
         <View style={styles.userInfo}>
           <Text style={styles.userName}>
             {user ? user.username : "Carregando..."}
@@ -108,6 +149,8 @@ console.log(username)
         keyExtractor={(item) => item.id}
         style={styles.reviewList}
       />
+      <Button title="Voltar" onPress={() => navigation.goBack()} />
+      <Button title="Sair" style={{ marginTop: 30 }} onPress={handleLogout} />
     </ScrollView>
   );
 };

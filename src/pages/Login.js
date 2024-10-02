@@ -15,6 +15,7 @@ import styles from "../styles/StyleSheet";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import IP_URL from "../components/IP";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
@@ -23,9 +24,11 @@ export default function LoginPage() {
   const [token, setToken] = useState(null);
   const navigation = useNavigation();
 
-  const IP_URL = "10.144.170.57"; // Variável de URL definida como constante
+  
 
   const handleLogin = async () => {
+    console.log("Dados enviados:", { username, passcode, rememberMe });
+
     try {
       const response = await axios.post(`http://${IP_URL}:3000/login`, {
         username: username,
@@ -43,6 +46,7 @@ export default function LoginPage() {
         }
   
         alert("Login bem-sucedido");
+        
   
         // Salva o token e o username no AsyncStorage se rememberMe estiver ativo
         if (rememberMe) {
@@ -50,8 +54,10 @@ export default function LoginPage() {
           await AsyncStorage.setItem('username', username);
           console.log("Token e username salvos:", token, username);
         }
+        
   
-        navigation.navigate("Perfil");
+        navigation.navigate("Perfil", { username: username });
+
       } else {
         alert("Usuário ou senha incorretos");
       }

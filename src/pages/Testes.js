@@ -1,12 +1,13 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Button } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 export default function Testes() {
     const navigation = useNavigation();
   return (
       <View style={{alignItems: 'center', justifyContent: 'center'}}>
-          <Text>Testes</Text>
-          <TouchableOpacity onPress={() => navigation.navigate("Login")}><Text>Ir para Login</Text></TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate("Perfil")}><Text>Ir para Perfil</Text></TouchableOpacity>
+          <Text style={{marginBottom: 15}}>Testes</Text>
+          <TouchableOpacity style={{marginBottom: 15}} onPress={() => navigation.navigate("Login")}><Text>Ir para Login</Text></TouchableOpacity>
+          <TouchableOpacity style={{marginBottom: 15}} onPress={() => navigation.navigate("Perfil")}><Text>Ir para Perfil</Text></TouchableOpacity>
+          <Button title="Voltar" onPress={() => navigation.goBack()}  />
       </View>
   );
 }
