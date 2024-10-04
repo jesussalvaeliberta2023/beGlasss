@@ -1,3 +1,4 @@
+import {jwtDecode} from 'jwt-decode'
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -13,15 +14,18 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useRoute } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import IP_URL from "../components/IP";
 import axios from "axios";
 import { Ionicons } from '@expo/vector-icons'; // Importando Ionicons
 
 export default function Drink() {
-  // Hooks devem ser usados no topo do componente, sem condicional
+  // Hooks devem ser usados no topo do componente
   const navigation = useNavigation();
   const route = useRoute();
-  const { id, image, data } = route.params; // Recebe os parâmetros da rota
+
+  // Verifica se os parâmetros estão presentes antes de usá-los
+  const { id, image } = route.params || {}; 
 
   const [drink, setDrink] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -29,42 +33,87 @@ export default function Drink() {
   const [comment, setComment] = useState(""); // Estado para o comentário
   const [rating, setRating] = useState(0); // Estado para a nota (estrelas)
 
-
-  const submitReview = () => {
-    const reviewData = {
-      produto: id, // O ID do produto
-      comentario: comment,
-      nota: rating,
-    };
-
-    axios
-      .post(`http://${IP_URL}:3000/reviews`, reviewData)
-      .then((response) => {
-        console.log("Review enviada com sucesso", response.data);
-        setModalVisible(false);
-        setComment("");
-        setRating(0);
-      })
-      .catch((error) => {
-        console.error("Erro ao enviar a review", error);
+  // Função para enviar review
+  const submitReview = async () => {
+    try {
+      // Recupera o token do AsyncStorage
+      const savedToken = await AsyncStorage.getItem("userToken");
+      console.log("Token recuperado:", savedToken);
+  
+      // Verifica se o token foi recuperado
+      if (!savedToken) {
+        console.error("Nenhum token encontrado. É necessário fazer login.");
+        return;
+      }
+  
+      // Decodifica o token
+      const decodedToken = jwtDecode(savedToken);
+      console.log("Token decodificado:", decodedToken);
+  
+      // Extrai o nome do usuário do token
+      const usernameFromToken = decodedToken.username; // Acesse a propriedade correta
+      console.log("Nome de usuário do token:", usernameFromToken);
+  
+      // Cria o objeto da review com os dados do produto, comentário, nota e username
+      const reviewData = {
+        autor: usernameFromToken, // Adiciona o username extraído do token
+        produto: id, // O ID do produto
+        comentario: comment,
+        nota: rating,
+      };
+  
+      // Envia a review para o backend, passando o token no cabeçalho
+      const response = await axios.post(`http://${IP_URL}:3000/reviews`, reviewData, {
+        headers: {
+          Authorization: `Bearer ${savedToken}`, // Inclui o token no cabeçalho da requisição
+        },
       });
+  
+      console.log("Review enviada com sucesso", response.data);
+      
+      // Reseta o modal e o formulário de comentário
+      setModalVisible(false);
+      setComment("");
+      setRating(0);
+    } catch (error) {
+      console.error("Erro ao enviar a review", error);
+    }
   };
 
-
+  // Busca dados da bebida pelo ID
   useEffect(() => {
-    console.log("ID recebido:", id);
-
-    axios
-      .get(`http://${IP_URL}:3000/produtos/${id}`)
-      .then((response) => {
-        setDrink(response.data);
+    // Função assíncrona dentro do useEffect
+    const fetchDrinkData = async () => {
+      if (id) {
+        try {
+          console.log("ID recebido:", id);
+  
+          // Recupera o token do AsyncStorage
+          const savedToken = await AsyncStorage.getItem("userToken");
+          console.log("Token recuperado:", savedToken);
+  
+          // Faz a requisição à API passando o token no cabeçalho, se necessário
+          const response = await axios.get(`http://${IP_URL}:3000/produtos/${id}`, {
+            headers: {
+              Authorization: `Bearer ${savedToken}`, // Envia o token no cabeçalho
+            },
+          });
+  
+          setDrink(response.data);
+          console.log("Buscando Bebidas");
+        } catch (error) {
+          console.error("Erro ao buscar bebidas", error);
+        } finally {
+          setLoading(false); // Garante que o loading seja desativado mesmo em caso de erro
+        }
+      } else {
+        console.error("ID não encontrado");
         setLoading(false);
-        console.log("Buscando Bebidas")
-      })
-      .catch((error) => {
-        console.error(error);
-        setLoading(false);
-      });
+      }
+    };
+  
+    // Chama a função assíncrona
+    fetchDrinkData();
   }, [id]);
 
   if (loading) {
@@ -79,7 +128,6 @@ export default function Drink() {
   if (!drink) {
     return <Text>Erro ao carregar o produto</Text>;
   }
-
 
   const renderStars = () => {
     const stars = [];
@@ -97,16 +145,16 @@ export default function Drink() {
     return stars;
   };
 
-
+ 
   return (
     <ScrollView style={styles.ScrollView}>
       <View style={styles.container}>
         {/* Botão no canto superior esquerdo */}
         <Pressable
           style={[styles.backButton, { paddingTop: 15 }]}
-          onPress={() => navigation.navigate("Login")}
+          onPress={() => navigation.goBack()}
         >
-          <Text style={styles.backButtonText}>Ir para a Login</Text>
+          <Text style={styles.backButtonText}>Voltar</Text>
         </Pressable>
         <Image source={image} style={styles.image} />
         <Text style={styles.name}>{drink.name}</Text>

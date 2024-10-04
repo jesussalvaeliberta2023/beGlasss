@@ -22,6 +22,7 @@ const Perfil = ({ route }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [reviews, setReviews] = useState([]); 
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -31,94 +32,83 @@ const Perfil = ({ route }) => {
         console.log("Token recuperado:", savedToken);
 
         if (!savedToken) {
-          // Exibe um alerta se não houver token e mantém o usuário na mesma página
           navigation.goBack();
           console.log("Acesso Negado");
           Alert.alert(
             "Acesso negado",
             "Você deve realizar o login para poder entrar.",
-
             [{ text: "OK", onPress: () => navigation.goBack() }]
           );
-          setLoading(false); // Interrompe o carregamento
+          setLoading(false);
           return;
         }
 
         // Decodificar o token
-      const decodedToken = jwtDecode(savedToken);
-      console.log("Token decodificado:", decodedToken);
-      
-      // Extrair o nome do usuário do token
-      const usernameFromToken = decodedToken.username; // Acesse a propriedade correta
-      console.log("Nome de usuário do token:", usernameFromToken);
+        const decodedToken = jwtDecode(savedToken);
+        console.log("Token decodificado:", decodedToken);
+        
+        // Extrair o nome do usuário do token
+        const usernameFromToken = decodedToken.username; 
+        console.log("Nome de usuário do token:", usernameFromToken);
 
-        const response = await axios.get( `http://${IP_URL}:3000/perfil/${usernameFromToken}`,
-          {
-            headers: {
-              Authorization: `Bearer ${savedToken}`,
-            },
-          }
-        );
+        // Buscar informações do usuário
+        const userResponse = await axios.get(`http://${IP_URL}:3000/perfil/${usernameFromToken}`, {
+          headers: {
+            Authorization: `Bearer ${savedToken}`,
+          },
+        });
 
-        if (response.status === 200) {
-          setUser(response.data); // Define os dados do usuário
+        if (userResponse.status === 200) {
+          setUser(userResponse.data); // Define os dados do usuário
         } else {
           setError("Usuário não encontrado");
+        }
+
+        // Buscar as reviews do usuário
+        const reviewsResponse = await axios.get(`http://${IP_URL}:3000/reviews?autor=${usernameFromToken}`, {
+          headers: {
+            Authorization: `Bearer ${savedToken}`,
+          },
+        });
+
+        if (reviewsResponse.status === 200) {
+          setReviews(reviewsResponse.data); // Define as reviews do usuário
+        } else {
+          setError("Nenhuma review encontrada");
         }
       } catch (error) {
         console.error("Erro ao buscar o perfil:", error);
         if (error.response?.status === 403 || error.response?.status === 401) {
-          // Token inválido ou expirado
           setError("Sessão expirada, faça login novamente.");
         } else {
           setError("Erro ao carregar o perfil");
         }
       } finally {
-        setLoading(false); // Para a animação de carregamento
+        setLoading(false);
       }
     };
 
     fetchUser();
   }, [username]);
 
-  //Função de Logout:
   const handleLogout = async () => {
     try {
-      // Remover o token de AsyncStorage
       await AsyncStorage.removeItem("userToken");
       Alert.alert("Logout", "Você foi desconectado com sucesso.");
-      // Redirecionar para a página de login
-      navigation.navigate("Login"); // Altere 'Login' para o nome da sua tela de login
+      navigation.navigate("Login");
     } catch (error) {
       console.error("Erro ao tentar fazer logout:", error);
       Alert.alert("Erro", "Não foi possível desconectar.");
     }
   };
 
-  const reviews = [
-    {
-      id: "1",
-      drink: "Caipirinha",
-      rating: 3.5,
-      review:
-        "A caipirinha é refrescante e equilibrada, mas a qualidade da cachaça e a mistura dos ingredientes podem variar. Boa, mas pode melhorar.",
-    },
-    {
-      id: "2",
-      drink: "Sangria",
-      rating: 4,
-      review:
-        "A sangria é uma opção saborosa e refrescante, mas pode ser um pouco doce para alguns paladares.",
-    },
-  ];
-
   const renderReview = ({ item }) => (
     <View style={styles.reviewCard}>
       <Image source={{ uri: item.image }} style={styles.drinkImage} />
       <View style={styles.reviewText}>
         <Text style={styles.drinkTitle}>{item.drink}</Text>
-        <Text style={styles.rating}>Avaliação: {item.rating} ★★★☆☆</Text>
-        <Text>{item.review}</Text>
+        <Text style={styles.rating}>Avaliação: {item.nota} ★★★☆☆</Text> 
+        <Text>{item.comentario}</Text> 
       </View>
     </View>
   );
