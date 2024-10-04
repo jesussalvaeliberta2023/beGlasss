@@ -52,8 +52,7 @@ const Perfil = ({ route }) => {
       const usernameFromToken = decodedToken.username; // Acesse a propriedade correta
       console.log("Nome de usuário do token:", usernameFromToken);
 
-        const response = await axios.get(
-          `http://${IP_URL}:3000/perfil/${username}`,
+        const response = await axios.get(         `http://${IP_URL}:3000/perfil/${username}`,
           {
             headers: {
               Authorization: `Bearer ${savedToken}`,
