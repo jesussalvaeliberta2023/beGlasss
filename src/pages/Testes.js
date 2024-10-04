@@ -7,6 +7,7 @@ export default function Testes() {
           <Text style={{marginBottom: 15}}>Testes</Text>
           <TouchableOpacity style={{marginBottom: 15}} onPress={() => navigation.navigate("Login")}><Text>Ir para Login</Text></TouchableOpacity>
           <TouchableOpacity style={{marginBottom: 15}} onPress={() => navigation.navigate("Perfil")}><Text>Ir para Perfil</Text></TouchableOpacity>
+          <TouchableOpacity style={{marginBottom: 15}} onPress={() => navigation.navigate("Perfil2")}><Text>Ir para Perfil</Text></TouchableOpacity>
           <Button title="Voltar" onPress={() => navigation.goBack()}  />
       </View>
   );

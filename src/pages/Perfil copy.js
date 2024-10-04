@@ -17,69 +17,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
 
-const Perfil = ({ route }) => {
+const Perfil2 = ({ route }) => {
   const username = route?.params?.username;
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigation = useNavigation();
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const savedToken = await AsyncStorage.getItem("userToken"); // Recupera o token do AsyncStorage
-        console.log("Token recuperado:", savedToken);
-
-        if (!savedToken) {
-          // Exibe um alerta se não houver token e mantém o usuário na mesma página
-          navigation.goBack();
-          console.log("Acesso Negado");
-          Alert.alert(
-            "Acesso negado",
-            "Você deve realizar o login para poder entrar.",
-
-            [{ text: "OK", onPress: () => navigation.goBack() }]
-          );
-          setLoading(false); // Interrompe o carregamento
-          return;
-        }
-
-        // Decodificar o token
-      const decodedToken = jwtDecode(savedToken);
-      console.log("Token decodificado:", decodedToken);
-      
-      // Extrair o nome do usuário do token
-      const usernameFromToken = decodedToken.username; // Acesse a propriedade correta
-      console.log("Nome de usuário do token:", usernameFromToken);
-
-        const response = await axios.get( `http://${IP_URL}:3000/perfil/${usernameFromToken}`,
-          {
-            headers: {
-              Authorization: `Bearer ${savedToken}`,
-            },
-          }
-        );
-
-        if (response.status === 200) {
-          setUser(response.data); // Define os dados do usuário
-        } else {
-          setError("Usuário não encontrado");
-        }
-      } catch (error) {
-        console.error("Erro ao buscar o perfil:", error);
-        if (error.response?.status === 403 || error.response?.status === 401) {
-          // Token inválido ou expirado
-          setError("Sessão expirada, faça login novamente.");
-        } else {
-          setError("Erro ao carregar o perfil");
-        }
-      } finally {
-        setLoading(false); // Para a animação de carregamento
-      }
-    };
-
-    fetchUser();
-  }, [username]);
+ 
 
   //Função de Logout:
   const handleLogout = async () => {
@@ -220,4 +165,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Perfil;
+export default Perfil2;

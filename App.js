@@ -8,6 +8,7 @@ import Language from "./src/pages/Language";
 import DrinkDetails from "./src/pages/DrinkDetails";
 import LoginPage from "./src/pages/Login";
 import Perfil from "./src/pages/Perfil";
+import Perfil2 from "./src/pages/Perfil copy";
 import configuracoesPerfil from "./src/pages/configuracoesPerfil";
 import SignUp from "./src/pages/SignUp";
 import Testes from "./src/pages/Testes";
@@ -66,6 +67,11 @@ export default function App() {
         <Stack.Screen
           name="Perfil"
           component={Perfil}
+          options={{ headerShown: false }}
+        />
+          <Stack.Screen
+          name="Perfil2"
+          component={Perfil2}
           options={{ headerShown: false }}
         />
         <Stack.Screen

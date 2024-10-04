@@ -7,8 +7,11 @@ import {
   Image,
   Dimensions,
   SafeAreaView,
-  Animated,
 } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  withSpring
+} from "react-native-reanimated";
 import { TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import PressComponent from "../components/PressableComponent";
@@ -112,24 +115,6 @@ function Backdrop({ scrollX }) {
           bottom: 0,
         }}
       />
-       {/* Barra inferior de navegação */}
-       <View style={styles.tabss}>
-                <PressComponent
-                  onPress={() => navigation.navigate("Home")}
-                  source={require("../assets/images/HomeFilled.png")}
-                  styleI={[styles.literlyButton, { marginTop: -9 }]}
-                  styleP={styles.homeButton}
-                />
-                <PressComponent
-                  onPress={() => navigation.navigate("Favorites")}
-                  source={require("../assets/images/HeartNaked.png")}
-                  styleI={[
-                    styles.literlyButton,
-                    { marginTop: -11, tintColor: "#ffffff" },
-                  ]}
-                  styleP={styles.favsButton}
-                />
-              </View>
     </View>
   );
 }

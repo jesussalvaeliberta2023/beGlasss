@@ -1,23 +1,8 @@
-import React, { useState, useEffect } from "react";
-import {
-  View,
-  TextInput,
-  StyleSheet,
-  Text,
-  ImageBackground,
-  Image,
-  TouchableOpacity,
-  Pressable,
-  Switch,  // Importa o Switch para o lembrar-me
-} from "react-native";
-import { BlurView } from "expo-blur";
-import styles from "../styles/StyleSheet";
-import { useNavigation } from "@react-navigation/native";
-import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import IP_URL from "../components/IP";
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, CheckBox, StyleSheet } from 'react-native';
 
-export default function LoginPage() {
+const LoginScreen = () => {
+  const [isSelected, setSelection] = useState(false);
   const [username, setUsername] = useState("");
   const [passcode, setPasscode] = useState("");
   const [rememberMe, setRememberMe] = useState(false); // Estado para lembrar-me
@@ -80,112 +65,114 @@ export default function LoginPage() {
   };
   return (
     <View style={styles.container}>
-      <ImageBackground
-        blurRadius={10}
-        style={{ flex: 1 }}
-        source={require("../assets/images/Drinks/VirginOnTheBeach.png")}
-      >
-        <Image
-          source={require("../assets/images/Logo.png")}
-          style={estilos.imagens}
+      <Text style={styles.title}>Entrar</Text>
+
+      <TextInput
+        style={styles.input}
+        placeholder="Usuário"
+        value={username}
+        onChangeText={setUsername}
+        keyboardType="email-address"
+      />
+
+      <TextInput
+        style={styles.input}
+        placeholder="Senha"
+        value={passcode}
+        onChangeText={setPasscode}
+        secureTextEntry
+/>
+
+      <View style={styles.checkboxContainer}>
+        <CheckBox
+          value={rememberMe}
+          onValueChange={setRememberMe}
+          style={styles.checkbox}
         />
-        <BlurView intensity={100} style={estilos.absolute} tint="dark">
-          <View style={estilos.corpinho}>
-            <Text style={estilos.titulations}>Faça seu Login</Text>
-            <TextInput
-              placeholder="Usuário:"
-              placeholderTextColor={"white"}
-              onChangeText={(username) => setUsername(username)}
-              style={estilos.inputs}
-            />
-            <TextInput
-              placeholder="Senha:"
-              placeholderTextColor={"white"}
-              onChangeText={(passcode) => setPasscode(passcode)}
-              secureTextEntry={true} // Adiciona ocultação da senha
-              style={estilos.inputs}
-            />
-            <View style={estilos.rememberMe}>
-              <Text style={{ color: "white" }}>Lembrar-me</Text>
-              <Switch
-                value={rememberMe}
-                onValueChange={(value) => setRememberMe(value)}
-              />
-            </View>
-            <TouchableOpacity style={estilos.botaun} onPress={handleLogin}>
-              <Text style={{ textAlign: "center" }}>Press Me</Text>
-            </TouchableOpacity>
-            <Pressable
-              style={estilos.botaun2}
-              onPress={() => navigation.navigate("SignUp")}
-            >
-              <Text style={{ textAlign: "center", color: "white" }}>
-                Cadastrar-se
-              </Text>
-            </Pressable>
-          </View>
-        </BlurView>
-      </ImageBackground>
+        <Text style={styles.label}>Manter-se conectado</Text>
+      </View>
+
+      <TouchableOpacity onPress={handleLogin} style={styles.button}>
+        <Text style={styles.buttonText}>Entrar</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity>
+        <Text style={styles.link}>Não tenho uma conta! Cadastrar</Text>
+      </TouchableOpacity>
+
+      <Text style={styles.subTitle}>Entrar com</Text>
+
+      <TouchableOpacity style={styles.oauthButton}>
+        <Text style={styles.oauthText}>Continue com o Google</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.oauthButton}>
+        <Text style={styles.oauthText}>Continue com o Email</Text>
+      </TouchableOpacity>
     </View>
   );
-}
+};
 
-const estilos = StyleSheet.create({
-  inputs: {
-    width: 375,
-    height: 45,
-    fontStyle: 'italic',
-    color: 'white',
-    borderBottomWidth: 2,
-    borderColor: "white",
-    fontSize: 20,
-    marginTop: "15%",
-  },
-  corpinho: {
+const styles = StyleSheet.create({
+  container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    padding: 20,
+    backgroundColor: '#333',
   },
-  titulations: {
-    fontSize: 25,
-    marginTop: "22%",
-    color: "white",
-    textAlign: "center",
+  title: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 20,
   },
-  absolute: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    bottom: 0,
-    right: 0,
+  input: {
+    backgroundColor: '#fff',
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 10,
   },
-  imagens: {
-    width: 240,
-    height: 200,
-    alignSelf: "center",
-    marginTop: "20%",
-    marginLeft: "10%",
-    zIndex: 1,
+  checkboxContainer: {
+    flexDirection: 'row',
+    marginBottom: 20,
+    alignItems: 'center',
   },
-  botaun: {
-    backgroundColor: "#E98F83",
-    marginTop: "15%",
-    width: 300,
-    height: 50,
-    justifyContent: "center",
-    borderRadius: 15,
+  checkbox: {
+    marginRight: 10,
   },
-  botaun2: {
-    borderBottomWidth: 1,
-    borderBottomColor: "white",
-    marginTop: "15%",
-    width: 85,
-    height: 25,
-    justifyContent: "center",
+  label: {
+    color: '#fff',
   },
-  rememberMe: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 10,
+  button: {
+    backgroundColor: '#ffcc00',
+    padding: 15,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#333',
+    fontWeight: 'bold',
+  },
+  link: {
+    color: '#ffcc00',
+    marginTop: 20,
+    textAlign: 'center',
+  },
+  subTitle: {
+    color: '#fff',
+    marginVertical: 20,
+    textAlign: 'center',
+  },
+  oauthButton: {
+    backgroundColor: '#ddd',
+    padding: 15,
+    borderRadius: 5,
+    marginBottom: 10,
+    alignItems: 'center',
+  },
+  oauthText: {
+    color: '#333',
   },
 });
+
+export default LoginScreen;

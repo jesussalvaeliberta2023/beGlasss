@@ -203,6 +203,68 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: ListItemWidth / 2,
   },
+  
+  //login
+
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20,
+    backgroundColor: '#333',
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 20,
+  },
+  input: {
+    backgroundColor: '#fff',
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+    marginBottom: 20,
+    alignItems: 'center',
+  },
+  checkbox: {
+    marginRight: 10,
+  },
+  label: {
+    color: '#fff',
+  },
+  button: {
+    backgroundColor: '#ffcc00',
+    padding: 15,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#333',
+    fontWeight: 'bold',
+  },
+  link: {
+    color: '#ffcc00',
+    marginTop: 20,
+    textAlign: 'center',
+  },
+  subTitle: {
+    color: '#fff',
+    marginVertical: 20,
+    textAlign: 'center',
+  },
+  oauthButton: {
+    backgroundColor: '#ddd',
+    padding: 15,
+    borderRadius: 5,
+    marginBottom: 10,
+    alignItems: 'center',
+  },
+  oauthText: {
+    color: '#333',
+  },
 });
 
 export default styles;
