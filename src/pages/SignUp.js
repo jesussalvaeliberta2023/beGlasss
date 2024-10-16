@@ -1,162 +1,168 @@
-import React, {useState, useEffect } from "react";
+import React, { useState } from 'react';
+import { useNavigation } from "@react-navigation/native";
+import axios from 'axios';
+import IP_URL from '../components/IP';
 import {
   View,
-  TextInput,
-  StyleSheet,
   Text,
-  ImageBackground,
-  Image,
-  Alert,
+  TextInput,
   TouchableOpacity,
-} from "react-native";
-import { BlurView } from "expo-blur";
-import styles from "../styles/StyleSheet";
-import axios from "axios";
+  StyleSheet,
+  ImageBackground,
+} from 'react-native';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
-export default function SignUp({ navigation }) {
+// Importando a imagem local
+import backgroundImage from '../assets/images/Coffes/Coffe.png';
+
+export default function CadastroScreen() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
-  const [passcode, setPasscode] = useState('');
-  const [confirmPasscode, setConfirmPasscode] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [isChecked, setIsChecked] = useState(false);
 
-  const IP_URL = '10.144.170.57'; // Substitua com seu IP ou URL
-
-  const handleSignUp = async () => {
-    if (!username || !email || !passcode || !confirmPasscode) {
-      Alert.alert('Erro', 'Todos os campos são obrigatórios.')
-      console.log('Todos campos são necessários.');
-      return;
-    }
-
-    if (passcode !== confirmPasscode) {
-      Alert.alert('Erro', 'As senhas não coincidem.');
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      const response = await axios.post(`http://${IP_URL}:3000/usuarios`, {
-        username,
-        email,
-        passcode,
-      });
-
-      if (response.status === 201) {
-        Alert.alert('Sucesso', 'Usuário cadastrado com sucesso');
-        navigation.navigate('Login'); // Redireciona para a tela de login após o cadastro
-      }
-    } catch (error) {
-      console.error('Erro ao registrar usuário:', error);
-      Alert.alert('Erro', 'Não foi possível cadastrar o usuário. Tente novamente.');
-    } finally {
-      setLoading(false);
-    }
+  // Função para alternar o estado do checkbox
+  const toggleCheckbox = () => {
+    setIsChecked(!isChecked); // Alterna entre true e false
   };
 
   return (
-    <View style={styles.container}>
-    <ImageBackground
-      blurRadius={10}
-      style={{ flex: 1 }}
-      source={require("../assets/images/Drinks/Sangria.png")}
-    >
-      <Image
-        source={require("../assets/images/Logo.png")}
-        style={estilos.imagens}
-      />
-      <BlurView intensity={100} style={estilos.absolute} tint="dark">
-        <View style={estilos.corpao}>
-          <Text style={estilos.titulous}>Faça seu Cadastro</Text>
-          <TextInput
-            placeholder="Nome de Usuário:"
-            placeholderTextColor={"white"}
-            value={username}
-            onChangeText={setUsername}
-            style={estilos.inputs}
-          />
-          <TextInput
-            placeholder="Email:"
-            placeholderTextColor={"white"}
-            style={estilos.inputs}
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-          />
-          <TextInput
-            placeholder="Senha:"
-            placeholderTextColor={"white"}
-            style={estilos.inputs}
-            value={passcode}
-            onChangeText={setPasscode}
-            secureTextEntry
-          />
-          <TextInput
-            placeholder="Confirmar Senha:"
-            placeholderTextColor={"white"}
-            style={estilos.inputs}
-            value={confirmPasscode}
-            onChangeText={setConfirmPasscode}
-            secureTextEntry
-          />
-          <TouchableOpacity
-            style={estilos.botatudo}
-            onPress={handleSignUp}
-            disabled={loading}
-          >
-            <Text style={estilos.botatudoText}>{loading ? "Carregando..." : "Registrar"}</Text>
-          </TouchableOpacity>
-        </View>
-      </BlurView>
-    </ImageBackground>
-  </View>
-);
-};
+    // Usando ImageBackground para criar o fundo
+    <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
+      <View style={styles.container}>
+        <Text style={styles.title}>Cadastro</Text>
 
-const estilos = StyleSheet.create({
-  inputs: {
-    width: 375,
-    height: 45,
-    fontStyle: 'italic',
-    color: 'white',
-    borderBottomWidth: 2,
-    borderColor: "white",
-    fontSize: 20,
-    marginTop: "15%",
-  },
-  corpao: {
+        <TextInput
+          style={styles.input}
+          placeholder="Nome de Usuário"
+          placeholderTextColor="#999"
+          value={username}
+          onChangeText={setUsername}
+        />
+
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          placeholderTextColor="#999"
+          keyboardType="email-address"
+          value={email}
+          onChangeText={setEmail}
+        />
+
+      </View>
+      <View style={styles.container2}>
+        <TextInput
+          style={styles.input}
+          placeholder="Senha"
+          placeholderTextColor="#999"
+          secureTextEntry={true}
+          value={password}
+          onChangeText={setPassword}
+        />
+
+        <TextInput
+          style={styles.input}
+          placeholder="Confirmar Senha"
+          placeholderTextColor="#999"
+          secureTextEntry={true}
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+        />
+
+        <View style={styles.checkboxContainer}>
+          <TouchableOpacity onPress={toggleCheckbox}>
+            <MaterialCommunityIcons name={isChecked ? 'checkbox-marked' : 'checkbox-blank-outline'} size={24} color="white" />
+          </TouchableOpacity>
+          <Text style={styles.label}>Concordo com os termos de política e privacidade</Text>
+        </View>
+
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.buttonText}>Cadastrar</Text>
+        </TouchableOpacity>
+
+        <Text style={styles.loginText}>Já tenho uma conta! <Text style={styles.link}>Entre</Text></Text>
+
+        <TouchableOpacity style={styles.googleButton}>
+          <Text style={styles.googleButtonText}>Continue com o Google</Text>
+        </TouchableOpacity>
+      </View>
+    </ImageBackground>
+  );
+}
+
+const styles = StyleSheet.create({
+  backgroundImage: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    resizeMode: 'cover', // Garante que a imagem se ajuste corretamente
   },
-  titulous: {
-    fontSize: 35,
-    marginTop: "25%",
-    color: "white",
-    textAlign: "center",
+  container: {
+    flex: 0.5,
+    justifyContent: 'center', 
+    paddingHorizontal: 20,
+    backgroundColor: 'black', 
   },
-  absolute: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    bottom: 0,
-    right: 0,
+  container2: {
+    flex: 1,
+    justifyContent:'top', 
+    paddingHorizontal: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)', // Cor de fundo semitransparente para o conteúdo
   },
-  imagens: {
-    width: 300,
-    height: 100,
-    alignSelf: "center",
-    marginTop: "20%",
-    marginLeft: "10%",
-    zIndex: 1,
+  title: {
+    fontSize: 40,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 30,
   },
-  botatudo: {
-    backgroundColor: "#E98F83",
-    marginTop: "15%",
-    width: 300,
-    height: 50,
-    justifyContent: "center",
-    borderRadius: 15,
+  input: {
+    backgroundColor: '#222',
+    color: '#fff',
+    borderRadius: 10,
+    paddingVertical: 15,
+    paddingHorizontal: 15,
+    marginBottom: 30,
+    fontSize: 16,
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 50,
+  },
+  label: {
+    color: '#fff',
+    fontSize: 14,
+  },
+  button: {
+    backgroundColor: '#FFC700',
+    borderRadius: 10,
+    paddingVertical: 15,
+    alignItems: 'center',
+    marginBottom: 30,
+  },
+  buttonText: {
+    color: '#000',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  loginText: {
+    color: '#fff',
+    fontSize: 14,
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  link: {
+    color: '#FFC700',
+    fontWeight: 'bold',
+  },
+  googleButton: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    paddingVertical: 15,
+    alignItems: 'center',
+  },
+  googleButtonText: {
+    color: '#000',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
