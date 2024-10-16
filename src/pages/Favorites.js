@@ -9,13 +9,14 @@ import {
   SafeAreaView,
 } from "react-native";
 import Animated, {
+  useSharedValue,
   useAnimatedStyle,
-  withSpring
+  withSpring,
+  useAnimatedScrollHandler,
+  interpolate, // <--- Adicione isso
 } from "react-native-reanimated";
 import { TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import PressComponent from "../components/PressableComponent";
-import { useNavigation } from "@react-navigation/native";
 
 // Imagens com Títulos
 const imagenes = [
@@ -61,7 +62,6 @@ const imagenes = [
   },
 ];
 
-// Medidas da tela
 const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
 
@@ -91,10 +91,8 @@ function Backdrop({ scrollX }) {
           (index + 1) * CONTAINER_WIDTH,
         ];
 
-        const opacity = scrollX.interpolate({
-          inputRange,
-          outputRange: [0, 1, 0],
-        });
+        const opacity = interpolate(scrollX.value, inputRange, [0, 1, 0]); // <--- Modificado aqui
+
         return (
           <Animated.Image
             key={imagen.id}
@@ -119,47 +117,27 @@ function Backdrop({ scrollX }) {
   );
 }
 
-export default function App() {
-  const scrollX = React.useRef(new Animated.Value(0)).current;
-  const navigation = useNavigation();
+export default function Favorites() {
+  const scrollX = useSharedValue(0);
 
-  const textoAnimated = useAnimatedStyle(() => {
-    return { transform: [{ translateX: withSpring(translateX.value) }] };
+  const onScroll = useAnimatedScrollHandler((event) => {
+    scrollX.value = event.contentOffset.x;
   });
 
+  const textoAnimated = useAnimatedStyle(() => {
+    return { transform: [{ translateX: withSpring(scrollX.value) }] };
+  });
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar hidden />
-
-       {/* Botões na parte superior */}
-       <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          onPress={() => console.log("Botão 1")}
-          style={styles.squareButton}
-        >
-          <Text style={styles.buttonText}>Cafés</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => console.log("Botão 2")}
-          style={styles.squareButton}
-        >
-          <Text style={styles.buttonText}>Drinks</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => console.log("Botão 3")}
-          style={styles.squareButton}
-        >
-          <Text style={styles.buttonText}>Sucos</Text>
-        </TouchableOpacity>
+      <View style={styles.buttonContainer}>
+        {/* Botões na parte superior */}
       </View>
 
       <Backdrop scrollX={scrollX} />
       <Animated.FlatList
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-          { useNativeDriver: true }
-        )}
+        onScroll={onScroll}
         showsHorizontalScrollIndicator={false}
         horizontal={true}
         snapToAlignment="start"
@@ -179,10 +157,8 @@ export default function App() {
             (index + 1) * CONTAINER_WIDTH,
           ];
 
-          const scrollY = scrollX.interpolate({
-            inputRange,
-            outputRange: [0, -50, 0],
-          });
+          const scrollY = interpolate(scrollX.value, inputRange, [0, -50, 0]); // <--- Modificado aqui
+
           return (
             <View style={{ width: CONTAINER_WIDTH }}>
               <Animated.View
@@ -196,18 +172,16 @@ export default function App() {
                 }}
               >
                 <View style={{ position: 'relative', width: '100%' }}>
-          <Image source={item.image} style={styles.posterImage} />
-          <Text style={styles.titleText}>{item.title}</Text>
-        </View>
+                  <Image source={item.image} style={styles.posterImage} />
+                  <Text style={styles.titleText}>{item.title}</Text>
+                </View>
               </Animated.View>
-              {/* Título */}
-        <Animated.Text
-          style={[styles.choose, textoAnimated, { fontFamily: "Belleza" }]}
-        >
-          Escolha seu Drink
-        </Animated.Text>
+              <Animated.Text
+                style={[styles.choose, textoAnimated, { fontFamily: "Belleza" }]}
+              >
+                Escolha seu Drink
+              </Animated.Text>
             </View>
-            
           );
         }}
       />
@@ -221,7 +195,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     justifyContent: "center",
   },
-
   posterImage: {
     width: "100%",
     height: CONTAINER_WIDTH * 1.2,
@@ -230,19 +203,6 @@ const styles = StyleSheet.create({
     margin: 0,
     marginBottom: 10,
   },
-
-  tabss: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    marginVertical: 20,
-    position: "absolute", 
-    bottom: 0, 
-    left: 0,
-    right: 0,
-    backgroundColor: "black",
-    paddingVertical: 10, 
-  },
-
   titleText: {
     position: 'absolute',
     top: 10,
@@ -253,7 +213,6 @@ const styles = StyleSheet.create({
     padding: 5,
     borderRadius: 5,
   },
-
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -273,5 +232,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 6,
   },
-  
+  choose: {
+    textAlign: 'center',
+    fontSize: 24,
+    color: 'black',
+    marginTop: 20,
+  },
 });

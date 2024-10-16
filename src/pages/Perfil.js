@@ -72,7 +72,8 @@ const Perfil = ({ route }) => {
         });
 
         if (reviewsResponse.status === 200) {
-          setReviews(reviewsResponse.data); // Define as reviews do usuário
+          setReviews(reviewsResponse.data[0]); // Define as reviews do usuário
+          console.log("Reviews recuperadas:", reviewsResponse.data[0]);
         } else {
           setError("Nenhuma review encontrada");
         }
@@ -106,12 +107,15 @@ const Perfil = ({ route }) => {
     <View style={styles.reviewCard}>
       <Image source={{ uri: item.image }} style={styles.drinkImage} />
       <View style={styles.reviewText}>
-        <Text style={styles.drinkTitle}>{item.drink}</Text>
-        <Text style={styles.rating}>Avaliação: {item.nota} ★★★☆☆</Text> 
-        <Text>{item.comentario}</Text> 
+        <Text style={styles.drinkTitle}>{item.autor}</Text>
+        <Text style={styles.rating}>Avaliação: {item.nota} ★★★☆☆</Text>
+        <Text style={styles.drinkText}>{item.comentario}</Text> 
       </View>
     </View>
   );
+
+
+  
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
@@ -208,6 +212,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 16,
   },
+  drinkText: {
+    color: 'white'
+  }
 });
 
 export default Perfil;

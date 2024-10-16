@@ -1,4 +1,4 @@
-import {jwtDecode} from 'jwt-decode'
+import { jwtDecode } from "jwt-decode";
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -10,68 +10,73 @@ import {
   Pressable,
   TextInput,
   Button,
-  Modal
+  Modal,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useRoute } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import IP_URL from "../components/IP";
 import axios from "axios";
-import { Ionicons } from '@expo/vector-icons'; // Importando Ionicons
+import { Ionicons } from "@expo/vector-icons"; // Importando Ionicons
 
 export default function Drink() {
-  // Hooks devem ser usados no topo do componente
   const navigation = useNavigation();
   const route = useRoute();
 
-  // Verifica se os parâmetros estão presentes antes de usá-los
-  const { id, image } = route.params || {}; 
+  const { id, image } = route.params || {};
 
   const [drink, setDrink] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [modalVisible, setModalVisible] = useState(false); // Estado para controlar a visibilidade do modal
-  const [comment, setComment] = useState(""); // Estado para o comentário
-  const [rating, setRating] = useState(0); // Estado para a nota (estrelas)
+  const [modalVisible, setModalVisible] = useState(false);
+  const [comment, setComment] = useState("");
+  const [rating, setRating] = useState(0);
+  const [reviews, setReviews] = useState([]); // Estado para armazenar as reviews
+
+  // Função para buscar notas do produto
+  const fetchReviews = async () => {
+    try {
+      const response = await axios.get(
+        `http://${IP_URL}:3000/notas?produto=${id}`,
+        console.log(id)
+      );
+      setReviews(response.data); // Armazena as reviews recebidas
+      console.log("Reviews encontradas:", response.data);
+    } catch (error) {
+      console.error("Erro ao buscar reviews", error);
+    }
+  };
 
   // Função para enviar review
   const submitReview = async () => {
     try {
-      // Recupera o token do AsyncStorage
       const savedToken = await AsyncStorage.getItem("userToken");
-      console.log("Token recuperado:", savedToken);
-  
-      // Verifica se o token foi recuperado
       if (!savedToken) {
         console.error("Nenhum token encontrado. É necessário fazer login.");
         return;
       }
-  
-      // Decodifica o token
+
       const decodedToken = jwtDecode(savedToken);
-      console.log("Token decodificado:", decodedToken);
-  
-      // Extrai o nome do usuário do token
-      const usernameFromToken = decodedToken.username; // Acesse a propriedade correta
-      console.log("Nome de usuário do token:", usernameFromToken);
-  
-      // Cria o objeto da review com os dados do produto, comentário, nota e username
+      const usernameFromToken = decodedToken.username;
+
       const reviewData = {
-        autor: usernameFromToken, // Adiciona o username extraído do token
-        produto: id, // O ID do produto
+        autor: usernameFromToken,
+        produto: id,
         comentario: comment,
         nota: rating,
       };
-  
-      // Envia a review para o backend, passando o token no cabeçalho
-      const response = await axios.post(`http://${IP_URL}:3000/reviews`, reviewData, {
-        headers: {
-          Authorization: `Bearer ${savedToken}`, // Inclui o token no cabeçalho da requisição
-        },
-      });
-  
+
+      const response = await axios.post(
+        `http://${IP_URL}:3000/reviews`,
+        reviewData,
+        {
+          headers: {
+            Authorization: `Bearer ${savedToken}`,
+          },
+        }
+      );
+
+    
       console.log("Review enviada com sucesso", response.data);
-      
-      // Reseta o modal e o formulário de comentário
       setModalVisible(false);
       setComment("");
       setRating(0);
@@ -80,39 +85,36 @@ export default function Drink() {
     }
   };
 
-  // Busca dados da bebida pelo ID
+  // Busca dados da bebida e as reviews associadas pelo ID
   useEffect(() => {
-    // Função assíncrona dentro do useEffect
     const fetchDrinkData = async () => {
       if (id) {
         try {
-          console.log("ID recebido:", id);
-  
-          // Recupera o token do AsyncStorage
           const savedToken = await AsyncStorage.getItem("userToken");
-          console.log("Token recuperado:", savedToken);
-  
-          // Faz a requisição à API passando o token no cabeçalho, se necessário
-          const response = await axios.get(`http://${IP_URL}:3000/produtos/${id}`, {
-            headers: {
-              Authorization: `Bearer ${savedToken}`, // Envia o token no cabeçalho
-            },
-          });
-  
+          const response = await axios.get(
+            `http://${IP_URL}:3000/produtos/${id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${savedToken}`,
+              },
+            }
+          );
           setDrink(response.data);
-          console.log("Buscando Bebidas");
+          console.log("Bebida Encontrada", response.data);
+          fetchReviews(); // Busca as reviews do produto
+          console.log("To buscando notas")
         } catch (error) {
           console.error("Erro ao buscar bebidas", error);
+          console.log("Não achei nada...")
         } finally {
-          setLoading(false); // Garante que o loading seja desativado mesmo em caso de erro
+          setLoading(false);
         }
       } else {
         console.error("ID não encontrado");
         setLoading(false);
       }
     };
-  
-    // Chama a função assíncrona
+
     fetchDrinkData();
   }, [id]);
 
@@ -135,9 +137,9 @@ export default function Drink() {
       stars.push(
         <Pressable key={i} onPress={() => setRating(i)}>
           <Ionicons
-            name={i <= rating ? "star" : "star-outline"} // Estrelas preenchidas ou contorno
+            name={i <= rating ? "star" : "star-outline"}
             size={30}
-            color="#FFD700" // Cor dourada para as estrelas
+            color="#FFD700"
           />
         </Pressable>
       );
@@ -145,11 +147,9 @@ export default function Drink() {
     return stars;
   };
 
- 
   return (
     <ScrollView style={styles.ScrollView}>
       <View style={styles.container}>
-        {/* Botão no canto superior esquerdo */}
         <Pressable
           style={[styles.backButton, { paddingTop: 15 }]}
           onPress={() => navigation.goBack()}
@@ -159,10 +159,29 @@ export default function Drink() {
         <Image source={image} style={styles.image} />
         <Text style={styles.name}>{drink.name}</Text>
         <Text style={styles.description}>{drink.description}</Text>
+
+      {/* Impressão das notas */}
+        <Text style={styles.reviewsTitle}>Avaliações:</Text>
+        {reviews.length > 0 ? (
+          reviews.map((review) => (
+            <View key={review.id} style={styles.reviewContainer}>
+              <Text style={styles.reviewAuthor}>{review.autor}</Text>
+              <Text style={styles.reviewComment}>{review.comentario}</Text>
+              <Text style={styles.reviewRating}>Nota: {review.nota}</Text>
+            </View>
+          ))
+        ) : (
+          <Text>Sem avaliações ainda.</Text>
+        )}
+
+
         <Text style={styles.ingredientsTitle}>Ingredientes:</Text>
         <Text style={styles.ingredients}>{drink.recipe}</Text>
         <Text style={styles.howToMakeTitle}>Modo de Preparo:</Text>
         <Text style={styles.howToMake}>{drink.comofazer}</Text>
+
+        
+
         <Pressable
           style={styles.commentButton}
           onPress={() => setModalVisible(true)}
@@ -178,7 +197,6 @@ export default function Drink() {
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
               <Text style={styles.modalTitle}>Deixe seu comentário</Text>
-              
               <TextInput
                 style={styles.input}
                 placeholder="Escreva seu comentário"
@@ -187,15 +205,9 @@ export default function Drink() {
                 value={comment}
                 onChangeText={setComment}
               />
-
               <Text style={styles.ratingTitle}>Dê uma nota:</Text>
               <View style={styles.starsContainer}>{renderStars()}</View>
-
-              <Button
-                title="Enviar"
-                onPress={submitReview}
-              />
-              
+              <Button title="Enviar" onPress={submitReview} />
               <Button
                 title="Cancelar"
                 onPress={() => setModalVisible(false)}
@@ -295,5 +307,26 @@ const styles = StyleSheet.create({
   starsContainer: {
     flexDirection: "row",
     marginBottom: 20,
+  },
+  reviewsTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginVertical: 10,
+  },
+  reviewContainer: {
+    marginBottom: 10,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+  },
+  reviewAuthor: {
+    fontWeight: "bold",
+  },
+  reviewComment: {
+    marginVertical: 5,
+  },
+  reviewRating: {
+    fontStyle: "italic",
   },
 });
