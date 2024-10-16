@@ -135,13 +135,18 @@ const Perfil = ({ route }) => {
         </View>
       </View>
 
-      <Text style={styles.sectionTitle}>Suas avaliações</Text>
-      <FlatList
-        data={reviews}
-        renderItem={renderReview}
-        keyExtractor={(item) => item.id}
-        style={styles.reviewList}
-      />
+      <View style={styles.feedbacks}>
+    
+        <Text style={styles.sectionTitle}>Suas avaliações</Text>
+        <FlatList
+          data={reviews}
+          renderItem={renderReview}
+          keyExtractor={(item) => item.id}
+          style={styles.reviewList}
+        />
+      </View>
+
+
       <Button title="Voltar" onPress={() => navigation.goBack()} />
       <Button title="Sair" style={{ marginTop: 30 }} onPress={handleLogout} />
     </ScrollView>

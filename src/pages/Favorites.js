@@ -7,16 +7,18 @@ import {
   Image,
   Dimensions,
   SafeAreaView,
+  TouchableOpacity,
 } from "react-native";
 import Animated, {
   useSharedValue,
-  useAnimatedStyle,
-  withSpring,
   useAnimatedScrollHandler,
-  interpolate, // <--- Adicione isso
+  useAnimatedStyle,
+  interpolate,
 } from "react-native-reanimated";
-import { TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import PressComponent from "../components/PressableComponent";
+import { useNavigation } from "@react-navigation/native";
+import { Ionicons, FontAwesome } from '@expo/vector-icons';
 
 // Imagens com Títulos
 const imagenes = [
@@ -62,13 +64,13 @@ const imagenes = [
   },
 ];
 
-const width = Dimensions.get("window").width;
-const height = Dimensions.get("window").height;
+// Medidas da tela
+const { width, height } = Dimensions.get("window");
 
 // Definindo Tamanhos
 const CONTAINER_WIDTH = width * 0.6;
 const SPACE_CONTAINER = (width - CONTAINER_WIDTH) / 2;
-const ESPACIO = 8;
+const ESPACIO = 6;
 const ALTURA_BACKDROP = height * 1;
 
 function Backdrop({ scrollX }) {
@@ -91,23 +93,27 @@ function Backdrop({ scrollX }) {
           (index + 1) * CONTAINER_WIDTH,
         ];
 
-        const opacity = interpolate(scrollX.value, inputRange, [0, 1, 0]); // <--- Modificado aqui
+        const animatedStyle = useAnimatedStyle(() => {
+          const opacity = interpolate(scrollX.value, inputRange, [0, 1, 0]);
+          return { opacity };
+        });
 
         return (
           <Animated.Image
             key={imagen.id}
             source={imagen.image}
             style={[
-              { width: width, height: ALTURA_BACKDROP, opacity: opacity },
+              { width: width, height: ALTURA_BACKDROP },
+              animatedStyle,
               StyleSheet.absoluteFillObject,
             ]}
+            resizeMode="cover"
           />
         );
       })}
       <LinearGradient
         colors={["transparent", "black"]}
         style={{
-          width,
           height: ALTURA_BACKDROP,
           position: "absolute",
           bottom: 0,
@@ -119,81 +125,138 @@ function Backdrop({ scrollX }) {
 
 export default function Favorites() {
   const scrollX = useSharedValue(0);
+  const navigation = useNavigation();
 
   const onScroll = useAnimatedScrollHandler((event) => {
     scrollX.value = event.contentOffset.x;
   });
 
-  const textoAnimated = useAnimatedStyle(() => {
-    return { transform: [{ translateX: withSpring(scrollX.value) }] };
-  });
+  const renderItem = ({ item, index }) => {
+    const inputRange = [
+      (index - 1) * CONTAINER_WIDTH,
+      index * CONTAINER_WIDTH,
+      (index + 1) * CONTAINER_WIDTH,
+    ];
+
+    const animatedStyle = useAnimatedStyle(() => {
+      const translateY = interpolate(
+        scrollX.value,
+        inputRange,
+        [50, 0, 50]
+      );
+      return { transform: [{ translateY }] };
+    });
+
+    return (
+      <View style={{ width: CONTAINER_WIDTH }}>
+        <Animated.View
+          style={[
+            {
+              marginHorizontal: ESPACIO,
+              padding: ESPACIO,
+              borderRadius: 34,
+              backgroundColor: "#fff",
+              alignItems: "center",
+            },
+            animatedStyle,
+          ]}
+        >
+          <Image source={item.image} style={styles.posterImage} />
+          <Text style={{ fontWeight: "bold", fontSize: 26 }}>{item.title}</Text>
+          <FontAwesome name="heart" size={24} color="white" style={styles.heartIcon} />
+        </Animated.View>
+      </View>
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar hidden />
-      <View style={styles.buttonContainer}>
-        {/* Botões na parte superior */}
+      <View style={styles.header}>
+       {/* <TouchableOpacity onPress={() => navigation.openDrawer()}>
+          <Ionicons name="menu" size={30} color="white" />
+        </TouchableOpacity>
+        <Text style={styles.headerText}>Favoritos</Text>
+        <Image 
+          source={{ uri: 'https://randomuser.me/api/portraits/women/1.jpg' }} 
+          style={styles.profilePic} 
+        />
+        */}
       </View>
-
+      <Text style={styles.subtitle}>Veja suas bebidas salvas</Text>
+      <View style={styles.categoryContainer}>
+        <FontAwesome name="coffee" size={40} color="#fff" />
+        <FontAwesome name="glass" size={40} color="#FFCF47" />
+        <FontAwesome name="cocktail" size={40} color="#fff" />
+      </View>
       <Backdrop scrollX={scrollX} />
       <Animated.FlatList
-        onScroll={onScroll}
+        data={imagenes}
+        keyExtractor={(item) => item.id}
+        renderItem={renderItem}
+        horizontal
         showsHorizontalScrollIndicator={false}
-        horizontal={true}
-        snapToAlignment="start"
         contentContainerStyle={{
-          paddingTop: 350,
+          paddingTop: 200,
           paddingHorizontal: SPACE_CONTAINER,
         }}
         snapToInterval={CONTAINER_WIDTH}
-        decelerationRate={0}
+        decelerationRate="fast"
+        onScroll={onScroll}
         scrollEventThrottle={16}
-        data={imagenes}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item, index }) => {
-          const inputRange = [
-            (index - 1) * CONTAINER_WIDTH,
-            index * CONTAINER_WIDTH,
-            (index + 1) * CONTAINER_WIDTH,
-          ];
-
-          const scrollY = interpolate(scrollX.value, inputRange, [0, -50, 0]); // <--- Modificado aqui
-
-          return (
-            <View style={{ width: CONTAINER_WIDTH }}>
-              <Animated.View
-                style={{
-                  marginHorizontal: ESPACIO,
-                  padding: ESPACIO,
-                  borderRadius: 34,
-                  backgroundColor: "transparent",
-                  alignItems: "center",
-                  transform: [{ translateY: scrollY }],
-                }}
-              >
-                <View style={{ position: 'relative', width: '100%' }}>
-                  <Image source={item.image} style={styles.posterImage} />
-                  <Text style={styles.titleText}>{item.title}</Text>
-                </View>
-              </Animated.View>
-              <Animated.Text
-                style={[styles.choose, textoAnimated, { fontFamily: "Belleza" }]}
-              >
-                Escolha seu Drink
-              </Animated.Text>
-            </View>
-          );
-        }}
       />
+      {/* Barra inferior de navegação */}
+      <View style={styles.tabss}>
+        <PressComponent
+          onPress={() => navigation.navigate("Home")}
+          source={require("../assets/images/HomeFilled.png")}
+          styleI={[styles.literlyButton, { marginTop: -9 }]}
+          styleP={styles.homeButton}
+        />
+        <PressComponent
+          onPress={() => navigation.navigate("Favorites")}
+          source={require("../assets/images/HeartNaked.png")}
+          styleI={[styles.literlyButton, { marginTop: -11, tintColor: "#ffffff" }]}
+          styleP={styles.favsButton}
+        />
+      </View>
     </SafeAreaView>
-  );
-}
+  )};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#131A22",
     justifyContent: "center",
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    marginTop: 10,
+  },
+  headerText: {
+    color: "white",
+    fontSize: 28,
+    fontWeight: "bold",
+  },
+  profilePic: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
+  subtitle: {
+    color: "white",
+    fontSize: 16,
+    paddingLeft: 20,
+    marginVertical: 10,
+  },
+  categoryContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    paddingHorizontal: 40,
+    marginBottom: 20,
   },
   posterImage: {
     width: "100%",
@@ -203,39 +266,14 @@ const styles = StyleSheet.create({
     margin: 0,
     marginBottom: 10,
   },
-  titleText: {
-    position: 'absolute',
+  heartIcon: {
+    position: "absolute",
     top: 10,
-    left: 10,
-    color: 'white',
-    fontSize: 16,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    padding: 5,
-    borderRadius: 5,
+    right: 10,
   },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    padding: 30,
-    paddingTop: 200,
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 1,
-  },
-  squareButton: {
-    width: 60,
-    height: 60,
-    backgroundColor: '#007AFF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 6,
-  },
-  choose: {
-    textAlign: 'center',
-    fontSize: 24,
-    color: 'black',
-    marginTop: 20,
+  tabss: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginVertical: 20,
   },
 });

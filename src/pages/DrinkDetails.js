@@ -17,7 +17,7 @@ import { useRoute } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import IP_URL from "../components/IP";
 import axios from "axios";
-import { Ionicons } from "@expo/vector-icons"; // Importando Ionicons
+import { Ionicons } from "@expo/vector-icons";
 
 export default function Drink() {
   const navigation = useNavigation();
@@ -31,16 +31,17 @@ export default function Drink() {
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState(0);
   const [reviews, setReviews] = useState([]); // Estado para armazenar as reviews
+  const [averageRating, setAverageRating] = useState(0); // Estado para a média das avaliações
 
   // Função para buscar notas do produto
   const fetchReviews = async () => {
     try {
-      const response = await axios.get(
-        `http://${IP_URL}:3000/notas?produto=${id}`,
-        console.log(id)
-      );
-      setReviews(response.data); // Armazena as reviews recebidas
-      console.log("Reviews encontradas:", response.data);
+      console.log("Buscando a média das notas para o produto ID:", id);
+      const response = await axios.get(`http://${IP_URL}:3000/notas/${id}`); // Ajustado para passar o ID diretamente na URL
+      if (response.data) {
+        console.log("Média das notas:", response.data.mediaNota);
+        setAverageRating(Math.round(response.data.mediaNota)); // Armazena a média das notas arredondada
+      }
     } catch (error) {
       console.error("Erro ao buscar reviews", error);
     }
@@ -65,59 +66,50 @@ export default function Drink() {
         nota: rating,
       };
 
-      const response = await axios.post(
-        `http://${IP_URL}:3000/reviews`,
-        reviewData,
-        {
-          headers: {
-            Authorization: `Bearer ${savedToken}`,
-          },
-        }
-      );
+      await axios.post(`http://${IP_URL}:3000/reviews`, reviewData, {
+        headers: {
+          Authorization: `Bearer ${savedToken}`,
+        },
+      });
 
-    
-      console.log("Review enviada com sucesso", response.data);
+      console.log("Review enviada com sucesso");
       setModalVisible(false);
       setComment("");
       setRating(0);
+      fetchReviews(); // Atualiza a média após enviar a review
     } catch (error) {
       console.error("Erro ao enviar a review", error);
     }
   };
 
-  // Busca dados da bebida e as reviews associadas pelo ID
   useEffect(() => {
     const fetchDrinkData = async () => {
       if (id) {
+        setLoading(true);
         try {
-          const savedToken = await AsyncStorage.getItem("userToken");
-          const response = await axios.get(
-            `http://${IP_URL}:3000/produtos/${id}`,
-            {
-              headers: {
-                Authorization: `Bearer ${savedToken}`,
-              },
-            }
-          );
-          setDrink(response.data);
-          console.log("Bebida Encontrada", response.data);
-          fetchReviews(); // Busca as reviews do produto
-          console.log("To buscando notas")
+          const response = await axios.get(`http://${IP_URL}:3000/produtos/${id}`);
+          if (response.data) {
+            setDrink(response.data);
+          } else {
+            console.error("Nenhum dado da bebida encontrado");
+            return;
+          }
+          await fetchReviews(); // Carrega as reviews associadas
         } catch (error) {
-          console.error("Erro ao buscar bebidas", error);
-          console.log("Não achei nada...")
+          console.error("Erro ao buscar dados da bebida ou reviews:", error);
         } finally {
-          setLoading(false);
+          setLoading(false); // Termina o estado de carregamento
         }
       } else {
         console.error("ID não encontrado");
-        setLoading(false);
+        setLoading(false); // Para o carregamento
       }
     };
 
     fetchDrinkData();
   }, [id]);
 
+  // Renderização condicional
   if (loading) {
     return (
       <View style={{ justifyContent: "center", alignContent: "center" }}>
@@ -147,6 +139,21 @@ export default function Drink() {
     return stars;
   };
 
+  const renderStarsReviews = () => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      stars.push(
+        <Ionicons
+          key={i}
+          name={i <= averageRating ? "star" : "star-outline"}
+          size={30}
+          color="#FFD700"
+        />
+      );
+    }
+    return stars;
+  };
+
   return (
     <ScrollView style={styles.ScrollView}>
       <View style={styles.container}>
@@ -160,27 +167,21 @@ export default function Drink() {
         <Text style={styles.name}>{drink.name}</Text>
         <Text style={styles.description}>{drink.description}</Text>
 
-      {/* Impressão das notas */}
-        <Text style={styles.reviewsTitle}>Avaliações:</Text>
-        {reviews.length > 0 ? (
-          reviews.map((review) => (
-            <View key={review.id} style={styles.reviewContainer}>
-              <Text style={styles.reviewAuthor}>{review.autor}</Text>
-              <Text style={styles.reviewComment}>{review.comentario}</Text>
-              <Text style={styles.reviewRating}>Nota: {review.nota}</Text>
-            </View>
-          ))
-        ) : (
-          <Text>Sem avaliações ainda.</Text>
-        )}
+        {/* Impressão das notas */}
+        <Text style={styles.reviewsTitle}>Avaliação:</Text>
 
+        <View style={styles.reviewContainer}>
+          {averageRating > 0 ? (
+            renderStarsReviews() // Renderiza as estrelas baseadas na média
+          ) : (
+            <Text>Ainda não há avaliações.</Text> // Mensagem quando não há avaliações
+          )}
+        </View>
 
         <Text style={styles.ingredientsTitle}>Ingredientes:</Text>
         <Text style={styles.ingredients}>{drink.recipe}</Text>
         <Text style={styles.howToMakeTitle}>Modo de Preparo:</Text>
         <Text style={styles.howToMake}>{drink.comofazer}</Text>
-
-        
 
         <Pressable
           style={styles.commentButton}
@@ -293,16 +294,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   input: {
-    height: 100,
-    borderColor: "gray",
     borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
     padding: 10,
     marginBottom: 20,
-  },
-  ratingTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
   },
   starsContainer: {
     flexDirection: "row",
@@ -314,19 +310,14 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   reviewContainer: {
-    marginBottom: 10,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
+    flexDirection: "row",
+    marginBottom: 20,
   },
-  reviewAuthor: {
-    fontWeight: "bold",
+  backButton: {
+    marginVertical: 10,
   },
-  reviewComment: {
-    marginVertical: 5,
-  },
-  reviewRating: {
-    fontStyle: "italic",
+  backButtonText: {
+    color: "#00ADEF",
+    fontSize: 16,
   },
 });

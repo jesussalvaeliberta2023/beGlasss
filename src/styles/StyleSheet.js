@@ -203,8 +203,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: ListItemWidth / 2,
   },
-});
+
+  // Aqui começa o Design da tela DrinkDetails
   
 
+});
 
 export default styles;
