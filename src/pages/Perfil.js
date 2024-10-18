@@ -23,6 +23,7 @@ const Perfil = ({ route }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [reviews, setReviews] = useState([]); 
+
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -48,8 +49,9 @@ const Perfil = ({ route }) => {
         console.log("Token decodificado:", decodedToken);
         
         // Extrair o nome do usuário do token
+        const emailFromToken = decodedToken.email; 
         const usernameFromToken = decodedToken.username; 
-        console.log("Nome de usuário do token:", usernameFromToken);
+        console.log("Nome de usuário e email do token:", usernameFromToken, emailFromToken);
 
         // Buscar informações do usuário
         const userResponse = await axios.get(`http://${IP_URL}:3000/perfil/${usernameFromToken}`, {

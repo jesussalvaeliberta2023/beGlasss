@@ -10,7 +10,7 @@ import {
 import { StatusBar } from "expo-status-bar";
 import { CircularCarousel } from "../components/CircularCarousel/CircularCarousel";
 import { useFonts } from "@expo-google-fonts/belleza";
-import styles from "../styles/StyleSheet";
+import styles from "../styles/DrinksStyles";
 import PressComponent from "../components/PressableComponent";
 import Animated, {
   useAnimatedStyle,

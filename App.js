@@ -12,6 +12,7 @@ import Perfil2 from "./src/pages/Perfil copy";
 import configuracoesPerfil from "./src/pages/configuracoesPerfil";
 import SignUp from "./src/pages/SignUp";
 import Testes from "./src/pages/Testes";
+import DesignDetails from "./src/pages/DesignDetails";
 
 const Stack = createNativeStackNavigator();
 
@@ -79,11 +80,19 @@ export default function App() {
           component={configuracoesPerfil}
           options={{ headerShown: false }}
         />
-         <Stack.Screen
-          name="Testes"
-          component={Testes}
-          options={{ headerShown: false }}
-        />
+        <Stack.Screen
+         name="Testes"
+         component={Testes}
+         options={{ headerShown: false }}
+       />
+       <Stack.Screen
+         name="DesignDetails"
+         component={DesignDetails}
+         options={{ headerShown: false }}
+       />
+       
+       
+        
       </Stack.Navigator>
     </NavigationContainer>
   );

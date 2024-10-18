@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigation } from "@react-navigation/native";
 import axios from 'axios';
 import IP_URL from '../components/IP';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Importando AsyncStorage
 import {
   View,
   Text,
@@ -15,55 +16,62 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isSelected, setSelection] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
-
-
-  const [username, setUsername] = useState("");
-  const [passcode, setPasscode] = useState("");
-  const [rememberMe, setRememberMe] = useState(false); 
   const navigation = useNavigation();
 
+  // Login
   const handleLogin = async () => {
-    console.log("Dados enviados:", { username, passcode, rememberMe });
-
+    console.log("Dados enviados:", { email, password, rememberMe: isChecked });
+  
     try {
       const response = await axios.post(`http://${IP_URL}:3000/login`, {
-        username: username,
-        passcode: passcode,
-        rememberMe: rememberMe,
+        email: email,
+        password: password,  
+        rememberMe: isChecked,
       });
   
+      // Verificando se o login foi bem-sucedido com status 200
       if (response.status === 200) {
         const token = response.data.token;
   
+        // Verificando se o token foi recebido
         if (!token) {
           alert("Token não recebido. Verifique as credenciais.");
-          return;
+          return; // Não prosseguir sem o token
         }
   
         alert("Login bem-sucedido");
-        
-        if (rememberMe) {
-          await AsyncStorage.setItem('userToken', token);
-          await AsyncStorage.setItem('username', username);
-          console.log("Token e username salvos:", token, username);
+  
+        // Salvando o token e email no AsyncStorage se a opção 'lembrar-me' estiver ativa
+        if (isChecked) {
+          await AsyncStorage.setItem('userToken', token); // Salvando o token
+          await AsyncStorage.setItem('email', email); // Salvando o email
+          console.log("Token e email salvos:", token, email);
         }
-        
-        navigation.navigate("Perfil", { username: username });
+  
+        // Navegando para a página 'Perfil'
+        navigation.navigate("Perfil", { email: email });
       } else {
+        // Caso o status não seja 200, login falhou
         alert("Usuário ou senha incorretos");
       }
     } catch (error) {
-      if (error.response) {
-        console.error("Erro ao fazer login:", error.response.data);
+      // Tratando erro ao fazer login
+      if (error.response && error.response.status === 401) {
+        // Se o servidor retornar 401, significa que o email ou senha estão incorretos
         alert("Usuário ou senha incorretos");
+      } else if (error.response) {
+        // Outro tipo de erro com resposta do servidor
+        console.error("Erro ao fazer login:", error.response.data);
+        alert("Erro ao fazer login. Tente novamente mais tarde.");
       } else if (error.request) {
+        // Erro sem resposta do servidor (possível problema de rede)
         console.error("Erro ao fazer login: Sem resposta do servidor", error.request);
-        alert("Erro ao conectar ao servidor");
+        alert("Erro ao conectar ao servidor. Verifique sua conexão.");
       } else {
+        // Outro tipo de erro
         console.error("Erro ao fazer login:", error.message);
-        alert("Erro ao fazer login");
+        alert("Erro ao fazer login. Tente novamente.");
       }
     }
   };
@@ -73,12 +81,19 @@ const LoginScreen = () => {
     setIsChecked(!isChecked); // Alterna entre true e false
   };
 
+  const handleForgotPassword = () => {
+    navigation.navigate('EsqueciSenha');
+  };
+
   return (
     <ImageBackground 
       source={require('../assets/images/Coffes/Coffe.png')} 
       style={styles.background}
     >
       <View style={styles.container}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <View><Text style={{color: 'white'}}>Voltar</Text></View>
+        </TouchableOpacity>
         <Text style={styles.title}>Entrar</Text>
 
         <TextInput
@@ -93,8 +108,8 @@ const LoginScreen = () => {
           style={styles.input}
           placeholder="Senha"
           placeholderTextColor="#888"
-          value={passcode}
-          onChangeText={setPasscode}
+          value={password}
+          onChangeText={setPassword}  // Usando setPassword para a senha
           secureTextEntry
         />
       </View>  
@@ -106,7 +121,7 @@ const LoginScreen = () => {
           <Text style={styles.label}>Manter-se conectado</Text>
         </View>
       
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity onPress={handleLogin} style={styles.button}>
           <Text style={styles.buttonText}>Entrar</Text>
         </TouchableOpacity>
 
@@ -114,6 +129,10 @@ const LoginScreen = () => {
           <Text style={styles.registerText}>
             Não tenho uma conta! <Text style={styles.highlight}>Cadastrar</Text>
           </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={handleForgotPassword}>
+          <Text style={styles.forgotPasswordText}>Esqueci a minha senha</Text>
         </TouchableOpacity>
 
         <Text style={styles.orText}>Entrar com</Text>
@@ -221,6 +240,13 @@ const styles = StyleSheet.create({
   emailButtonText: {
     color: '#000',
     fontSize: 16,
+  },
+  forgotPasswordText: {
+    color: '#FFF',
+    marginBottom: 20,
+    textAlign: 'center',
+    fontSize: 16,
+    textDecorationLine: 'underline',
   },
 });
 

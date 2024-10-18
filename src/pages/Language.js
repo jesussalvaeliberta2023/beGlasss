@@ -18,7 +18,7 @@ import i18next, { languageResources } from "../services/i18next";
 import { useTranslation } from "react-i18next";
 // Importa uma lista de idiomas, contendo informações como nomes nativos dos idiomas.
 import languagesList from "../services/languagesList.json";
-import styles from "../styles/StyleSheet";
+// import styles from "../styles/StyleSheet";
 
 //controla a visibilidade do modal
 //Desestrutura o método t do hook useTranslation, que é usado para traduzir textos de acordo com o idioma atual.

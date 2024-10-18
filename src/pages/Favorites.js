@@ -7,18 +7,12 @@ import {
   Image,
   Dimensions,
   SafeAreaView,
-  TouchableOpacity,
+  Animated,
 } from "react-native";
-import Animated, {
-  useSharedValue,
-  useAnimatedScrollHandler,
-  useAnimatedStyle,
-  interpolate,
-} from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
-import PressComponent from "../components/PressableComponent";
 import { useNavigation } from "@react-navigation/native";
-import { Ionicons, FontAwesome } from '@expo/vector-icons';
+import { FontAwesome } from "@expo/vector-icons";
+import { TouchableOpacity } from "react-native";
 
 // Imagens com Títulos
 const imagenes = [
@@ -65,12 +59,13 @@ const imagenes = [
 ];
 
 // Medidas da tela
-const { width, height } = Dimensions.get("window");
+const width = Dimensions.get("window").width;
+const height = Dimensions.get("window").height;
 
 // Definindo Tamanhos
-const CONTAINER_WIDTH = width * 0.6;
+const CONTAINER_WIDTH = width * 0.7;
 const SPACE_CONTAINER = (width - CONTAINER_WIDTH) / 2;
-const ESPACIO = 6;
+const ESPACIO = 10;
 const ALTURA_BACKDROP = height * 1;
 
 function Backdrop({ scrollX }) {
@@ -93,27 +88,25 @@ function Backdrop({ scrollX }) {
           (index + 1) * CONTAINER_WIDTH,
         ];
 
-        const animatedStyle = useAnimatedStyle(() => {
-          const opacity = interpolate(scrollX.value, inputRange, [0, 1, 0]);
-          return { opacity };
+        const opacity = scrollX.interpolate({
+          inputRange,
+          outputRange: [0, 1, 0],
         });
-
         return (
           <Animated.Image
             key={imagen.id}
             source={imagen.image}
             style={[
-              { width: width, height: ALTURA_BACKDROP },
-              animatedStyle,
+              { width: width, height: ALTURA_BACKDROP, opacity: opacity },
               StyleSheet.absoluteFillObject,
             ]}
-            resizeMode="cover"
           />
         );
       })}
       <LinearGradient
         colors={["transparent", "black"]}
         style={{
+          width,
           height: ALTURA_BACKDROP,
           position: "absolute",
           bottom: 0,
@@ -123,141 +116,111 @@ function Backdrop({ scrollX }) {
   );
 }
 
-export default function Favorites() {
-  const scrollX = useSharedValue(0);
+export default function App() {
+  const scrollX = React.useRef(new Animated.Value(0)).current;
   const navigation = useNavigation();
 
-  const onScroll = useAnimatedScrollHandler((event) => {
-    scrollX.value = event.contentOffset.x;
-  });
-
-  const renderItem = ({ item, index }) => {
-    const inputRange = [
-      (index - 1) * CONTAINER_WIDTH,
-      index * CONTAINER_WIDTH,
-      (index + 1) * CONTAINER_WIDTH,
-    ];
-
-    const animatedStyle = useAnimatedStyle(() => {
-      const translateY = interpolate(
-        scrollX.value,
-        inputRange,
-        [50, 0, 50]
-      );
-      return { transform: [{ translateY }] };
-    });
-
-    return (
-      <View style={{ width: CONTAINER_WIDTH }}>
-        <Animated.View
-          style={[
-            {
-              marginHorizontal: ESPACIO,
-              padding: ESPACIO,
-              borderRadius: 34,
-              backgroundColor: "#fff",
-              alignItems: "center",
-            },
-            animatedStyle,
-          ]}
-        >
-          <Image source={item.image} style={styles.posterImage} />
-          <Text style={{ fontWeight: "bold", fontSize: 26 }}>{item.title}</Text>
-          <FontAwesome name="heart" size={24} color="white" style={styles.heartIcon} />
-        </Animated.View>
-      </View>
-    );
-  };
+  const [selectedButton, setSelectedButton] = React.useState("l");
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar hidden />
-      <View style={styles.header}>
-       {/* <TouchableOpacity onPress={() => navigation.openDrawer()}>
-          <Ionicons name="menu" size={30} color="white" />
+
+      <View style={styles.topBar}>
+        {/* Botão de "Café" */}
+        <TouchableOpacity
+          style={[styles.button, selectedButton === "coffee" && styles.selectedButton]}
+          onPress={() => setSelectedButton("coffee")}
+        >
+          <FontAwesome name="coffee" size={24} color={selectedButton === "coffee" ? "#FFD700" : "#FFFFFF"} />
         </TouchableOpacity>
-        <Text style={styles.headerText}>Favoritos</Text>
-        <Image 
-          source={{ uri: 'https://randomuser.me/api/portraits/women/1.jpg' }} 
-          style={styles.profilePic} 
-        />
-        */}
+
+        {/* Botão de "Cocktail" */}
+        <TouchableOpacity
+          style={[styles.button, selectedButton === "cocktail" && styles.selectedButton]}
+          onPress={() => setSelectedButton("cocktail")}
+        >
+          <FontAwesome name="glass-martini" size={24} color={selectedButton === "cocktail" ? "#FFD700" : "#FFFFFF"} />
+        </TouchableOpacity>
+
+        {/* Botão de "Drink" */}
+        <TouchableOpacity
+          style={[styles.button, selectedButton === "drink" && styles.selectedButton]}
+          onPress={() => setSelectedButton("drink")}
+        >
+          <FontAwesome name="glass" size={24} color={selectedButton === "drink" ? "#FFD700" : "#FFFFFF"} />
+        </TouchableOpacity>
       </View>
-      <Text style={styles.subtitle}>Veja suas bebidas salvas</Text>
-      <View style={styles.categoryContainer}>
-        <FontAwesome name="coffee" size={40} color="#fff" />
-        <FontAwesome name="glass" size={40} color="#FFCF47" />
-        <FontAwesome name="cocktail" size={40} color="#fff" />
-      </View>
-      <Backdrop scrollX={scrollX} />
+
+
+<Backdrop scrollX={scrollX} />
+
       <Animated.FlatList
-        data={imagenes}
-        keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-        horizontal
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+          { useNativeDriver: true }
+        )}
         showsHorizontalScrollIndicator={false}
+        horizontal={true}
+        snapToAlignment="start"
         contentContainerStyle={{
-          paddingTop: 200,
+          paddingTop: 190,
           paddingHorizontal: SPACE_CONTAINER,
         }}
         snapToInterval={CONTAINER_WIDTH}
-        decelerationRate="fast"
-        onScroll={onScroll}
+        decelerationRate={0}
         scrollEventThrottle={16}
+        data={imagenes}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item, index }) => {
+          const inputRange = [
+            (index - 1) * CONTAINER_WIDTH,
+            index * CONTAINER_WIDTH,
+            (index + 1) * CONTAINER_WIDTH,
+          ];
+
+          const scrollY = scrollX.interpolate({
+            inputRange,
+            outputRange: [0, -50, 0],
+          });
+          return (
+            <View style={{ width: CONTAINER_WIDTH }}>
+              <Animated.View
+                style={{
+                  marginHorizontal: ESPACIO,
+                  padding: 0,
+                  borderRadius: 24,
+                  borderWidth: 1,
+                  borderColor: "#000",
+                  backgroundColor: "transparent",
+                  alignItems: "center",
+                  transform: [{ translateY: scrollY }],
+                }}
+              >
+                {/* Título no canto superior esquerdo */}
+              <View style={{ position: 'absolute', top: 10, left: 10, zIndex: 1 }}>
+                <Text style={{fontSize: 22, color: "#fff" }}>
+                 {item.title}
+                </Text>
+              </View>
+                <Image source={item.image} style={styles.posterImage} />
+              </Animated.View>
+
+            </View>
+          );
+        }}
       />
-      {/* Barra inferior de navegação */}
-      <View style={styles.tabss}>
-        <PressComponent
-          onPress={() => navigation.navigate("Home")}
-          source={require("../assets/images/HomeFilled.png")}
-          styleI={[styles.literlyButton, { marginTop: -9 }]}
-          styleP={styles.homeButton}
-        />
-        <PressComponent
-          onPress={() => navigation.navigate("Favorites")}
-          source={require("../assets/images/HeartNaked.png")}
-          styleI={[styles.literlyButton, { marginTop: -11, tintColor: "#ffffff" }]}
-          styleP={styles.favsButton}
-        />
-      </View>
     </SafeAreaView>
-  )};
+  );
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#131A22",
+    backgroundColor: "#fff",
     justifyContent: "center",
   },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    marginTop: 10,
-  },
-  headerText: {
-    color: "white",
-    fontSize: 28,
-    fontWeight: "bold",
-  },
-  profilePic: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-  },
-  subtitle: {
-    color: "white",
-    fontSize: 16,
-    paddingLeft: 20,
-    marginVertical: 10,
-  },
-  categoryContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    paddingHorizontal: 40,
-    marginBottom: 20,
-  },
+
   posterImage: {
     width: "100%",
     height: CONTAINER_WIDTH * 1.2,
@@ -266,14 +229,34 @@ const styles = StyleSheet.create({
     margin: 0,
     marginBottom: 10,
   },
-  heartIcon: {
-    position: "absolute",
-    top: 10,
-    right: 10,
-  },
+
   tabss: {
     flexDirection: "row",
     justifyContent: "space-around",
     marginVertical: 20,
   },
+
+  topBar: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    marginTop: 40,
+    paddingHorizontal: 20,
+    paddingTop: 100,
+    zIndex: 2,
+  },
+
+  button: {
+    width: 60,
+    height: 60,
+    backgroundColor: "#2E2E2E",
+    borderRadius: 15,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  selectedButton: {
+    backgroundColor: "#FFD700",
+  },
+ 
 });

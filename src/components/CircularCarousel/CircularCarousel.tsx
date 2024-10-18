@@ -3,7 +3,7 @@ import { FlatList, ImageProps } from "react-native";
 import { CircularCarouselListItem, ListItemHeight } from "./ListItem";
 import { useSharedValue, useAnimatedReaction, runOnJS } from "react-native-reanimated";
 import { useNavigation } from "@react-navigation/native";
-import styles from "../../styles/StyleSheet";
+import styles from "../../styles/List&CarouselStyles";
 
 type CircularCarouselProps = {
   data: {
