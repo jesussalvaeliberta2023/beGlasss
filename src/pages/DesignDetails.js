@@ -1,8 +1,18 @@
 import React from "react";
-import { View, StyleSheet, StatusBar } from "react-native";
+import { View, StyleSheet, StatusBar, Text, ActivityIndicator } from "react-native";
+import { useFonts } from "@expo-google-fonts/belleza";
 import PressComponent from "../components/PressableComponent";
 
 export default function DesignDetails() {
+
+  const [fontsLoaded] = useFonts({
+    Belleza: require("../assets/fonts/Belleza/Belleza-Regular.ttf"),
+  });
+
+  if (!fontsLoaded) {
+    return <ActivityIndicator size="large" color="#fff" />;
+  }
+
   return (
     <View style={styles.container}>
       <StatusBar style="light" translucent />
@@ -18,6 +28,13 @@ export default function DesignDetails() {
           styleI={styles.headerPerson}
         />
       </View>
+
+      <View style={styles.informations}>
+        <Text style={styles.drink}>Caipirinha</Text>
+        <Text style={styles.description}>Uma versão sem álcool da mais famosa bebida brasileira.</Text>
+        <Text style={styles.stars}>★★★☆☆</Text>
+      </View>
+
     </View>
 )};
 
@@ -25,24 +42,27 @@ const styles = StyleSheet.create({
   container: {
     display: "flex",
     flex: 1,
-    backgroundColor: "#000000",
+    backgroundColor: "#FF0000",
   },
 
   header: {
     width: "100%",
     flexDirection: "row",
-    marginTop: 32,
-    // alignItems: "center",
-    // justifyContent: "center",
+    justifyContent: "space-between",
+    marginTop: 40,
   },
 
   headerTab: {
-    alignSelf: "flex-start",
+    marginLeft: 15,
   },
 
   headerPerson: {
     width: 60,
     height: 60,
-    alignSelf: "flex-end",
+    marginRight: 15,
   },
+
+  drink:{
+    fontSize: 40,
+  }
 });

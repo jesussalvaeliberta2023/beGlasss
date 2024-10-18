@@ -12,6 +12,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import { FontAwesome } from "@expo/vector-icons";
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { TouchableOpacity } from "react-native";
 
 // Imagens com Títulos
@@ -122,6 +123,22 @@ export default function App() {
 
   const [selectedButton, setSelectedButton] = React.useState("l");
 
+// Estado para controlar cor do coração de cada drink
+const [liked, setLiked] = React.useState(
+  imagenes.reduce((acc, item) => {
+    acc[item.id] = false;
+    return acc;
+  }, {})
+);
+
+// Função para alternar o estado de "like"
+const toggleLike = (id) => {
+  setLiked((prevLiked) => ({
+    ...prevLiked,
+    [id]: !prevLiked[id],
+  }));
+};
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar hidden />
@@ -132,15 +149,15 @@ export default function App() {
           style={[styles.button, selectedButton === "coffee" && styles.selectedButton]}
           onPress={() => setSelectedButton("coffee")}
         >
-          <FontAwesome name="coffee" size={24} color={selectedButton === "coffee" ? "#FFD700" : "#FFFFFF"} />
+          <FontAwesome6 name="mug-hot" size={24} color={selectedButton === "coffee" ? "#000" : "#FFFFFF"} />
         </TouchableOpacity>
 
-        {/* Botão de "Cocktail" */}
+        {/* Botão de "Suco" */}
         <TouchableOpacity
-          style={[styles.button, selectedButton === "cocktail" && styles.selectedButton]}
-          onPress={() => setSelectedButton("cocktail")}
+          style={[styles.button, selectedButton === "Suco" && styles.selectedButton]}
+          onPress={() => setSelectedButton("Suco")}
         >
-          <FontAwesome name="glass-martini" size={24} color={selectedButton === "cocktail" ? "#FFD700" : "#FFFFFF"} />
+          <FontAwesome6 name="glass-water" size={24} color={selectedButton === "cocktail" ? "#000" : "#FFFFFF"}/>
         </TouchableOpacity>
 
         {/* Botão de "Drink" */}
@@ -148,7 +165,7 @@ export default function App() {
           style={[styles.button, selectedButton === "drink" && styles.selectedButton]}
           onPress={() => setSelectedButton("drink")}
         >
-          <FontAwesome name="glass" size={24} color={selectedButton === "drink" ? "#FFD700" : "#FFFFFF"} />
+          <FontAwesome6 name="martini-glass" size={24} color={selectedButton === "drink" ? "#000" : "#FFFFFF"}/>
         </TouchableOpacity>
       </View>
 
@@ -197,11 +214,23 @@ export default function App() {
                   transform: [{ translateY: scrollY }],
                 }}
               >
-                {/* Título no canto superior esquerdo */}
+                {/* Título na imagem*/}
               <View style={{ position: 'absolute', top: 10, left: 10, zIndex: 1 }}>
                 <Text style={{fontSize: 22, color: "#fff" }}>
                  {item.title}
                 </Text>
+
+                {/* Curtida na imagem */}
+                <TouchableOpacity
+                  onPress={() => toggleLike(item.id)}
+                  style={{ position: 'absolute', top: 10, right: 10, zIndex: 2 }}
+                >
+                  <FontAwesome
+                    name="heart"
+                    size={24}
+                    color={liked[item.id] ? "#000" : "#FFFFFF"} // Preto se liked, branco se não
+                  />
+                </TouchableOpacity>
               </View>
                 <Image source={item.image} style={styles.posterImage} />
               </Animated.View>
@@ -258,5 +287,7 @@ const styles = StyleSheet.create({
   selectedButton: {
     backgroundColor: "#FFD700",
   },
+
+
  
 });

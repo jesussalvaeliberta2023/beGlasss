@@ -6,25 +6,21 @@ const styles = StyleSheet.create({
     backgroundColor: "#20202C",
   },
 
-  headerD: {
+  header: {
     width: "100%",
-    height: "15%",
     flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    position: "absolute",
+    justifyContent: "space-between",
+    marginTop: 40,
   },
 
-  headerOp: {
-    width: 36,
-    height: 17,
-    marginRight: "70%",
+  headerTab: {
+    marginLeft: 15,
   },
 
-  headerPe: {
+  headerPerson: {
     width: 60,
     height: 60,
-    marginTop: 32,
+    marginRight: 15,
   },
 
   choose: {

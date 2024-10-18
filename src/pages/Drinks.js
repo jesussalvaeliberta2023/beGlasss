@@ -136,17 +136,17 @@ export default function Drinks() {
         />
 
         {/* Cabeçalho com botões */}
-        <View style={styles.headerD}>
+        <View style={styles.header}>
           <PressComponent
             onPress={() => navigation.navigate("Perfil", { token })}
             source={require("../assets/images/Bars.png")}
-            styleI={styles.headerOp}
+            styleI={styles.headerTab}
           />
           <Animated.View style={iconeAnimated}>
             <PressComponent
               onPress={() => navigation.navigate("Login")}
               source={require("../assets/images/Person.png")}
-              styleI={styles.headerPe}
+              styleI={styles.headerPerson}
             />
           </Animated.View>
         </View>
