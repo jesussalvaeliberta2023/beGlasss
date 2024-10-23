@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import axios from 'axios';
-import IP_URL from '../components/IP';
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Importando AsyncStorage
+import axios from "axios";
+import IP_URL from "../components/IP";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   View,
   Text,
@@ -10,66 +10,63 @@ import {
   TouchableOpacity,
   StyleSheet,
   ImageBackground,
-} from 'react-native';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+} from "react-native";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 const LoginScreen = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [usernameOrEmail, setUsernameOrEmail] = useState(""); // Alterado para usernameOrEmail
+    const [username, setUsername] = useState("")
+    const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("");
   const [isChecked, setIsChecked] = useState(false);
+  const [isEmailInput, setIsEmailInput] = useState(true); // Para controlar o tipo de input
   const navigation = useNavigation();
 
   // Login
   const handleLogin = async () => {
-    console.log("Dados enviados:", { email, password, rememberMe: isChecked });
-  
+    console.log("Dados enviados:", { email, username, password, rememberMe: isChecked });
+
     try {
+
       const response = await axios.post(`http://${IP_URL}:3000/login`, {
+        // [isEmailInput ? "email" : "username"]: usernameOrEmail, 
         email: email,
-        password: password,  
+        username: username,
+        password: password,
         rememberMe: isChecked,
       });
-  
-      // Verificando se o login foi bem-sucedido com status 200
+      
+
       if (response.status === 200) {
         const token = response.data.token;
-  
-        // Verificando se o token foi recebido
+
         if (!token) {
           alert("Token não recebido. Verifique as credenciais.");
-          return; // Não prosseguir sem o token
+          return;
         }
-  
+
         alert("Login bem-sucedido");
-  
-        // Salvando o token e email no AsyncStorage se a opção 'lembrar-me' estiver ativa
+
         if (isChecked) {
-          await AsyncStorage.setItem('userToken', token); // Salvando o token
-          await AsyncStorage.setItem('email', email); // Salvando o email
-          console.log("Token e email salvos:", token, email);
+          await AsyncStorage.setItem("userToken", token);
+          await AsyncStorage.setItem("usernameOrEmail", usernameOrEmail); // Alterado para usernameOrEmail
+          console.log("Token e usuário/email salvos:", token, usernameOrEmail);
         }
-  
-        // Navegando para a página 'Perfil'
-        navigation.navigate("Perfil", { email: email });
+
+        navigation.navigate("Perfil", { usernameOrEmail });
       } else {
-        // Caso o status não seja 200, login falhou
         alert("Usuário ou senha incorretos");
       }
     } catch (error) {
-      // Tratando erro ao fazer login
       if (error.response && error.response.status === 401) {
-        // Se o servidor retornar 401, significa que o email ou senha estão incorretos
         alert("Usuário ou senha incorretos");
       } else if (error.response) {
-        // Outro tipo de erro com resposta do servidor
         console.error("Erro ao fazer login:", error.response.data);
         alert("Erro ao fazer login. Tente novamente mais tarde.");
       } else if (error.request) {
-        // Erro sem resposta do servidor (possível problema de rede)
         console.error("Erro ao fazer login: Sem resposta do servidor", error.request);
         alert("Erro ao conectar ao servidor. Verifique sua conexão.");
       } else {
-        // Outro tipo de erro
         console.error("Erro ao fazer login:", error.message);
         alert("Erro ao fazer login. Tente novamente.");
       }
@@ -78,11 +75,17 @@ const LoginScreen = () => {
 
   // Função para alternar o estado do checkbox
   const toggleCheckbox = () => {
-    setIsChecked(!isChecked); // Alterna entre true e false
+    setIsChecked(!isChecked);
   };
 
   const handleForgotPassword = () => {
-    navigation.navigate('EsqueciSenha');
+    navigation.navigate("EsqueciSenha");
+  };
+
+  // Função para alternar entre Email e Usuário
+  const toggleInputType = () => {
+    setIsEmailInput(!isEmailInput);
+    setUsernameOrEmail(""); // Limpa o campo ao mudar
   };
 
   return (
@@ -92,16 +95,16 @@ const LoginScreen = () => {
     >
       <View style={styles.container}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-        <View><Text style={{color: 'white'}}>Voltar</Text></View>
+          <View><Text style={{color: 'white'}}>Voltar</Text></View>
         </TouchableOpacity>
         <Text style={styles.title}>Entrar</Text>
 
         <TextInput
           style={styles.input}
-          placeholder="Email"
+          placeholder={isEmailInput ? "Email" : "Usuário"} // Muda conforme a opção selecionada
           placeholderTextColor="#888"
-          value={email}
-          onChangeText={setEmail}
+          value={isEmailInput ? email : username} // Alterado para usar usernameOrEmail
+          onChangeText={isEmailInput ? setEmail : setUsername} // Alterado para setUsernameOrEmail
         />
 
         <TextInput
@@ -109,7 +112,7 @@ const LoginScreen = () => {
           placeholder="Senha"
           placeholderTextColor="#888"
           value={password}
-          onChangeText={setPassword}  // Usando setPassword para a senha
+          onChangeText={setPassword}
           secureTextEntry
         />
       </View>  
@@ -120,7 +123,7 @@ const LoginScreen = () => {
           </TouchableOpacity>
           <Text style={styles.label}>Manter-se conectado</Text>
         </View>
-      
+
         <TouchableOpacity onPress={handleLogin} style={styles.button}>
           <Text style={styles.buttonText}>Entrar</Text>
         </TouchableOpacity>
@@ -137,12 +140,10 @@ const LoginScreen = () => {
 
         <Text style={styles.orText}>Entrar com</Text>
 
-        <TouchableOpacity style={styles.googleButton}>
-          <Text style={styles.googleButtonText}>Continue com o Google</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.emailButton}>
-          <Text style={styles.emailButtonText}>Continue com o Email</Text>
+        <TouchableOpacity onPress={toggleInputType} style={styles.emailButton}>
+          <Text style={styles.emailButtonText}>
+            Continuar com {isEmailInput ? "Usuário" : "Email"}
+          </Text>
         </TouchableOpacity>
       </View>
     </ImageBackground>
@@ -152,31 +153,31 @@ const LoginScreen = () => {
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    resizeMode: 'cover', // Ajusta a imagem de fundo
-    justifyContent: 'center',
+    resizeMode: "cover", // Ajusta a imagem de fundo
+    justifyContent: "center",
   },
   container: {
-    flex: 0.5,
-    justifyContent: 'center',
+    flex: 1,
+    justifyContent: "center",
     paddingHorizontal: 30,
-    backgroundColor: 'black',
+    backgroundColor: "black",
   },
   container2: {
     flex: 1,
-    justifyContent: 'top',
+    justifyContent: "top",
     paddingHorizontal: 30,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)', // Fundo semi-transparente sobre a imagem
+    backgroundColor: "rgba(0, 0, 0, 0.6)", // Fundo semi-transparente sobre a imagem
   },
   title: {
     fontSize: 35,
-    fontWeight: 'bold',
-    color: '#FFF',
+    fontWeight: "bold",
+    color: "#FFF",
     marginBottom: 30,
-    textAlign: 'center',
+    textAlign: "center",
   },
   input: {
-    backgroundColor: '#333',
-    color: '#FFF',
+    backgroundColor: "#333",
+    color: "#FFF",
     borderRadius: 10,
     paddingVertical: 15,
     paddingHorizontal: 15,
@@ -184,69 +185,69 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   checkboxContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginBottom: 50,
-    alignItems: 'center'
+    alignItems: "center",
   },
   checkbox: {
-    alignSelf: 'center',
+    alignSelf: "center",
   },
   label: {
     margin: 10,
-    color: '#FFF',
+    color: "#FFF",
     fontSize: 16,
   },
   button: {
-    backgroundColor: '#FFD700',
+    backgroundColor: "#FFD700",
     borderRadius: 8,
     padding: 15,
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 40,
   },
   buttonText: {
-    color: '#000',
+    color: "#000",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   registerText: {
-    color: '#FFF',
+    color: "#FFF",
     marginBottom: 30,
   },
   highlight: {
-    color: '#FFD700',
+    color: "#FFD700",
   },
   orText: {
-    color: '#FFF',
+    color: "#FFF",
     marginBottom: 30,
-    textAlign: 'center',
+    textAlign: "center",
   },
   googleButton: {
-    backgroundColor: '#FFF',
+    backgroundColor: "#FFF",
     borderRadius: 10,
     padding: 15,
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 30,
   },
   googleButtonText: {
-    color: '#000',
+    color: "#000",
     fontSize: 16,
   },
   emailButton: {
-    backgroundColor: '#FFF',
+    backgroundColor: "#FFF",
     borderRadius: 10,
     padding: 15,
-    alignItems: 'center',
+    alignItems: "center",
   },
   emailButtonText: {
-    color: '#000',
+    color: "#000",
     fontSize: 16,
   },
   forgotPasswordText: {
-    color: '#FFF',
+    color: "#FFF",
     marginBottom: 20,
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: 16,
-    textDecorationLine: 'underline',
+    textDecorationLine: "underline",
   },
 });
 

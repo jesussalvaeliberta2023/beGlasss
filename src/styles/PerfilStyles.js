@@ -5,6 +5,38 @@ const styles = StyleSheet.create({
       flex: 1,
       backgroundColor: "#1c1b29",
     },
+
+    buttonSair: {
+      backgroundColor: '#20202c',  // Cor do botão
+      paddingVertical: 20,  // Altura do botão
+      paddingHorizontal: 20,  // Largura do botão
+      borderRadius: 10,  // Bordas arredondadas
+      margin: 10,  // Margem ao redor do botão
+      right: 150,  // Define a posição do botão 
+      top: -180,  // Ajuste a partir do topo do container
+    },
+    buttonEditar: {
+      backgroundColor: '#20202c',  // Cor do botão
+      paddingVertical: 20,  // Altura do botão
+      paddingHorizontal: 20,  // Largura do botão
+      borderRadius: 10,  // Bordas arredondadas
+      margin: 10,  // Margem ao redor do botão
+      left: 90,  // Define a posição do botão
+      top: -180,  // Alinhado na mesma altura que o outro botão
+      right: 20,  // Ajuste a partir da direita
+    },
+    
+
+    containerQ: {
+      flex: 1,  // Faz o container ocupar a tela toda
+      alignItems: 'center',  // Centraliza horizontalmente
+    },
+    square: {
+      width: 1500,  // Largura do quadrado
+      height: 130,  // Altura do quadrado (mesmo valor para ser um quadrado)
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',  // Cor semi-transparente (50%)
+      marginTop: 341, //posição do quadrado
+    },
   
     header: {
       flexDirection: "row",

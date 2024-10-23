@@ -1,4 +1,4 @@
-import {jwtDecode} from 'jwt-decode'
+import { jwtDecode } from "jwt-decode";
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -14,15 +14,16 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import IP_URL from "../components/IP";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Ionicons } from "@expo/vector-icons";
+import DrinksData from "../components/DrinksData";
 import axios from "axios";
-
 
 const Perfil = ({ route }) => {
   const username = route?.params?.username;
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [reviews, setReviews] = useState([]); 
+  const [reviews, setReviews] = useState([]);
 
   const navigation = useNavigation();
 
@@ -47,18 +48,25 @@ const Perfil = ({ route }) => {
         // Decodificar o token
         const decodedToken = jwtDecode(savedToken);
         console.log("Token decodificado:", decodedToken);
-        
+
         // Extrair o nome do usuário do token
-        const emailFromToken = decodedToken.email; 
-        const usernameFromToken = decodedToken.username; 
-        console.log("Nome de usuário e email do token:", usernameFromToken, emailFromToken);
+        const emailFromToken = decodedToken.email;
+        const usernameFromToken = decodedToken.username;
+        console.log(
+          "Nome de usuário e email do token:",
+          usernameFromToken,
+          emailFromToken
+        );
 
         // Buscar informações do usuário
-        const userResponse = await axios.get(`http://${IP_URL}:3000/perfil/${usernameFromToken}`, {
-          headers: {
-            Authorization: `Bearer ${savedToken}`,
-          },
-        });
+        const userResponse = await axios.get(
+          `http://${IP_URL}:3000/perfil/${usernameFromToken}`,
+          {
+            headers: {
+              Authorization: `Bearer ${savedToken}`,
+            },
+          }
+        );
 
         if (userResponse.status === 200) {
           setUser(userResponse.data); // Define os dados do usuário
@@ -67,15 +75,18 @@ const Perfil = ({ route }) => {
         }
 
         // Buscar as reviews do usuário
-        const reviewsResponse = await axios.get(`http://${IP_URL}:3000/reviews?autor=${usernameFromToken}`, {
-          headers: {
-            Authorization: `Bearer ${savedToken}`,
-          },
-        });
+        const reviewsResponse = await axios.get(
+          `http://${IP_URL}:3000/procurarReviews?autor=${usernameFromToken}`,
+          {
+            headers: {
+              Authorization: `Bearer ${savedToken}`,
+            },
+          }
+        );
 
         if (reviewsResponse.status === 200) {
-          setReviews(reviewsResponse.data[0]); // Define as reviews do usuário
-          console.log("Reviews recuperadas:", reviewsResponse.data[0]);
+          setReviews(reviewsResponse.data); // Define as reviews do usuário
+          console.log("Reviews recuperadas:", JSON.stringify(reviewsResponse.data, null, 2));
         } else {
           setError("Nenhuma review encontrada");
         }
@@ -105,19 +116,42 @@ const Perfil = ({ route }) => {
     }
   };
 
-  const renderReview = ({ item }) => (
-    <View style={styles.reviewCard}>
-      <Image source={{ uri: item.image }} style={styles.drinkImage} />
-      <View style={styles.reviewText}>
-        <Text style={styles.drinkTitle}>{item.autor}</Text>
-        <Text style={styles.rating}>Avaliação: {item.nota} ★★★☆☆</Text>
-        <Text style={styles.drinkText}>{item.comentario}</Text> 
+  const renderStarsReviews = (rating) => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      stars.push(
+        <Ionicons
+          key={i}
+          name={i <= rating ? "star" : "star-outline"}
+          size={13}
+          color="#FFD700"
+        />
+      );
+    }
+    return stars;
+  };
+
+  const renderReview = ({ item }) => {
+    // Encontrar o drink correspondente ao ID do produto
+
+    return (
+      <View style={styles.reviewCard}>
+        <Image
+          source={DrinksData[item.produto - 1].image}
+          style={styles.drinkImage}
+        />
+
+        <View style={styles.reviewText}>
+          <Text style={styles.drinkTitle}>{item.autor}</Text>
+          <View style={styles.ratingContainer}>
+            {renderStarsReviews(item.nota)}
+            {/* Renderiza as estrelas de acordo com a nota */}
+          </View>
+          <Text style={styles.drinkText}>{item.comentario}</Text>
+        </View>
       </View>
-    </View>
-  );
-
-
-  
+    );
+  };
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
@@ -138,8 +172,8 @@ const Perfil = ({ route }) => {
       </View>
 
       <View style={styles.feedbacks}>
-    
         <Text style={styles.sectionTitle}>Suas avaliações</Text>
+        {error && <Text style={styles.errorText}>{error}</Text>}
         <FlatList
           data={reviews}
           renderItem={renderReview}
@@ -147,7 +181,6 @@ const Perfil = ({ route }) => {
           style={styles.reviewList}
         />
       </View>
-
 
       <Button title="Voltar" onPress={() => navigation.goBack()} />
       <Button title="Sair" style={{ marginTop: 30 }} onPress={handleLogout} />
@@ -220,8 +253,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   drinkText: {
-    color: 'white'
-  }
+    color: "white",
+  },
+  errorText: {
+    color: "red",
+    textAlign: "center",
+    marginVertical: 10,
+  },
+  ratingContainer: {
+    flexDirection: "row", // Alinha as estrelas horizontalmente
+    marginVertical: 5, // Adiciona um espaço vertical
+  },
 });
 
 export default Perfil;

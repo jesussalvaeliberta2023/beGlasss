@@ -144,7 +144,7 @@ export default function Drinks() {
           />
           <Animated.View style={iconeAnimated}>
             <PressComponent
-              onPress={() => navigation.navigate("Login")}
+              onPress={() => navigation.navigate("Perfil")}
               source={require("../assets/images/Person.png")}
               styleI={styles.headerPerson}
             />

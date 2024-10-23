@@ -1,10 +1,23 @@
-import { View, Text, Image, StyleSheet, FlatList, ScrollView, Button, Alert, ActivityIndicator, Dimensions } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  FlatList,
+  ScrollView,
+  Button,
+  Alert,
+  ActivityIndicator,
+  Dimensions,
+  TouchableOpacity,
+} from "react-native";
 import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from "jwt-decode";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import styles from "../styles/PerfilStyles";
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 const Perfil2 = ({ route }) => {
   const username = route?.params?.username;
@@ -13,7 +26,7 @@ const Perfil2 = ({ route }) => {
   const [error, setError] = useState(null);
   const navigation = useNavigation();
 
-  const { width } = Dimensions.get('window'); // Correção
+  const { width } = Dimensions.get("window"); // Correção
 
   const handleLogout = async () => {
     try {
@@ -32,14 +45,16 @@ const Perfil2 = ({ route }) => {
       image: require("../assets/images/Drinks/Caipirinha.png"),
       drink: "Caipirinha",
       rating: 3.5,
-      review: "A caipirinha é refrescante e equilibrada, mas a qualidade da cachaça e a mistura dos ingredientes podem variar. Boa, mas pode melhorar.",
+      review:
+        "A caipirinha é refrescante e equilibrada, mas a qualidade da cachaça e a mistura dos ingredientes podem variar. Boa, mas pode melhorar.",
     },
     {
       id: "2",
       image: require("../assets/images/Drinks/Sangria.png"),
       drink: "Sangria",
       rating: 4,
-      review: "A sangria é uma opção saborosa e refrescante, mas pode ser um pouco doce para alguns paladares.",
+      review:
+        "A sangria é uma opção saborosa e refrescante, mas pode ser um pouco doce para alguns paladares.",
     },
   ];
 
@@ -48,7 +63,7 @@ const Perfil2 = ({ route }) => {
   //     <View>
   //       <Image source={item.image} style={styles.drinkImage} />
   //     </View>
-      
+
   //     <View style={styles.reviewTextContainer}>
   //       <View style={styles.titleAndRating}>
   //         <Text style={styles.drinkTitle}>{item.drink}</Text>
@@ -67,9 +82,28 @@ const Perfil2 = ({ route }) => {
           style={styles.profileImage}
         />
         <View style={styles.userInfo}>
-          <Text style={styles.userName}>{user ? user.username : "Carregando..."}</Text>
-          <Text style={styles.email}>{user ? user.email : "Carregando email..."}</Text>
+          <Text style={styles.userName}>
+            {user ? user.username : "Carregando..."}
+          </Text>
+          <Text style={styles.email}>
+            {user ? user.email : "Carregando email..."}
+          </Text>
           <Text style={styles.rating}>4.5 ★</Text>
+        </View>
+        <TouchableOpacity
+          style={styles.buttonSair}
+          onPress={() => Alert.alert("Botão Sair pressionado")}
+        ></TouchableOpacity>
+          <AntDesign name="doubleleft" size={24} color="white" />  {/* icone para botão sair */}
+          
+
+        <TouchableOpacity
+          style={styles.buttonEditar}
+          onPress={() => Alert.alert("Botão Editar pressionado")}
+        ></TouchableOpacity>
+
+        <View style={styles.containerQ}>
+          <View style={styles.square} />
         </View>
       </View>
 
@@ -83,23 +117,23 @@ const Perfil2 = ({ route }) => {
           <Text style={styles.sectionTitle}>Suas avaliações</Text>
           <ScrollView>
             {reviews.map((item) => (
-            <View key={item.id} style={styles.reviewCard}>
-              <View>
-                <Image source={item.image} style={styles.drinkImage} />
-              </View>
-      
-              <View style={styles.reviewTextContainer}>
-                <View style={styles.titleAndRating}>
-                  <Text style={styles.drinkTitle}>{item.drink}</Text>
-                  <Text style={styles.rating}>{item.rating} ★★★☆☆</Text>
+              <View key={item.id} style={styles.reviewCard}>
+                <View>
+                  <Image source={item.image} style={styles.drinkImage} />
                 </View>
-                <Text style={styles.textReview}>{item.review}</Text>
+
+                <View style={styles.reviewTextContainer}>
+                  <View style={styles.titleAndRating}>
+                    <Text style={styles.drinkTitle}>{item.drink}</Text>
+                    <Text style={styles.rating}>{item.rating} ★★★☆☆</Text>
+                  </View>
+                  <Text style={styles.textReview}>{item.review}</Text>
+                </View>
               </View>
-            </View>
             ))}
           </ScrollView>
         </View>
-        
+
         <View style={[styles.settings, { width }]}>
           <Text style={styles.sectionTitle}>Configurações</Text>
           <Text style={styles.text}>Idioma</Text>
