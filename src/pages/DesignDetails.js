@@ -21,6 +21,8 @@ export default function DesignDetails() {
     return <ActivityIndicator size="large" color="#fff" />;
   }
 
+  const { width } = Dimensions.get("window");
+
   return (
     <ImageBackground
       source={require("../assets/images/Drinks/Caipirinha.png")}
@@ -58,11 +60,8 @@ export default function DesignDetails() {
         </View>
 
         <View>
-          <Text style={{
-            color: "white",
-            
-          }}>
-            Igredients
+          <Text style={styles.titleOne}>
+            Ingredientes:
             </Text>
           <ScrollView horizontal>
             <View style={[{ marginStart: 25 }, styles.igredientsImages]}>
@@ -89,7 +88,7 @@ export default function DesignDetails() {
 
               <View style={styles.yellowPart}>
                 <Text style={styles.igredients}>Água com Gás</Text>
-                <Text style={styles.amount}>250ml</Text>
+                <Text style={styles.amount}>250 ml</Text>
               </View>
             </View>
 
@@ -122,6 +121,46 @@ export default function DesignDetails() {
             </View>
           </ScrollView>
         </View>
+
+        <View>
+          <ScrollView
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.scrollViewContainer}
+          >
+
+            <View style={[styles.feedbacks, { width }]}>
+              <Text style={styles.sectionTitle}>Suas avaliações</Text>
+              <ScrollView>
+                {reviews.map((item) => (
+                  <View key={item.id} style={styles.reviewCard}>
+                    <View>
+                      <Image source={item.image} style={styles.drinkImage} />
+                    </View>
+
+                    <View style={styles.reviewTextContainer}>
+                      <View style={styles.titleAndRating}>
+                        <Text style={styles.drinkTitle}>{item.drink}</Text>
+                        <Text style={styles.rating}>{item.rating} ★★★☆☆</Text>
+                      </View>
+                      <Text style={styles.textReview}>{item.review}</Text>
+                    </View>
+                  </View>
+                ))}
+              </ScrollView>
+            </View>
+
+        <View style={[styles.settings, { width }]}>
+          <Text style={styles.sectionTitle}>Configurações</Text>
+          <Text style={styles.text}>Idioma</Text>
+          <Text style={styles.text}>Trocar email</Text>
+          <Text style={styles.text}>Trocar senha</Text>
+          <Text style={styles.text}>Excluir conta</Text>
+        </View>
+      </ScrollView>
+      </View>
+
       </View>
     </ImageBackground>
   );
@@ -220,5 +259,13 @@ const styles = StyleSheet.create({
   amount: {
     fontSize: 13,
     marginStart: 7,
+  },
+
+  titleOne: {
+    color: "white",
+    fontSize: 25,
+    marginStart: 25,
+    marginBottom: 10,
+    fontFamily: "Belleza",
   },
 });

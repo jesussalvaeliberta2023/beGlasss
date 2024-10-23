@@ -9,12 +9,14 @@ import {
   SafeAreaView,
   Animated,
   TouchableOpacity,
+  Pressable,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import { FontAwesome } from "@expo/vector-icons";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import PressComponent from "../components/PressableComponent";
+import DrinksData from "../components/DrinksData";
 
 // Dados das bebidas com título e imagem
 const imagenes = [
@@ -32,6 +34,7 @@ const imagenes = [
 // Dimensões da tela
 const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
+const navigation = useNavigation
 
 // Constantes de layout
 const CONTAINER_WIDTH = width * 0.7;
@@ -61,7 +64,7 @@ function Backdrop({ scrollX }) {
   );
 }
 
-export default function Favorites() {
+export default function FavoritesBack() {
   const scrollX = React.useRef(new Animated.Value(0)).current;
   const navigation = useNavigation();
   const [selectedButton, setSelectedButton] = React.useState("l");
@@ -83,7 +86,7 @@ export default function Favorites() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar hidden />
-
+     
       <View style={styles.topBar}>
         <TouchableOpacity
           style={[styles.button, selectedButton === "coffee" && styles.selectedButton]}
@@ -117,7 +120,7 @@ export default function Favorites() {
         showsHorizontalScrollIndicator={false}
         horizontal={true}
         snapToAlignment="start"
-        contentContainerStyle={{ paddingTop: 150, paddingHorizontal: SPACE_CONTAINER }}
+        contentContainerStyle={{ paddingTop: 190, paddingHorizontal: SPACE_CONTAINER }}
         snapToInterval={CONTAINER_WIDTH}
         decelerationRate={0}
         scrollEventThrottle={16}
@@ -235,23 +238,23 @@ const styles = StyleSheet.create({
   },
 
   tabss: {
-    backgroundColor: "#00000090",
-    width: "60%",
+    backgroundColor: "#00000090", // cor com transparência
+    width: "90%", // aumenta a largura para cobrir mais a tela
     height: 70,
     position: "absolute",
-    bottom: "4%",
-    left: "15%",
+    bottom: "4%", // ajuste para garantir que fique no rodapé
+    left: "5%", // ajusta para centralizar a barra
     borderRadius: 20,
     alignItems: "center",
-    justifyContent: "space-around",
+    justifyContent: "space-around", // espaçamento igual entre os ícones
     flexDirection: "row",
-    paddingHorizontal: 20,
+    paddingHorizontal: 20, // adiciona padding interno
   },
 
   homeButton: {
-    width: 50,
+    width: 50, // ajusta o tamanho dos ícones
     height: 50,
-    marginHorizontal: 20,
+    marginHorizontal: 20, // espaçamento entre botões
     justifyContent: "center",
     alignItems: "center",
   },

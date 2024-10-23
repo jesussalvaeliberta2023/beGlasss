@@ -28,8 +28,7 @@ const LoginScreen = () => {
 
     try {
 
-      const response = await axios.post(`http://${IP_URL}:3000/login`, {
-        // [isEmailInput ? "email" : "username"]: usernameOrEmail, 
+      const response = await axios.post(`http://${IP_URL}:3000/login`, { 
         email: email,
         username: username,
         password: password,

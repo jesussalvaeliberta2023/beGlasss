@@ -13,6 +13,7 @@ import configuracoesPerfil from "./src/pages/configuracoesPerfil";
 import SignUp from "./src/pages/SignUp";
 import Testes from "./src/pages/Testes";
 import DesignDetails from "./src/pages/DesignDetails";
+import FavoritesBack from "./src/pages/FavoriteBack";
 
 const Stack = createNativeStackNavigator();
 
@@ -88,6 +89,11 @@ export default function App() {
        <Stack.Screen
          name="DesignDetails"
          component={DesignDetails}
+         options={{ headerShown: false }}
+       />
+       <Stack.Screen
+         name="FavoritesBack"
+         component={FavoritesBack}
          options={{ headerShown: false }}
        />
        

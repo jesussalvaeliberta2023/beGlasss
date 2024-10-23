@@ -17,7 +17,7 @@ import { jwtDecode } from "jwt-decode";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import styles from "../styles/PerfilStyles";
-import AntDesign from '@expo/vector-icons/AntDesign';
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 const Perfil2 = ({ route }) => {
   const username = route?.params?.username;
@@ -94,14 +94,12 @@ const Perfil2 = ({ route }) => {
           style={styles.buttonSair}
           onPress={() => Alert.alert("Botão Sair pressionado")}
         ></TouchableOpacity>
-          <AntDesign name="doubleleft" size={24} color="white" />  {/* icone para botão sair */}
-          
-
+        <AntDesign name="doubleleft" size={24} color="white" />{" "}
+        {/* icone para botão sair */}
         <TouchableOpacity
           style={styles.buttonEditar}
           onPress={() => Alert.alert("Botão Editar pressionado")}
         ></TouchableOpacity>
-
         <View style={styles.containerQ}>
           <View style={styles.square} />
         </View>
