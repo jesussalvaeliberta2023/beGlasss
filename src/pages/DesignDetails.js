@@ -8,9 +8,14 @@ import {
   ImageBackground,
   Image,
   ScrollView,
+  Dimensions,
 } from "react-native";
 import { useFonts } from "@expo-google-fonts/belleza";
 import PressComponent from "../components/PressableComponent";
+
+const format = (passos) => {
+  return passos.map((passo, index) => `${index + 1}. ${passo}`).join('\n');
+};
 
 export default function DesignDetails() {
   const [fontsLoaded] = useFonts({
@@ -23,145 +28,169 @@ export default function DesignDetails() {
 
   const { width } = Dimensions.get("window");
 
+  const reviews = [
+    {
+      id: "1",
+      image: require("../assets/images/Drinks/Caipirinha.png"),
+      drink: "Caipirinha",
+      rating: 3.5,
+      review:
+        "A caipirinha é refrescante e equilibrada, mas a qualidade da cachaça e a mistura dos ingredientes podem variar. Boa, mas pode melhorar.",
+    },
+    {
+      id: "2",
+      image: require("../assets/images/Drinks/Sangria.png"),
+      drink: "Sangria",
+      rating: 4,
+      review:
+        "A sangria é uma opção saborosa e refrescante, mas pode ser um pouco doce para alguns paladares.",
+    },
+  ];
+
+  const preparationMethod = [
+    "Corte o limão em 4 pedaços e retire o miolo branco; se preferir, retire a casca também.",
+    "Coloque o limão em um copo juntamente com o açúcar.",
+    "Macere os ingredientes, adicione o gelo, e complete com a água gaseificada.",
+    "Misture delicadamente, decore com uma rodela de limão e sirva.",
+  ];
+
   return (
     <ImageBackground
       source={require("../assets/images/Drinks/Caipirinha.png")}
       style={styles.background}
       blurRadius={10}
     >
-      <View style={styles.container}>
-        <StatusBar style="light" translucent />
-        <View style={styles.header}>
-          <PressComponent
-            onPress={() => navigation.navigate("Perfil", { token })}
-            source={require("../assets/images/Bars.png")}
-            styleI={styles.headerTab}
-          />
-          <PressComponent
-            onPress={() => navigation.navigate("Login")}
-            source={require("../assets/images/Person.png")}
-            styleI={styles.headerPerson}
-          />
-        </View>
+      <ScrollView>
+        <View style={styles.container}>
+          <StatusBar style="light" translucent />
+          <View style={styles.header}>
+            <PressComponent
+              onPress={() => navigation.navigate("Perfil", { token })}
+              source={require("../assets/images/Bars.png")}
+              styleI={styles.headerTab}
+            />
+            <PressComponent
+              onPress={() => navigation.navigate("Login")}
+              source={require("../assets/images/Person.png")}
+              styleI={styles.headerPerson}
+            />
+          </View>
 
-        <View style={styles.informations}>
-          <Text style={styles.drink}>Caipirinha</Text>
-          <Text style={styles.description}>
-            Uma versão sem álcool da mais famosa bebida brasileira.
-          </Text>
-          <Text style={styles.stars}>★★★☆☆</Text>
-        </View>
-
-        <View style={styles.imageView}>
-          <Image
-            source={require("../assets/images/Drinks/Caipirinha.png")}
-            style={styles.image}
-          />
-        </View>
-
-        <View>
-          <Text style={styles.titleOne}>
-            Ingredientes:
+          <View style={styles.informations}>
+            <Text style={styles.drink}>Caipirinha</Text>
+            <Text style={styles.description}>
+              Uma versão sem álcool da mais famosa bebida brasileira.
             </Text>
-          <ScrollView horizontal>
-            <View style={[{ marginStart: 25 }, styles.igredientsImages]}>
-              <View style={styles.darkPart}>
-                <Image
-                  source={require("../assets/images/Igredients/Lemon.png")}
-                  style={{ width: 140, height: 140 }}
-                />
+            <Text style={styles.stars}>★★★☆☆</Text>
+          </View>
+        
+          <View style={styles.imageView}>
+            <Image
+              source={require("../assets/images/Drinks/Caipirinha.png")}
+              style={styles.image}
+            />
+          </View>
+
+          <View>
+            <Text style={styles.titleOne}>
+              Ingredientes:
+              </Text>
+            <ScrollView horizontal>
+              <View style={[{ marginStart: 25 }, styles.igredientsImages]}>
+                <View style={styles.darkPart}>
+                  <Image
+                    source={require("../assets/images/Igredients/Lemon.png")}
+                    style={{ width: 140, height: 140 }}
+                  />
+                </View>
+
+                <View style={styles.yellowPart}>
+                  <Text style={styles.igredients}>Limão</Text>
+                  <Text style={styles.amount}>1</Text>
+                </View>
               </View>
 
-              <View style={styles.yellowPart}>
-                <Text style={styles.igredients}>Limão</Text>
-                <Text style={styles.amount}>1</Text>
-              </View>
-            </View>
+              <View style={styles.igredientsImages}>
+                <View style={styles.darkPart}>
+                  <Image
+                    source={require("../assets/images/Igredients/SparklingWater.png")}
+                    style={{ width: 140, height: 140 }}
+                  />
+                </View>
 
-            <View style={styles.igredientsImages}>
-              <View style={styles.darkPart}>
-                <Image
-                  source={require("../assets/images/Igredients/SparklingWater.png")}
-                  style={{ width: 140, height: 140 }}
-                />
-              </View>
-
-              <View style={styles.yellowPart}>
-                <Text style={styles.igredients}>Água com Gás</Text>
-                <Text style={styles.amount}>250 ml</Text>
-              </View>
-            </View>
-
-            <View style={styles.igredientsImages}>
-              <View style={styles.darkPart}>
-                <Image
-                  source={require("../assets/images/Igredients/Sugar.png")}
-                  style={{ width: 140, height: 140 }}
-                />
+                <View style={styles.yellowPart}>
+                  <Text style={styles.igredients}>Água com Gás</Text>
+                  <Text style={styles.amount}>250 ml</Text>
+                </View>
               </View>
 
-              <View style={styles.yellowPart}>
-                <Text style={styles.igredients}>Açúcar (à gosto)</Text>
-                <Text style={styles.amount}>1 colher de chá</Text>
+              <View style={styles.igredientsImages}>
+                <View style={styles.darkPart}>
+                  <Image
+                    source={require("../assets/images/Igredients/Sugar.png")}
+                    style={{ width: 140, height: 140 }}
+                  />
+                </View>
+
+                <View style={styles.yellowPart}>
+                  <Text style={styles.igredients}>Açúcar</Text>
+                  <Text style={styles.amount}>1 colher de chá</Text>
+                </View>
               </View>
-            </View>
 
-            <View style={[{ marginEnd: 25 }, styles.igredientsImages]}>
-              <View style={styles.darkPart}>
-                <Image
-                  source={require("../assets/images/Igredients/Ice.png")}
-                  style={{ width: 140, height: 140 }}
-                />
+              <View style={[{ marginEnd: 25 }, styles.igredientsImages]}>
+                <View style={styles.darkPart}>
+                  <Image
+                    source={require("../assets/images/Igredients/Ice.png")}
+                    style={{ width: 140, height: 140 }}
+                  />
+                </View>
+
+                <View style={styles.yellowPart}>
+                  <Text style={styles.igredients}>Gelo</Text>
+                  <Text style={styles.amount}>Quantidade que desejar</Text>
+                </View>
+              </View>
+            </ScrollView>
+          </View>
+
+          <View>
+            <ScrollView
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.scrollViewContainer}
+            >
+              <View style={[styles.settings, { width }]}>
+                <Text style={[styles.titleOne, {paddingTop: 20}]}>Modo de Preparo:</Text>
+                <Text style={styles.text}>{format(preparationMethod)}</Text>
               </View>
 
-              <View style={styles.yellowPart}>
-                <Text style={styles.igredients}>Gelo (à gosto)</Text>
-                <Text style={styles.amount}>Quantidade que desejar</Text>
-              </View>
-            </View>
-          </ScrollView>
-        </View>
-
-        <View>
-          <ScrollView
-            horizontal
-            pagingEnabled
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.scrollViewContainer}
-          >
-
-            <View style={[styles.feedbacks, { width }]}>
-              <Text style={styles.sectionTitle}>Suas avaliações</Text>
-              <ScrollView>
-                {reviews.map((item) => (
-                  <View key={item.id} style={styles.reviewCard}>
-                    <View>
-                      <Image source={item.image} style={styles.drinkImage} />
-                    </View>
-
-                    <View style={styles.reviewTextContainer}>
-                      <View style={styles.titleAndRating}>
-                        <Text style={styles.drinkTitle}>{item.drink}</Text>
-                        <Text style={styles.rating}>{item.rating} ★★★☆☆</Text>
+              <View style={[styles.feedbacks, { width }]}>
+                <Text style={styles.sectionTitle}>Suas avaliações</Text>
+                <ScrollView>
+                  {reviews.map((item) => (
+                    <View key={item.id} style={styles.reviewCard}>
+                      <View>
+                        <Image source={item.image} style={styles.drinkImage} />
                       </View>
-                      <Text style={styles.textReview}>{item.review}</Text>
-                    </View>
-                  </View>
-                ))}
-              </ScrollView>
-            </View>
 
-        <View style={[styles.settings, { width }]}>
-          <Text style={styles.sectionTitle}>Configurações</Text>
-          <Text style={styles.text}>Idioma</Text>
-          <Text style={styles.text}>Trocar email</Text>
-          <Text style={styles.text}>Trocar senha</Text>
-          <Text style={styles.text}>Excluir conta</Text>
+                      <View style={styles.reviewTextContainer}>
+                        <View style={styles.titleAndRating}>
+                          <Text style={styles.drinkTitle}>{item.drink}</Text>
+                          <Text style={styles.rating}>{item.rating} ★★★☆☆</Text>
+                        </View>
+                        <Text style={styles.textReview}>{item.review}</Text>
+                      </View>
+                    </View>
+                  ))}
+                </ScrollView>
+              </View>
+            </ScrollView>
+          </View>
+
         </View>
       </ScrollView>
-      </View>
-
-      </View>
     </ImageBackground>
   );
 }
@@ -267,5 +296,84 @@ const styles = StyleSheet.create({
     marginStart: 25,
     marginBottom: 10,
     fontFamily: "Belleza",
+  },
+
+  settings: {
+    borderRadius: 20,
+  },
+
+  text: {
+    fontSize: 15,
+    fontWeight: "bold",
+    backgroundColor: "#FFFFFF",
+  },
+
+
+
+
+
+  feedbacks: {
+    justifyContent: "center",
+    borderRadius: 20,
+  },
+
+  sectionTitle: {
+    color: "#fff",
+    fontSize: 11,
+    marginTop: 20,
+    marginBottom: 10,
+    paddingRight: 250,
+    color: "#ccc",
+    padding: 11,
+  },
+
+  reviewCard: {
+    width: "90%",  
+    marginHorizontal: "5%",  
+    flexDirection: "row",
+    alignItems: "flex-start",
+    borderRadius: 20,  
+    padding: 10,  
+    marginBottom: 20,  
+    backgroundColor: "#252239",
+  },
+
+  drinkImage: {
+    width: 90,  
+    height: 120,  
+    borderRadius: 10,  
+    marginRight: 15,  
+  },
+
+  reviewTextContainer: {
+    flex: 1,  
+    flexDirection: "column",
+  },
+
+  titleAndRating: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+
+  drinkTitle: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
+    flex: 1,
+  },
+
+  textReview: {
+    color: "#AFABAB",
+    textAlign: "justify",
+    marginTop: 5,
+  },
+
+
+
+  text: {
+    fontSize: 15,
+    fontWeight: "bold",
+    backgroundColor: "#FFFFFF",
   },
 });

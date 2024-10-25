@@ -81,7 +81,7 @@ const data = [
     characteristic: "Melancia Fizz",
     icon: require("../assets/images/HeartNaked.png"),
   },
-  { id: 11, image: require("../assets/images/Drinks/Frame.png") },
+  { image: require("../assets/images/Drinks/Frame.png") },
 ];
 
 export default function Drinks() {

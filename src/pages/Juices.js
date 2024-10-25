@@ -20,66 +20,66 @@ import Animated, {
 
 const data = [
   {
-    id: 23,
+    id: 21,
     image: require("../assets/images/Juices/GreenJuice.png"),
     characteristic: "Suco Verde",
     icon: require("../assets/images/HeartNaked.png"),
   },
   {
-    id: 24,
+    id: 22,
     image: require("../assets/images/Juices/OrangeCarrotJuice.png"),
     characteristic: "Suco de Laranja com Cenoura",
     icon: require("../assets/images/HeartNaked.png"),
   },
   {
-    id: 25,
+    id: 23,
     image: require("../assets/images/Juices/TropicalJuice.png"),
     characteristic: "Suco Tropical",
     icon: require("../assets/images/HeartNaked.png"),
   },
   {
-    id: 26,
+    id: 24,
     image: require("../assets/images/Juices/PineapplePassionJuice.png"),
     characteristic: "Suco de Abacaxi com Maracujá",
     icon: require("../assets/images/HeartNaked.png"),
   },
   {
-    id: 27,
+    id: 25,
     image: require("../assets/images/Juices/MangoRedJuice.png"),
     characteristic: "Suco de Vermelhas com Manga",
     icon: require("../assets/images/HeartNaked.png"),
   },
   {
-    id: 28,
+    id: 26,
     image: require("../assets/images/Juices/LemonTeaJuice.png"),
     characteristic: "Suco de Limão com Chá",
     icon: require("../assets/images/HeartNaked.png"),
   },
   {
-    id: 29,
+    id: 27,
     image: require("../assets/images/Juices/GrapeKiwiJuice.png"),
     characteristic: "Suco de Kiwi com Uva",
     icon: require("../assets/images/HeartNaked.png"),
   },
   {
-    id: 30,
+    id: 28,
     image: require("../assets/images/Juices/LemonBlackbarryJuice.png"),
     characteristic: "Suco de Limão com Amora",
     icon: require("../assets/images/HeartNaked.png"),
   },
   {
-    id: 31,
+    id: 29,
     image: require("../assets/images/Juices/PinkLemonJuice.png"),
     characteristic: "Pink Limonade",
     icon: require("../assets/images/HeartNaked.png"),
   },
   {
-    id: 32,
+    id: 30,
     image: require("../assets/images/Juices/DragonJuice.png"),
     characteristic: "Suco de Pitaia",
     icon: require("../assets/images/HeartNaked.png"),
   },
-  { id: 33, image: require("../assets/images/Juices/Frame.png") },
+  { image: require("../assets/images/Juices/Frame.png") },
 ];
 
 export default function Juices() {

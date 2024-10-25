@@ -86,7 +86,10 @@ const Perfil = ({ route }) => {
 
         if (reviewsResponse.status === 200) {
           setReviews(reviewsResponse.data); // Define as reviews do usuário
-          console.log("Reviews recuperadas:", JSON.stringify(reviewsResponse.data, null, 2));
+          console.log(
+            "Reviews recuperadas:",
+            JSON.stringify(reviewsResponse.data, null, 2)
+          );
         } else {
           setError("Nenhuma review encontrada");
         }
@@ -131,27 +134,33 @@ const Perfil = ({ route }) => {
     return stars;
   };
 
-  const renderReview = ({ item }) => {
-    // Encontrar o drink correspondente ao ID do produto
 
+  const renderReview = ({ item }) => {
+    // Define a imagem diretamente
+    const drinkImage = DrinksData[item.produto - 1]?.image;
+  
     return (
       <View style={styles.reviewCard}>
-        <Image
-          source={DrinksData[item.produto - 1].image}
-          style={styles.drinkImage}
-        />
-
+        {drinkImage ? (
+          <Image source={drinkImage} style={styles.drinkImage} />
+        ) : (
+          <Text style={styles.drinkText}>Imagem não disponível</Text>
+        )}
         <View style={styles.reviewText}>
           <Text style={styles.drinkTitle}>{item.autor}</Text>
           <View style={styles.ratingContainer}>
             {renderStarsReviews(item.nota)}
-            {/* Renderiza as estrelas de acordo com a nota */}
           </View>
           <Text style={styles.drinkText}>{item.comentario}</Text>
         </View>
       </View>
     );
   };
+  
+  
+  
+
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
