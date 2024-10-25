@@ -62,17 +62,24 @@ export default function Drink() {
     try {
       const savedToken = await AsyncStorage.getItem("userToken");
       if (!savedToken) {
-        console.log("Nenhum token encontrado. Não é possível verificar favoritos.");
+        console.log(
+          "Nenhum token encontrado. Não é possível verificar favoritos."
+        );
+        setIsChecked(false);
         return;
       }
-  
+
       const decodedToken = jwtDecode(savedToken);
       const userId = decodedToken.id;
-  
-      const response = await axios.get(`http://${IP_URL}:3000/favorites/${userId}/${id}`);
+
+      const response = await axios.get(
+        `http://${IP_URL}:3000/favorites/${userId}/${id}`
+      );
       setIsChecked(response.data.isFavorite); // Atualiza o estado do coração
+      console.log(isChecked);
     } catch (error) {
       console.error("Erro ao verificar o status de favorito", error);
+      console.log(id);
     }
   };
 
@@ -113,36 +120,30 @@ export default function Drink() {
 
   // Função para favoritar o produto
   const toggleFavorite = async () => {
+    const savedToken = await AsyncStorage.getItem("userToken");
+    if (!savedToken) {
+      console.error("Nenhum token encontrado. É necessário fazer login.");
+      return;
+    }
+
+    const decodedToken = jwtDecode(savedToken);
+    const userId = decodedToken.id;
+
+    // Se já está favoritado, abre o modal de confirmação
     if (isChecked) {
-      // Se o drink já está favoritado, abre o modal de confirmação para remoção
       setModalFavoriteVisible(true);
     } else {
-      // Se o drink não está favoritado, favoritar diretamente
+      // Caso contrário, favorita o produto
       try {
-        const savedToken = await AsyncStorage.getItem("userToken");
-        if (!savedToken) {
-          console.error("Nenhum token encontrado. É necessário fazer login.");
-          return;
-        }
+        const favoriteData = { userId, productId: id };
 
-        const decodedToken = jwtDecode(savedToken);
-        const userId = decodedToken.id; // Pega o ID do usuário do token
-
-        const favoriteData = {
-          userId, // ID do usuário
-          productId: id, // ID do drink
-        };
-
-        // Envia a requisição para favoritar
         await axios.post(`http://${IP_URL}:3000/favorites`, favoriteData, {
-          headers: {
-            Authorization: `Bearer ${savedToken}`,
-          },
+          headers: { Authorization: `Bearer ${savedToken}` },
         });
 
         console.log("Produto favoritado com sucesso");
-        setIsChecked(true); // Atualiza o estado do coração para preenchido
-        await AsyncStorage.setItem(`favorite_${id}`, "true"); // Armazena no AsyncStorage
+        setIsChecked(true); // Marca como favoritado
+        await AsyncStorage.setItem(`favorite_${id}`, "true");
       } catch (error) {
         console.error("Erro ao favoritar o produto", error);
       }
@@ -179,43 +180,64 @@ export default function Drink() {
 
   useEffect(() => {
     const fetchDrinkData = async () => {
-      if (id) {
-        setLoading(true);
-        try {
-          const response = await axios.get(
-            `http://${IP_URL}:3000/produtos/${id}`
-          );
-          setDrink(response.data);
-          await fetchReviews(); // Carrega as reviews associadas
-          await checkFavoriteStatus(); // Verifica se o drink está favoritado
-        } catch (error) {
-          console.error("Erro ao buscar dados da bebida:", error.response?.data || error.message);
-        }
-         finally {
-          setLoading(false);
-        }
-      } else {
+      setLoading(true);
+      try {
+        const response = await axios.get(
+          `http://${IP_URL}:3000/produtos/${id}`
+        );
+        setDrink(response.data);
+        await fetchReviews(); // Carrega as reviews associadas ao produto
+      } catch (error) {
+        console.error(
+          "Erro ao buscar dados da bebida:",
+          error.response?.data || error.message
+        );
+        setDrink(null); // Define drink como null em caso de erro
+      } finally {
         setLoading(false);
       }
     };
 
-    fetchDrinkData();
+    const checkFavoriteStatus = async () => {
+      const savedToken = await AsyncStorage.getItem("userToken");
+      const decodedToken = jwtDecode(savedToken);
+      const userId = decodedToken.id; // Pega o ID do usuário do token
+
+      try {
+        const response = await axios.get(
+          `http://${IP_URL}:3000/favorites/${userId}/${id}`
+        );
+        setIsChecked(response.data.isFavorite); // Define o status de favorito
+        console.log(response.data.isFavorite)
+      } catch (error) {
+        console.error(
+          "Erro ao verificar o status de favorito:",
+          error.response?.data || error.message
+        );
+      }
+    };
+
+    // Executa o fetchDrinkData e checkFavoriteStatus quando o ID está presente
+    if (id) {
+      fetchDrinkData(); // Carrega os dados da bebida
+      checkFavoriteStatus(); // Verifica o status de favorito
+    }
   }, [id]);
 
-
+  // Condicional de carregamento
   if (loading) {
     return (
-      <View style={{ justifyContent: "center", alignContent: "center" }}>
+      <View style={{ justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size="large" color="#0000ff" />
         <Text>Carregando</Text>
       </View>
     );
   }
 
+  // Condicional para erro de carregamento do produto
   if (!drink) {
     return <Text>Erro ao carregar o produto</Text>;
   }
-
   const renderStars = () => {
     const stars = [];
     for (let i = 1; i <= 5; i++) {

@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -10,6 +10,7 @@ import {
   Animated,
   TouchableOpacity,
 } from "react-native";
+import { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import { FontAwesome } from "@expo/vector-icons";
@@ -66,6 +67,18 @@ export default function Favorites() {
   const navigation = useNavigation();
   const [selectedButton, setSelectedButton] = React.useState("l");
 
+   const translateX = useSharedValue(0);
+
+  const textoAnimated = useAnimatedStyle(() => {
+    return { transform: [{ translateX: withSpring(translateX.value) }] };
+  });
+
+  const iconeAnimated = useAnimatedStyle(() => {
+    return { transform: [{ translateX: withSpring(-translateX.value) }] };
+  });
+
+
+
   const [liked, setLiked] = React.useState(
     imagenes.reduce((acc, item) => {
       acc[item.id] = false;
@@ -83,6 +96,30 @@ export default function Favorites() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar hidden />
+
+       {/* Cabeçalho com botões */}
+       <View style={styles.header}>
+          <PressComponent
+            onPress={() => navigation.navigate("Perfil", { token })}
+            source={require("../assets/images/Bars.png")}
+            styleI={styles.headerTab}
+          />
+          <View>
+            <PressComponent
+              onPress={() => navigation.navigate("Perfil")}
+              source={require("../assets/images/Person.png")}
+              styleI={styles.headerPerson}
+            />
+          </View>
+        </View>
+
+        {/* Título */}
+        <Text
+          style={[styles.choose]}
+        >
+          Favoritos
+        </Text>
+
 
       <View style={styles.topBar}>
         <TouchableOpacity
@@ -215,9 +252,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
-    marginTop: 40,
     paddingHorizontal: 20,
-    paddingTop: 100,
+    paddingTop: 40,
     zIndex: 2,
   },
 
@@ -261,5 +297,32 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: "center",
     alignItems: "center",
+  },
+  
+  header: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 0,
+    zIndex:2,
+  },
+
+  headerTab: {
+    marginLeft: 15,
+  },
+
+  headerPerson: {
+    width: 60,
+    height: 60,
+    marginRight: 15,
+  },
+
+  choose: {
+    color: "white",
+    width: "65%",
+    fontSize: 47,
+    //position: "absolute",
+    marginLeft: "4%",
+    zIndex:2,
   },
 });

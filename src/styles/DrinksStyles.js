@@ -51,28 +51,27 @@ const styles = StyleSheet.create({
     height: 70,
     position: "absolute",
     bottom: "4%",
-    left: "20%",
+    left: "15%",
     borderRadius: 20,
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-around",
     flexDirection: "row",
-  },
-
-  literlyButton: {
-    width: 24,
-    height: 24,
-    marginTop: -8,
+    paddingHorizontal: 20,
   },
 
   homeButton: {
-    width: "10%",
-    height: "14%",
-    marginRight: 65,
+    width: 50,
+    height: 50,
+    marginHorizontal: 20,
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   favsButton: {
-    width: "10%",
-    height: "14%",
+    width: 50,
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 

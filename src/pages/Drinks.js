@@ -6,11 +6,13 @@ import {
   StyleSheet,
   Alert,
   ActivityIndicator,
+  TouchableOpacity,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { CircularCarousel } from "../components/CircularCarousel/CircularCarousel";
 import { useFonts } from "@expo-google-fonts/belleza";
 import styles from "../styles/DrinksStyles";
+import { FontAwesome } from "@expo/vector-icons";
 import PressComponent from "../components/PressableComponent";
 import Animated, {
   useAnimatedStyle,
@@ -18,7 +20,6 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import { useRoute } from "@react-navigation/native";
-
 
 const data = [
   {
@@ -184,24 +185,30 @@ export default function Drinks() {
           fontFamily="Belleza"
         />
 
-        {/* Barra inferior de navegação */}
-        <View style={styles.tabss}>
-          <PressComponent
-            onPress={() => navigation.navigate("Home")}
-            source={require("../assets/images/HomeFilled.png")}
-            styleI={[styles.literlyButton, { marginTop: -9 }]}
-            styleP={styles.homeButton}
+        {/*Barra de navegação*/}
+      <View style={styles.tabss}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("Drinks")}
+          style={styles.homeButton}
+        >
+          <FontAwesome
+            name="home"
+            size={24}
+            color="#FFD700"
           />
-          <PressComponent
-            onPress={() => navigation.navigate("Favorites")}
-            source={require("../assets/images/HeartNaked.png")}
-            styleI={[
-              styles.literlyButton,
-              { marginTop: -11, tintColor: "#ffffff" },
-            ]}
-            styleP={styles.favsButton}
+        </TouchableOpacity>
+        
+        <TouchableOpacity
+          onPress={() => navigation.navigate("Favorites")}
+          style={styles.favsButton}
+        >
+          <FontAwesome
+            name="heart"
+            size={24}
+            color="#FFFFFF"
           />
-        </View>
+      </TouchableOpacity>
+      </View>
       </ImageBackground>
     </View>
   );

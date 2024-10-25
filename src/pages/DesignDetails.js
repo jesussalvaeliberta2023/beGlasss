@@ -14,12 +14,13 @@ import { useFonts } from "@expo-google-fonts/belleza";
 import PressComponent from "../components/PressableComponent";
 
 const format = (passos) => {
-  return passos.map((passo, index) => `${index + 1}. ${passo}`).join('\n');
+  return passos.map((passo, index) => `${index + 1}. ${passo}\n`).join('\n');
 };
 
 export default function DesignDetails() {
   const [fontsLoaded] = useFonts({
     Belleza: require("../assets/fonts/Belleza/Belleza-Regular.ttf"),
+    Montserrat: require("../assets/fonts/Montserrat/Montserrat-Regular.ttf")
   });
 
   if (!fontsLoaded) {
@@ -163,7 +164,7 @@ export default function DesignDetails() {
             >
               <View style={[styles.settings, { width }]}>
                 <Text style={[styles.titleOne, {paddingTop: 20}]}>Modo de Preparo:</Text>
-                <Text style={styles.text}>{format(preparationMethod)}</Text>
+                <Text style={styles.textMethod}>{format(preparationMethod)}</Text>
               </View>
 
               <View style={[styles.feedbacks, { width }]}>
@@ -299,13 +300,19 @@ const styles = StyleSheet.create({
   },
 
   settings: {
-    borderRadius: 20,
+    marginTop: 30,
+    borderTopEndRadius: 30,
+    borderTopLeftRadius: 30,
+    backgroundColor: "#2A2A3999",
   },
 
-  text: {
-    fontSize: 15,
-    fontWeight: "bold",
-    backgroundColor: "#FFFFFF",
+  textMethod: {
+    fontSize: 18,
+    color: "#FFFFFF",
+    fontFamily: "Montserrat",
+    marginStart: 25,
+    marginEnd: 25,
+    textAlign: "justify",
   },
 
 
@@ -367,13 +374,5 @@ const styles = StyleSheet.create({
     color: "#AFABAB",
     textAlign: "justify",
     marginTop: 5,
-  },
-
-
-
-  text: {
-    fontSize: 15,
-    fontWeight: "bold",
-    backgroundColor: "#FFFFFF",
   },
 });
