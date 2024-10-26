@@ -14,6 +14,8 @@ import SignUp from "./src/pages/SignUp";
 import Testes from "./src/pages/Testes";
 import DesignDetails from "./src/pages/DesignDetails";
 import FavoritesBack from "./src/pages/FavoriteBack";
+import EsqueciSenha from "./src/pages/EsqueciSenha";
+import ResetPasswordScreen from "./src/pages/ResetPasswordScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -96,6 +98,17 @@ export default function App() {
          component={FavoritesBack}
          options={{ headerShown: false }}
        />
+       <Stack.Screen
+         name="EsqueciSenha"
+         component={EsqueciSenha}
+         options={{ headerShown: false }}
+       />
+       <Stack.Screen
+         name="ResetSenha"
+         component={ResetPasswordScreen}
+         options={{ headerShown: false }}
+       />
+       
        
        
         

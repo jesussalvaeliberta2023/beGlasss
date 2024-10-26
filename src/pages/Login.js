@@ -93,7 +93,7 @@ const LoginScreen = () => {
       style={styles.background}
     >
       <View style={styles.container}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity onPress={() => navigation.navigate("Drinks")}>
           <View><Text style={{color: 'white'}}>Voltar</Text></View>
         </TouchableOpacity>
         <Text style={styles.title}>Entrar</Text>

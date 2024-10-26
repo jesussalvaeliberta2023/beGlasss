@@ -30,7 +30,9 @@ export default function CadastroScreen() {
   };
 
   const validateEmail = (email) => {
-    return email.endsWith("@gmail.com");
+    // Expressão regular para verificar se o e-mail é válido
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@(gmail\.com|hotmail\.com|gmx\.[a-z]{2,3})$/;
+    return emailPattern.test(email);
   };
 
   const validatePassword = (password) => {
@@ -239,4 +241,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
+  errorText: {
+    color: 'red',
+    fontSize: 15,
+    marginBottom: 10
+  }
 });

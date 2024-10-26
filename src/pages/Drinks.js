@@ -122,7 +122,7 @@ export default function Drinks() {
 
   return (
     <View style={styles.container}>
-      <StatusBar style="light" translucent />
+      <StatusBar style="light" backgroundColor="transparent" />
       <ImageBackground
         source={activeImage}
         style={StyleSheet.absoluteFillObject}

@@ -34,12 +34,21 @@ const Perfil = ({ route }) => {
         console.log("Token recuperado:", savedToken);
 
         if (!savedToken) {
-          navigation.goBack();
           console.log("Acesso Negado");
           Alert.alert(
-            "Acesso negado",
-            "Você deve realizar o login para poder entrar.",
-            [{ text: "OK", onPress: () => navigation.goBack() }]
+            'Acesso Negado', // Título do alerta
+            'Você deve realizar o login para poder entrar.', // Mensagem do alerta
+            [
+              {
+                text: 'Cancelar', // Botão de cancelamento
+                onPress: () => navigation.goBack(),
+                style: 'cancel',
+              },
+              {
+                text: 'OK', // Botão para ir ao login
+                onPress: () => navigation.navigate('Login'),
+              },
+            ]
           );
           setLoading(false);
           return;
@@ -86,19 +95,26 @@ const Perfil = ({ route }) => {
 
         if (reviewsResponse.status === 200) {
           setReviews(reviewsResponse.data); // Define as reviews do usuário
-          console.log(
-            "Reviews recuperadas:",
-            JSON.stringify(reviewsResponse.data, null, 2)
-          );
+          console.log("Reviews recuperadas:", JSON.stringify(reviewsResponse.data, null, 2));
         } else {
           setError("Nenhuma review encontrada");
         }
       } catch (error) {
-        console.error("Erro ao buscar o perfil:", error);
-        if (error.response?.status === 403 || error.response?.status === 401) {
-          setError("Sessão expirada, faça login novamente.");
+        if (__DEV__) {
+          console.error("Erro ao buscar o perfil:", error); // Log de erro apenas em desenvolvimento
+        }
+        if (error.response) {
+          if (error.response.status === 403 || error.response.status === 401) {
+            setError("Sessão expirada, faça login novamente.");
+          } else if (error.response.status === 404) {
+            setError("Usuário não encontrado.");
+          } else {
+            setError("Erro ao carregar o perfil. Tente novamente mais tarde.");
+          }
+        } else if (error.request) {
+          setError("Erro de rede. Verifique sua conexão.");
         } else {
-          setError("Erro ao carregar o perfil");
+          setError("Erro desconhecido. Tente novamente.");
         }
       } finally {
         setLoading(false);
@@ -162,7 +178,7 @@ const Perfil = ({ route }) => {
 
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.header}>
         <Image
           source={require("../assets/images/Drinks/PinaColada.png")}
@@ -191,9 +207,9 @@ const Perfil = ({ route }) => {
         />
       </View>
 
-      <Button title="Voltar" onPress={() => navigation.goBack()} />
+      <Button title="Voltar" onPress={() => navigation.navigate("Drinks")} />
       <Button title="Sair" style={{ marginTop: 30 }} onPress={handleLogout} />
-    </ScrollView>
+    </View>
   );
 };
 
