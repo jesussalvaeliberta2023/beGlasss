@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {
   View,
   StyleSheet,
@@ -9,23 +9,19 @@ import {
   Image,
   ScrollView,
   Dimensions,
+  Pressable,
 } from "react-native";
 import { useFonts } from "@expo-google-fonts/belleza";
 import PressComponent from "../components/PressableComponent";
-
-const format = (passos) => {
-  return passos.map((passo, index) => `${index + 1}. ${passo}\n`).join('\n');
-};
+import { useNavigation } from '@react-navigation/native';
 
 export default function DesignDetails() {
+  const navigation = useNavigation();
+
   const [fontsLoaded] = useFonts({
     Belleza: require("../assets/fonts/Belleza/Belleza-Regular.ttf"),
-    Montserrat: require("../assets/fonts/Montserrat/Montserrat-Regular.ttf")
+    Montserrat: require("../assets/fonts/Montserrat/Montserrat-Regular.ttf"),
   });
-
-  if (!fontsLoaded) {
-    return <ActivityIndicator size="large" color="#fff" />;
-  }
 
   const { width } = Dimensions.get("window");
 
@@ -47,13 +43,32 @@ export default function DesignDetails() {
         "A sangria é uma opção saborosa e refrescante, mas pode ser um pouco doce para alguns paladares.",
     },
   ];
-
+  
   const preparationMethod = [
     "Corte o limão em 4 pedaços e retire o miolo branco; se preferir, retire a casca também.",
     "Coloque o limão em um copo juntamente com o açúcar.",
     "Macere os ingredientes, adicione o gelo, e complete com a água gaseificada.",
     "Misture delicadamente, decore com uma rodela de limão e sirva.",
   ];
+
+  const [checkedSteps, setCheckedSteps] = useState(Array(preparationMethod.length).fill(false));
+
+  const toggleCheckbox = (index) => {
+    // console.log("Checkbox index:", index, "Current state:", checkedSteps[index]);
+    setCheckedSteps((prevCheckedSteps) => {
+      const updatedCheckedSteps = [...prevCheckedSteps];
+      updatedCheckedSteps[index] = !updatedCheckedSteps[index];
+      return updatedCheckedSteps;
+    });
+  };
+
+  if (!fontsLoaded) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#fff" />
+      </View>
+    );
+  }
 
   return (
     <ImageBackground
@@ -163,8 +178,23 @@ export default function DesignDetails() {
               contentContainerStyle={styles.scrollViewContainer}
             >
               <View style={[styles.settings, { width }]}>
-                <Text style={[styles.titleOne, {paddingTop: 20}]}>Modo de Preparo:</Text>
-                <Text style={styles.textMethod}>{format(preparationMethod)}</Text>
+                <Text style={styles.titleOne}>Modo de Preparo:</Text>
+                {preparationMethod.map((step, index) => (
+                  <View key={index} style={styles.stepContainer}>
+                    <Pressable
+                      onPress={() => toggleCheckbox(index)}
+                      style={checkedSteps[index] ? styles.checkedBox : styles.uncheckedBox}
+                    />
+                    <Text
+                      style={[
+                        styles.textMethod,
+                        checkedSteps[index] && { textDecorationLine: "line-through", color: "#888" }
+                      ]}
+                    >
+                      {`${index + 1}. ${step}`}
+                    </Text>
+                  </View>
+                ))}
               </View>
 
               <View style={[styles.feedbacks, { width }]}>
@@ -252,8 +282,8 @@ const styles = StyleSheet.create({
   },
 
   image: {
-    width: 400,
-    height: 400,
+    width: 350,
+    height: 350,
     borderRadius: 20,
   },
 
@@ -305,19 +335,6 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 30,
     backgroundColor: "#2A2A3999",
   },
-
-  textMethod: {
-    fontSize: 18,
-    color: "#FFFFFF",
-    fontFamily: "Montserrat",
-    marginStart: 25,
-    marginEnd: 25,
-    textAlign: "justify",
-  },
-
-
-
-
 
   feedbacks: {
     justifyContent: "center",
@@ -374,5 +391,41 @@ const styles = StyleSheet.create({
     color: "#AFABAB",
     textAlign: "justify",
     marginTop: 5,
+  },
+
+  stepContainer: {
+    marginTop: "20",
+    flexDirection: "row",
+    paddingHorizontal: 25,
+    marginVertical: 5,
+  },
+
+  textMethod: {
+    fontSize: 18,
+    color: "#FFFFFF",
+    fontFamily: "Montserrat",
+    marginStart: 25,
+    margiN: 25,
+    textAlign: "justify",
+  },
+
+  uncheckedBox: {
+    width: 20,
+    height: 20,
+    backgroundColor: "translucent",
+    borderColor: "#888888",
+    borderWidth: 2,
+    marginRight: 10,
+    marginTop: 6,
+  },
+
+  checkedBox: {
+    width: 20,
+    height: 20,
+    backgroundColor: "#888888",
+    borderColor: "#8888888",
+    borderWidth: 2,
+    marginRight: 10,
+    marginTop: 6,
   },
 });

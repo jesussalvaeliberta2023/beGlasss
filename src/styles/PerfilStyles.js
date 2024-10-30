@@ -5,7 +5,20 @@ const styles = StyleSheet.create({
       flex: 1,
       backgroundColor: "#1c1b29",
     },
-
+    buttonIdioma:{
+      backgroundColor: '#4c4a64', // Cor do botão
+      borderRadius:10, // Bordas arredondadas
+      padding: 15, // Margem dentro do botão
+      margin: 5,// Margem ao redor do botão
+    },
+    iconeSair: {
+      marginTop: -360,
+      right: 193,
+    },
+    iconeEditar: {
+      marginTop: -360,
+      left: 17,
+    },
     buttonSair: {
       backgroundColor: '#20202c',  // Cor do botão
       paddingVertical: 20,  // Altura do botão
@@ -21,9 +34,9 @@ const styles = StyleSheet.create({
       paddingHorizontal: 20,  // Largura do botão
       borderRadius: 10,  // Bordas arredondadas
       margin: 10,  // Margem ao redor do botão
-      left: 90,  // Define a posição do botão
+      left: 60,  // Define a posição do botão
       top: -180,  // Alinhado na mesma altura que o outro botão
-      right: 20,  // Ajuste a partir da direita
+      right: 40,  // Ajuste a partir da direita
     },
     
 
@@ -88,7 +101,7 @@ const styles = StyleSheet.create({
     sectionTitle: {
       color: "#fff",
       fontSize: 11,
-      marginTop: 20,
+      marginTop: 10,
       marginBottom: 10,
       paddingRight: 250,
       color: "#ccc",
@@ -138,15 +151,73 @@ const styles = StyleSheet.create({
     },
   
     settings: {
-      justifyContent: 'center',
-      alignItems: 'center',
       borderRadius: 20,
     },
   
     text: {
       fontSize: 15,
       fontWeight: 'bold',
-      backgroundColor: '#FFFFFF',
+      backgroundColor: '#4c4a64',
+      color: '#cfcfcf',
+      textAlign: 'left',
+    },
+
+
+    //Idioma
+    containerIII: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "#f8f9fa", // fundo suave para todo o layout
+      padding: 20,
+    },
+    languagesList: {
+      flex: 1,
+      backgroundColor: "#ffffff",
+      padding: 20,
+      marginVertical: 20,
+      borderRadius: 10,
+      borderColor: "#ddd",
+      borderWidth: 1,
+    },
+    languageButton: {
+      padding: 15,
+      backgroundColor: "#e0e0e0",
+      marginVertical: 5,
+      borderRadius: 5,
+      alignItems: "center",
+    },
+    lngName: {
+      fontSize: 18,
+      color: "#333333",
+    },
+    textModal: {
+      fontSize: 24,
+      fontWeight: "bold",
+      color: "#333333",
+      marginBottom: 20,
+    },
+    button: {
+      backgroundColor: "#6200ee",
+      padding: 15,
+      borderRadius: 8,
+      marginVertical: 10,
+      width: "80%",
+      alignItems: "center",
+    },
+    buttonText: {
+      color: "#ffffff",
+      fontSize: 18,
+      fontWeight: "600",
+    },
+    tabs: {
+      flexDirection: "row",
+      justifyContent: "space-around",
+      width: "100%",
+      paddingVertical: 10,
+      borderTopWidth: 1,
+      borderTopColor: "#cccccc",
+      backgroundColor: "#f8f8f8",
     },
 });
 

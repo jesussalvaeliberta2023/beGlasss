@@ -108,9 +108,6 @@ export default function App() {
          component={ResetPasswordScreen}
          options={{ headerShown: false }}
        />
-       
-       
-       
         
       </Stack.Navigator>
     </NavigationContainer>

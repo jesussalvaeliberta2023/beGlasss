@@ -114,14 +114,14 @@ const LoginScreen = () => {
           onChangeText={setPassword}
           secureTextEntry
         />
-      </View>  
-      <View style={styles.container2}>
+
         <View style={styles.checkboxContainer}>
           <TouchableOpacity onPress={toggleCheckbox}>
             <MaterialCommunityIcons name={isChecked ? 'checkbox-marked' : 'checkbox-blank-outline'} size={24} color="white" />
           </TouchableOpacity>
           <Text style={styles.label}>Manter-se conectado</Text>
         </View>
+
 
         <TouchableOpacity onPress={handleLogin} style={styles.button}>
           <Text style={styles.buttonText}>Entrar</Text>
@@ -141,6 +141,12 @@ const LoginScreen = () => {
 
         <TouchableOpacity onPress={toggleInputType} style={styles.emailButton}>
           <Text style={styles.emailButtonText}>
+            Continuar com Google
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={toggleInputType} style={styles.emailButton2}>
+          <Text style={styles.emailButtonText}>
             Continuar com {isEmailInput ? "Usuário" : "Email"}
           </Text>
         </TouchableOpacity>
@@ -159,37 +165,30 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     paddingHorizontal: 30,
-    backgroundColor: "black",
-  },
-  container2: {
-    flex: 1,
-    justifyContent: "top",
-    paddingHorizontal: 30,
     backgroundColor: "rgba(0, 0, 0, 0.6)", // Fundo semi-transparente sobre a imagem
   },
   title: {
     fontSize: 35,
-    fontWeight: "bold",
     color: "#FFF",
     marginBottom: 30,
-    textAlign: "center",
   },
   input: {
-    backgroundColor: "#333",
+    backgroundColor: "black",
     color: "#FFF",
     borderRadius: 10,
     paddingVertical: 15,
     paddingHorizontal: 15,
-    marginBottom: 30,
+    marginBottom: 20,
     fontSize: 16,
   },
   checkboxContainer: {
     flexDirection: "row",
-    marginBottom: 50,
+    marginBottom: 30,
     alignItems: "center",
+    justifyContent: "center",
   },
   checkbox: {
-    alignSelf: "center",
+    alignSelf: "top",
   },
   label: {
     margin: 10,
@@ -198,10 +197,11 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: "#FFD700",
-    borderRadius: 8,
+    borderTopLeftRadius: 15,
+    borderBottomRightRadius: 15,
     padding: 15,
     alignItems: "center",
-    marginBottom: 40,
+    marginBottom: 30,
   },
   buttonText: {
     color: "#000",
@@ -211,9 +211,10 @@ const styles = StyleSheet.create({
   registerText: {
     color: "#FFF",
     marginBottom: 30,
+    justifyContent: "center",
   },
   highlight: {
-    color: "#FFD700",
+    color: "#FFC700",
   },
   orText: {
     color: "#FFF",
@@ -236,6 +237,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 15,
     alignItems: "center",
+    marginBottom: 20,
+  },
+  emailButton2: {
+    backgroundColor: "#FFF",
+    borderRadius: 10,
+    padding: 15,
+    alignItems: "center",
   },
   emailButtonText: {
     color: "#000",
@@ -247,6 +255,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 16,
     textDecorationLine: "underline",
+    justifyContent: "center",
   },
 });
 

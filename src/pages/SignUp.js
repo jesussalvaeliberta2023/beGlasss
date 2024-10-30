@@ -90,7 +90,7 @@ export default function CadastroScreen() {
         <TextInput
           style={styles.input}
           placeholder="Nome de Usuário"
-          placeholderTextColor="#999"
+          placeholderTextColor="white"
           value={username}
           onChangeText={setUsername}
         />
@@ -98,26 +98,24 @@ export default function CadastroScreen() {
         <TextInput
           style={styles.input}
           placeholder="Email"
-          placeholderTextColor="#999"
+          placeholderTextColor="white"
           keyboardType="email-address"
           value={email}
           onChangeText={setEmail}
         />
-      </View>
-      <View style={styles.container2}>
         <TextInput
-          style={styles.input2}
+          style={styles.input}
           placeholder="Senha"
-          placeholderTextColor="#999"
+          placeholderTextColor="white"
           secureTextEntry={true}
           value={password}
           onChangeText={setPassword}
         />
 
         <TextInput
-          style={styles.input2}
+          style={styles.input}
           placeholder="Confirmar Senha"
-          placeholderTextColor="#999"
+          placeholderTextColor="white"
           secureTextEntry={true}
           value={confirmPassword}
           onChangeText={setConfirmPassword}
@@ -136,7 +134,7 @@ export default function CadastroScreen() {
             />
           </TouchableOpacity>
           <Text style={styles.label}>
-            Concordo com os termos de política e privacidade
+            Concordo com os termos de <Text style={styles.link}>política</Text> e <Text style={styles.link}>privacidade</Text>
           </Text>
         </View>
 
@@ -166,32 +164,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    paddingHorizontal: 20,
-    backgroundColor: "black",
-  },
-  container2: {
-    flex: 1,
-    justifyContent: "top",
-    paddingHorizontal: 20,
+    paddingHorizontal: 40,
     backgroundColor: "rgba(0, 0, 0, 0.6)", // Cor de fundo semitransparente para o conteúdo
   },
   title: {
     fontSize: 40,
-    fontWeight: "bold",
     color: "#fff",
     marginBottom: 30,
   },
   input: {
-    backgroundColor: "#222",
-    color: "#fff",
-    borderRadius: 10,
-    paddingVertical: 15,
-    paddingHorizontal: 10,
-    marginBottom: 20,
-    fontSize: 16,
-  },
-  input2: {
-    backgroundColor: "#222",
+    backgroundColor: "black",
     color: "#fff",
     borderRadius: 10,
     paddingVertical: 15,
@@ -205,12 +187,14 @@ const styles = StyleSheet.create({
     marginBottom: 50,
   },
   label: {
+    margin: 10,
     color: "#fff",
-    fontSize: 14,
+    fontSize: 16,
   },
   button: {
-    backgroundColor: "#FFC700",
-    borderRadius: 10,
+    backgroundColor: "#FFD700",
+    borderTopLeftRadius: 15,
+    borderBottomRightRadius: 15,
     paddingVertical: 15,
     alignItems: "center",
     marginBottom: 30,

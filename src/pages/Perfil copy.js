@@ -7,9 +7,12 @@ import {
   ScrollView,
   Button,
   Alert,
+  Modal,
   ActivityIndicator,
   Dimensions,
   TouchableOpacity,
+  SafeAreaView,
+  Pressable,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -17,7 +20,16 @@ import { jwtDecode } from "jwt-decode";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import styles from "../styles/PerfilStyles";
+//importando icones
 import AntDesign from "@expo/vector-icons/AntDesign";
+import Feather from "@expo/vector-icons/Feather";
+
+// O i18next serve para gerenciamento de internacionalização para acessar recursos de linguagem.
+import i18next, { languageResources } from "../services/i18next";
+//Hook da biblioteca react-i18next para tradução.
+import { useTranslation } from "react-i18next";
+// Importa uma lista de idiomas, contendo informações como nomes nativos dos idiomas.
+import languagesList from "../services/languagesList.json";
 
 const Perfil2 = ({ route }) => {
   const username = route?.params?.username;
@@ -25,6 +37,15 @@ const Perfil2 = ({ route }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigation = useNavigation();
+
+  const [visible, setVisible] = useState(false);
+  const { t } = useTranslation();
+
+  //changeLng: Função para alterar o idioma usando i18next. Recebe o código do idioma (lng), altera a linguagem e fecha o modal.
+  const changeLng = (lng) => {
+    i18next.changeLanguage(lng);
+    setVisible(false);
+  };
 
   const { width } = Dimensions.get("window"); // Correção
 
@@ -92,14 +113,26 @@ const Perfil2 = ({ route }) => {
         </View>
         <TouchableOpacity
           style={styles.buttonSair}
-          onPress={() => Alert.alert("Botão Sair pressionado")}
+          onPress={() => navigation.goBack()}
         ></TouchableOpacity>
-        <AntDesign name="doubleleft" size={24} color="white" />{" "}
         {/* icone para botão sair */}
+        <AntDesign
+          name="doubleleft"
+          size={24}
+          color="white"
+          style={styles.iconeSair}
+        />
+        {/* icone para botão editar */}
         <TouchableOpacity
           style={styles.buttonEditar}
           onPress={() => Alert.alert("Botão Editar pressionado")}
         ></TouchableOpacity>
+        <Feather
+          name="edit"
+          size={24}
+          color="white"
+          style={styles.iconeEditar}
+        />
         <View style={styles.containerQ}>
           <View style={styles.square} />
         </View>
@@ -134,15 +167,70 @@ const Perfil2 = ({ route }) => {
 
         <View style={[styles.settings, { width }]}>
           <Text style={styles.sectionTitle}>Configurações</Text>
-          <Text style={styles.text}>Idioma</Text>
-          <Text style={styles.text}>Trocar email</Text>
-          <Text style={styles.text}>Trocar senha</Text>
-          <Text style={styles.text}>Excluir conta</Text>
+          <View>
+            <TouchableOpacity
+              style={styles.buttonIdioma}
+              onPress={() => setVisible(true)}
+            >
+              <Text style={styles.text}>Idioma</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.buttonIdioma}
+              onPress={() => Alert.alert("Botão Trocar email pressionado!")}
+            >
+              <Text style={styles.text}>Alterar email</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.buttonIdioma}
+              onPress={() => Alert.alert("Botão Trocar senha pressionado!")}
+            >
+              <Text style={styles.text}>Alterar senha</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.buttonIdioma}
+              onPress={() => Alert.alert("Botão Excluir conta pressionado!")}
+            >
+              <Text style={styles.text}>Excluir conta</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.buttonIdioma}
+              onPress={handleLogout}
+            >
+              <Text style={styles.text}>Sair</Text>
+            </TouchableOpacity>
+
+            <SafeAreaView style={styles.containerIII}>
+              <Modal visible={visible} onRequestClose={() => setVisible(false)}>
+                <View style={styles.languagesList}>
+                  <FlatList
+                    // Lista de idiomas disponíveis. Usa Object.keys(languageResources) para obter a lista de chaves
+                    //(códigos dos idiomas) e renderItem para renderizar cada item
+                    data={Object.keys(languageResources)}
+                    renderItem={({ item }) => (
+                      <TouchableOpacity
+                        style={styles.languageButton}
+                        onPress={() => changeLng(item)}
+                      >
+                        <Text style={styles.lngName}>
+                          {languagesList[item].nativeName}
+                        </Text>
+                      </TouchableOpacity>
+                    )}
+                  />
+                </View>
+              </Modal>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => setVisible(true)}
+              >
+                {/* Text exibe texto traduzido usando o método t. */}
+                <Text style={styles.buttonText}>{t("change-language")}</Text>
+              </TouchableOpacity>
+              <View style={styles.tabs}></View>
+            </SafeAreaView>
+          </View>
         </View>
       </ScrollView>
-
-      <Button title="Voltar" onPress={() => navigation.goBack()} />
-      <Button title="Sair" onPress={handleLogout} />
     </ScrollView>
   );
 };
