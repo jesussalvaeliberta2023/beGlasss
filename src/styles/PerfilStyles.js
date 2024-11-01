@@ -219,6 +219,50 @@ const styles = StyleSheet.create({
       borderTopColor: "#cccccc",
       backgroundColor: "#f8f8f8",
     },
+
+  //Modal configuração
+
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // fundo semitransparente para destacar o modal
+  },
+  modalContent: {
+    width: "80%",
+    padding: 20,
+    backgroundColor: "#4c4a64",
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  modalText: {
+    fontSize: 12,
+    color: "#cfcfcf",
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  inputField: {
+    width: "100%",
+    padding: 10,
+    borderColor: "#ccc",
+    borderWidth: 1,
+    borderRadius: 5,
+    marginBottom: 20,
+  },
+  modalButton: {
+    backgroundColor: "#cfcfcf",
+    padding: 10,
+    width: "100%",
+    alignItems: "center",
+    marginTop: 10,
+    borderTopLeftRadius: 15,
+    borderBottomRightRadius: 15,
+  },
+  modalButtonText: {
+    color: "#4c4a64",
+    fontSize: 13,
+    fontWeight: "600",
+  },
 });
 
 export default styles;

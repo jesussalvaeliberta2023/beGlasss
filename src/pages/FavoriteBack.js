@@ -125,14 +125,13 @@ export default function FavoritesBack() {
     getUserFavorites();
   }, []);
 
-
   const filteredImages = imagenes.filter((img) =>
     favorites.some((fav) => fav.product_id === img.product_id)
   );
-  
+
   console.log("Favorites:", favorites);
   console.log("Filtered Images:", filteredImages);
-  
+
   const [liked, setLiked] = React.useState(
     imagenes.reduce((acc, item) => {
       acc[item.product_id] = false;
@@ -217,7 +216,7 @@ export default function FavoritesBack() {
       <Backdrop scrollX={scrollX} filteredImages={filteredImages} />
 
       <Animated.FlatList
-        data={filteredImages} 
+        data={filteredImages}
         keyExtractor={(item) => item.product_id.toString()}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { x: scrollX } } }],
@@ -328,10 +327,10 @@ const styles = StyleSheet.create({
   topBar: {
     flexDirection: "row",
     justifyContent: "space-around",
-    alignItems: "center",
-    marginTop: 40,
+    alignItems: "flex-start",
+    marginTop: 10,
     paddingHorizontal: 20,
-    paddingTop: 100,
+    paddingTop: 25,
     zIndex: 2,
   },
 
@@ -375,5 +374,30 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: "center",
     alignItems: "center",
+  },
+  header: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: 15,
+    zIndex:2,
+  },
+
+  headerTab: {
+    marginLeft: 15,
+  },
+
+  headerPerson: {
+    width: 60,
+    height: 60,
+  },
+
+  choose: {
+    color: "white",
+    width: "65%",
+    fontSize: 47,
+    //position: "absolute",
+    marginLeft: "4%",
+    zIndex: 2,
   },
 });

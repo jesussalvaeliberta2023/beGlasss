@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Pressable,
+  TextInput,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -39,9 +40,13 @@ const Perfil2 = ({ route }) => {
   const navigation = useNavigation();
 
   const [visible, setVisible] = useState(false);
+  const [emailModalVisible, setEmailModalVisible] = useState(false);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [newEmail, setNewEmail] = useState("");
+  const [senha, setSenha] = useState("");
   const { t } = useTranslation();
 
-  //changeLng: Função para alterar o idioma usando i18next. Recebe o código do idioma (lng), altera a linguagem e fecha o modal.
+  // Função para alterar o idioma usando i18next
   const changeLng = (lng) => {
     i18next.changeLanguage(lng);
     setVisible(false);
@@ -58,6 +63,17 @@ const Perfil2 = ({ route }) => {
       console.error("Erro ao tentar fazer logout:", error);
       Alert.alert("Erro", "Não foi possível desconectar.");
     }
+  };
+
+  const handleEmailChange = () => {
+    // Função para salvar o novo email aqui
+    setEmailModalVisible(false);
+    Alert.alert("Sucesso", "Email alterado com sucesso!");
+  };
+
+  const handleAccountDeletion = () => {
+    setDeleteModalVisible(false);
+    navigation.goBack();
   };
 
   const reviews = [
@@ -79,22 +95,6 @@ const Perfil2 = ({ route }) => {
     },
   ];
 
-  // const renderReview = ({ item }) => (
-  //   <View key={item.id} style={styles.reviewCard}>
-  //     <View>
-  //       <Image source={item.image} style={styles.drinkImage} />
-  //     </View>
-
-  //     <View style={styles.reviewTextContainer}>
-  //       <View style={styles.titleAndRating}>
-  //         <Text style={styles.drinkTitle}>{item.drink}</Text>
-  //         <Text style={styles.rating}>{item.rating} ★★★☆☆</Text>
-  //       </View>
-  //       <Text style={styles.textReview}>{item.review}</Text>
-  //     </View>
-  //   </View>
-  // );
-
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
@@ -115,14 +115,12 @@ const Perfil2 = ({ route }) => {
           style={styles.buttonSair}
           onPress={() => navigation.goBack()}
         ></TouchableOpacity>
-        {/* icone para botão sair */}
         <AntDesign
           name="doubleleft"
           size={24}
           color="white"
           style={styles.iconeSair}
         />
-        {/* icone para botão editar */}
         <TouchableOpacity
           style={styles.buttonEditar}
           onPress={() => Alert.alert("Botão Editar pressionado")}
@@ -152,7 +150,6 @@ const Perfil2 = ({ route }) => {
                 <View>
                   <Image source={item.image} style={styles.drinkImage} />
                 </View>
-
                 <View style={styles.reviewTextContainer}>
                   <View style={styles.titleAndRating}>
                     <Text style={styles.drinkTitle}>{item.drink}</Text>
@@ -176,7 +173,7 @@ const Perfil2 = ({ route }) => {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.buttonIdioma}
-              onPress={() => Alert.alert("Botão Trocar email pressionado!")}
+              onPress={() => setEmailModalVisible(true)}
             >
               <Text style={styles.text}>Alterar email</Text>
             </TouchableOpacity>
@@ -188,7 +185,7 @@ const Perfil2 = ({ route }) => {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.buttonIdioma}
-              onPress={() => Alert.alert("Botão Excluir conta pressionado!")}
+              onPress={() => setDeleteModalVisible(true)}
             >
               <Text style={styles.text}>Excluir conta</Text>
             </TouchableOpacity>
@@ -203,8 +200,6 @@ const Perfil2 = ({ route }) => {
               <Modal visible={visible} onRequestClose={() => setVisible(false)}>
                 <View style={styles.languagesList}>
                   <FlatList
-                    // Lista de idiomas disponíveis. Usa Object.keys(languageResources) para obter a lista de chaves
-                    //(códigos dos idiomas) e renderItem para renderizar cada item
                     data={Object.keys(languageResources)}
                     renderItem={({ item }) => (
                       <TouchableOpacity
@@ -219,14 +214,61 @@ const Perfil2 = ({ route }) => {
                   />
                 </View>
               </Modal>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => setVisible(true)}
+
+              {/* Modal para Alterar Email */}
+              <Modal
+                visible={emailModalVisible}
+                transparent
+                onRequestClose={() => setEmailModalVisible(false)}
               >
-                {/* Text exibe texto traduzido usando o método t. */}
-                <Text style={styles.buttonText}>{t("change-language")}</Text>
-              </TouchableOpacity>
-              <View style={styles.tabs}></View>
+                <View style={styles.modalContainer}>
+                  <View style={styles.modalContent}>
+                    <Text style={styles.modalText}>Novo endereço de email:</Text>
+                    <TextInput
+                      style={styles.inputField}
+                      placeholder="Digite aqui..."
+                      placeholderTextColor= "#afabab"
+                      value={newEmail}
+                      onChangeText={setNewEmail}
+                    />
+                    <Text style={styles.modalText}>Senha:</Text>
+                    <TextInput
+                      style={styles.inputField}
+                      placeholder="Digite aqui..."
+                      placeholderTextColor= "#afabab"
+                      value={senha}
+                      onChangeText={setSenha}
+                    />
+                    <TouchableOpacity
+                      style={styles.modalButton}
+                      onPress={handleEmailChange1}
+                    >
+                      <Text style={styles.modalButtonText}>Concluído</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </Modal>
+
+              {/* Modal para Excluir Conta */}
+              <Modal
+                visible={deleteModalVisible}
+                transparent
+                onRequestClose={() => setDeleteModalVisible(false)}
+              >
+                <View style={styles.modalContainer}>
+                  <View style={styles.modalContent}>
+                    <Text style={styles.modalText}>
+                      Tem certeza que deseja excluir a conta?
+                    </Text>
+                    <TouchableOpacity
+                      style={styles.modalButton}
+                      onPress={handleAccountDeletion}
+                    >
+                      <Text style={styles.modalButtonText}>Confirmar</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </Modal>
             </SafeAreaView>
           </View>
         </View>

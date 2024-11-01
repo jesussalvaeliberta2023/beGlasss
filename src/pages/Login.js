@@ -12,6 +12,8 @@ import {
   ImageBackground,
 } from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import Fontisto from '@expo/vector-icons/Fontisto';
+
 
 const LoginScreen = () => {
   const [usernameOrEmail, setUsernameOrEmail] = useState(""); // Alterado para usernameOrEmail
@@ -127,7 +129,7 @@ const LoginScreen = () => {
           <Text style={styles.buttonText}>Entrar</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
+        <TouchableOpacity onPress={() => navigation.navigate("SignUp")} style={styles.btnCadastrar}>
           <Text style={styles.registerText}>
             Não tenho uma conta! <Text style={styles.highlight}>Cadastrar</Text>
           </Text>
@@ -145,11 +147,13 @@ const LoginScreen = () => {
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={toggleInputType} style={styles.emailButton2}>
-          <Text style={styles.emailButtonText}>
-            Continuar com {isEmailInput ? "Usuário" : "Email"}
-          </Text>
-        </TouchableOpacity>
+        <TouchableOpacity onPress={toggleInputType} style={[styles.emailButton2, { flexDirection: 'row', alignItems: 'center' }]}>
+  <Fontisto name="email" size={30} color="black" style={{ marginRight: 40 }} />
+  <Text style={styles.emailButtonText}>
+    Continuar com {isEmailInput ? "Usuário" : "Email"}
+  </Text>
+</TouchableOpacity>
+
       </View>
     </ImageBackground>
   );
@@ -164,8 +168,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
+    alignContent: 'center',
     paddingHorizontal: 30,
-    backgroundColor: "rgba(0, 0, 0, 0.6)", // Fundo semi-transparente sobre a imagem
+    backgroundColor: 'rgba(80, 48, 30, 0.3)'
+    
   },
   title: {
     fontSize: 35,
@@ -210,8 +216,6 @@ const styles = StyleSheet.create({
   },
   registerText: {
     color: "#FFF",
-    marginBottom: 30,
-    justifyContent: "center",
   },
   highlight: {
     color: "#FFC700",
@@ -257,6 +261,12 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
     justifyContent: "center",
   },
+
+  btnCadastrar:{
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingBottom: 30,
+  }
 });
 
 export default LoginScreen;

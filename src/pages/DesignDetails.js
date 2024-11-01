@@ -28,16 +28,16 @@ export default function DesignDetails() {
   const reviews = [
     {
       id: "1",
-      image: require("../assets/images/Drinks/Caipirinha.png"),
-      drink: "Caipirinha",
+      image: require("../assets/images/Persons/Person1.png"),
+      name: "Douglas Alencar",
       rating: 3.5,
       review:
         "A caipirinha é refrescante e equilibrada, mas a qualidade da cachaça e a mistura dos ingredientes podem variar. Boa, mas pode melhorar.",
     },
     {
       id: "2",
-      image: require("../assets/images/Drinks/Sangria.png"),
-      drink: "Sangria",
+      image: require("../assets/images/Persons/Person2.png"),
+      name: "Luísa Andrade",
       rating: 4,
       review:
         "A sangria é uma opção saborosa e refrescante, mas pode ser um pouco doce para alguns paladares.",
@@ -178,7 +178,7 @@ export default function DesignDetails() {
               contentContainerStyle={styles.scrollViewContainer}
             >
               <View style={[styles.settings, { width }]}>
-                <Text style={styles.titleOne}>Modo de Preparo:</Text>
+                <Text style={[styles.titleOne, {fontSize: 20,}]}>Modo de Preparo:</Text>
                 {preparationMethod.map((step, index) => (
                   <View key={index} style={styles.stepContainer}>
                     <Pressable
@@ -198,7 +198,7 @@ export default function DesignDetails() {
               </View>
 
               <View style={[styles.feedbacks, { width }]}>
-                <Text style={styles.sectionTitle}>Suas avaliações</Text>
+                <Text style={[styles.titleOne, {fontSize: 20,}]}>Suas avaliações</Text>
                 <ScrollView>
                   {reviews.map((item) => (
                     <View key={item.id} style={styles.reviewCard}>
@@ -208,8 +208,16 @@ export default function DesignDetails() {
 
                       <View style={styles.reviewTextContainer}>
                         <View style={styles.titleAndRating}>
-                          <Text style={styles.drinkTitle}>{item.drink}</Text>
-                          <Text style={styles.rating}>{item.rating} ★★★☆☆</Text>
+                          <Text style={styles.drinkTitle}>
+                            {item.name.charAt(0).toUpperCase() + item.name.slice(1)}
+                          </Text>
+                          <View style={styles.ratingContainer}>
+                            {Array.from({ length: 5 }).map((_, index) => (
+                              <Text key={index} style={index < item.rating ? styles.starFilled : styles.starEmpty}>
+                                ★
+                              </Text>
+                            ))}
+                          </View>
                         </View>
                         <Text style={styles.textReview}>{item.review}</Text>
                       </View>
@@ -217,6 +225,7 @@ export default function DesignDetails() {
                   ))}
                 </ScrollView>
               </View>
+
             </ScrollView>
           </View>
 
@@ -330,15 +339,17 @@ const styles = StyleSheet.create({
   },
 
   settings: {
+    padding: 25,
     marginTop: 30,
-    borderTopEndRadius: 30,
     borderTopLeftRadius: 30,
     backgroundColor: "#2A2A3999",
   },
 
   feedbacks: {
     justifyContent: "center",
-    borderRadius: 20,
+    marginTop: 30,
+    borderTopEndRadius: 30,
+    backgroundColor: "#2A2A3999",
   },
 
   sectionTitle: {
@@ -359,14 +370,28 @@ const styles = StyleSheet.create({
     borderRadius: 20,  
     padding: 10,  
     marginBottom: 20,  
-    backgroundColor: "#252239",
+    backgroundColor: "#20202C",
   },
 
   drinkImage: {
-    width: 90,  
-    height: 120,  
-    borderRadius: 10,  
-    marginRight: 15,  
+    width: 45,
+    height: 45,
+    borderRadius: 45,
+    marginRight: 15,
+  },
+
+  ratingContainer: {
+    flexDirection: "row",
+  },
+  
+  starFilled: {
+    color: "#FFD700",
+    fontSize: 14,
+  },
+  
+  starEmpty: {
+    color: "#555",
+    fontSize: 14,
   },
 
   reviewTextContainer: {
@@ -401,11 +426,11 @@ const styles = StyleSheet.create({
   },
 
   textMethod: {
-    fontSize: 18,
+    fontSize: 14,
     color: "#FFFFFF",
     fontFamily: "Montserrat",
-    marginStart: 25,
-    margiN: 25,
+    marginStart: 0,
+    margiN: 0,
     textAlign: "justify",
   },
 
@@ -429,3 +454,86 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
 });
+
+              // <View style={[styles.feedbacks, { width }]}>
+              //   <Text style={styles.sectionTitle}>Suas avaliações</Text>
+              //   <ScrollView>
+              //     {reviews.map((item) => (
+              //       <View key={item.id} style={styles.reviewCard}>
+              //         <View>
+              //           <Image source={item.image} style={styles.drinkImage} />
+              //         </View>
+
+              //         <View style={styles.reviewTextContainer}>
+              //           <View style={styles.titleAndRating}>
+              //             <Text style={styles.drinkTitle}>{item.name}</Text>
+              //             <Text style={styles.rating}>{item.rating} ★★★☆☆</Text>
+              //           </View>
+              //           <Text style={styles.textReview}>{item.review}</Text>
+              //         </View>
+              //       </View>
+              //     ))}
+              //   </ScrollView>
+              // </View>
+
+              // feedbacks: {
+              //   justifyContent: "center",
+              //   borderRadius: 20,
+              // },
+
+              // sectionTitle: {
+              //   color: "#fff",
+              //   fontSize: 11,
+              //   marginTop: 20,
+              //   marginBottom: 10,
+              //   paddingRight: 250,
+              //   color: "#ccc",
+              //   padding: 11,
+              // },
+
+              // reviewCard: {
+              //   width: "90%",  
+              //   marginHorizontal: "5%",  
+              //   flexDirection: "row",
+              //   alignItems: "flex-start",
+              //   borderRadius: 20,  
+              //   padding: 10,  
+              //   marginBottom: 20,  
+              //   backgroundColor: "#252239",
+              // },
+
+              // drinkImage: {
+              //   width: 90,  
+              //   height: 120,  
+              //   borderRadius: 10,  
+              //   marginRight: 15,  
+              // },
+
+              // reviewTextContainer: {
+              //   flex: 1,  
+              //   flexDirection: "column",
+              // },
+            
+              // titleAndRating: {
+              //   flexDirection: "row",
+              //   justifyContent: "space-between",
+              //   alignItems: "center",
+              // },
+            
+              // drinkTitle: {
+              //   color: "#fff",
+              //   fontWeight: "bold",
+              //   fontSize: 16,
+              //   flex: 1,
+              // },
+            
+              // textReview: {
+              //   color: "#AFABAB",
+              //   textAlign: "justify",
+              //   marginTop: 5,
+              // },
+
+          
+              
+              
+              

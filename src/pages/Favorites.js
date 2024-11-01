@@ -154,9 +154,9 @@ export default function Favorites() {
         showsHorizontalScrollIndicator={false}
         horizontal={true}
         snapToAlignment="start"
-        contentContainerStyle={{ paddingTop: 150, paddingHorizontal: SPACE_CONTAINER }}
+        contentContainerStyle={{ paddingTop: 110, paddingHorizontal: SPACE_CONTAINER }}
         snapToInterval={CONTAINER_WIDTH}
-        decelerationRate={0}
+        decelerationRate={0}s
         scrollEventThrottle={16}
         data={imagenes}
         keyExtractor={(item) => item.id}
