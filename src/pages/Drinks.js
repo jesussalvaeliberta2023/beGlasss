@@ -145,7 +145,7 @@ export default function Drinks() {
           />
           <Animated.View style={iconeAnimated}>
             <PressComponent
-              onPress={() => navigation.navigate("Perfil")}
+              onPress={() => navigation.navigate("Perfil2")}
               source={require("../assets/images/Person.png")}
               styleI={styles.headerPerson}
             />
@@ -199,7 +199,7 @@ export default function Drinks() {
         </TouchableOpacity>
         
         <TouchableOpacity
-          onPress={() => navigation.navigate("Favorites")}
+          onPress={() => navigation.navigate("FavoritesBack")}
           style={styles.favsButton}
         >
           <FontAwesome

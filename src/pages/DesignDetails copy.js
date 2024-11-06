@@ -1,4 +1,5 @@
-import React, {useState} from "react";
+import { jwtDecode } from "jwt-decode";
+import React, {useState, useEffect} from "react";
 import {
   View,
   StyleSheet,
@@ -12,47 +13,284 @@ import {
   Pressable,
   Alert,
 } from "react-native";
-import { useFonts, } from "@expo-google-fonts/belleza";
+import { useFonts } from "@expo-google-fonts/belleza";
 
 import PressComponent from "../components/PressableComponent";
-import { useNavigation } from '@react-navigation/native';
+// Navegação
+import { useNavigation } from "@react-navigation/native";
+import { useRoute } from "@react-navigation/native";
 
-export default function DesignDetails() {
+// Back-End
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import IP_URL from "../components/IP";
+import axios from "axios";
+
+// Ícones
+import { Ionicons } from "@expo/vector-icons";
+import AntDesign from "@expo/vector-icons/AntDesign";
+
+
+export default function DesignDetails2() {
+// Constantes de Estado
+const [drink, setDrink] = useState(null);
+const [loading, setLoading] = useState(true);
+const [modalCommentVisible, setModalCommentVisible] = useState(false);
+const [modalFavoriteVisible, setModalFavoriteVisible] = useState(false);
+const [comment, setComment] = useState("");
+const [rating, setRating] = useState(0);
+const [isChecked, setIsChecked] = useState(false);
+const [averageRating, setAverageRating] = useState(0); // Média das avaliações
+
+
+
+  const route = useRoute();
   const navigation = useNavigation();
-
+  const { id, image } = route.params || {};
   const [fontsLoaded] = useFonts({
     Belleza: require("@expo-google-fonts/belleza"),
   });
 
+  
+ // Função para buscar notas do produto
+ const fetchReviews = async () => {
+  try {
+    const response = await axios.get(`http://${IP_URL}:3000/notas/${id}`);
+    if (response.data) {
+      setAverageRating(Math.round(response.data.mediaNota));
+    }
+  } catch (error) {
+    console.error("Erro ao buscar reviews", error);
+  }
+};
+
+// Função para verificar se o produto está favoritado
+const checkFavoriteStatus = async () => {
+  try {
+    const savedToken = await AsyncStorage.getItem("userToken");
+    if (!savedToken) {
+      console.log(
+        "Nenhum token encontrado. Não é possível verificar favoritos."
+      );
+      setIsChecked(false);
+      return;
+    }
+
+    const decodedToken = jwtDecode(savedToken);
+    const userId = decodedToken.id;
+
+    const response = await axios.get(
+      `http://${IP_URL}:3000/favorites/${userId}/${id}`
+    );
+    setIsChecked(response.data.isFavorite); // Atualiza o estado do coração
+    console.log(isChecked);
+  } catch (error) {
+    console.error("Erro ao verificar o status de favorito", error);
+    console.log(id);
+  }
+};
+
+// Função para enviar review
+const submitReview = async () => {
+  try {
+    const savedToken = await AsyncStorage.getItem("userToken");
+    if (!savedToken) {
+      console.error("Nenhum token encontrado. É necessário fazer login.");
+      return;
+    }
+
+    const decodedToken = jwtDecode(savedToken);
+    const usernameFromToken = decodedToken.username;
+
+    const reviewData = {
+      autor: usernameFromToken,
+      produto: id,
+      comentario: comment,
+      nota: rating,
+    };
+
+    await axios.post(`http://${IP_URL}:3000/reviews`, reviewData, {
+      headers: {
+        Authorization: `Bearer ${savedToken}`,
+      },
+    });
+
+    console.log("Review enviada com sucesso");
+    setModalCommentVisible(false);
+    setComment("");
+    setRating(0);
+    fetchReviews(); // Atualiza a média após enviar a review
+  } catch (error) {
+    console.error("Erro ao enviar a review", error);
+  }
+};
+
+// Função para favoritar o produto
+const toggleFavorite = async () => {
+  const savedToken = await AsyncStorage.getItem("userToken");
+  if (!savedToken) {
+    console.error("Nenhum token encontrado. É necessário fazer login.");
+    return;
+  }
+
+  const decodedToken = jwtDecode(savedToken);
+  const userId = decodedToken.id;
+
+  // Se já está favoritado, abre o modal de confirmação
+  if (isChecked) {
+    setModalFavoriteVisible(true);
+  } else {
+    // Caso contrário, favorita o produto
+    try {
+      const favoriteData = { userId, productId: id };
+
+      await axios.post(`http://${IP_URL}:3000/favorites`, favoriteData, {
+        headers: { Authorization: `Bearer ${savedToken}` },
+      });
+
+      console.log("Produto favoritado com sucesso");
+      setIsChecked(true); // Marca como favoritado
+      await AsyncStorage.setItem(`favorite_${id}`, "true");
+    } catch (error) {
+      console.error("Erro ao favoritar o produto", error);
+    }
+  }
+};
+
+// Função para remover o favorito
+const removeFavorite = async () => {
+  try {
+    const savedToken = await AsyncStorage.getItem("userToken");
+    if (!savedToken) {
+      console.error("Nenhum token encontrado. É necessário fazer login.");
+      return;
+    }
+
+    const decodedToken = jwtDecode(savedToken);
+    const userId = decodedToken.id; // Pega o ID do usuário do token
+
+    await axios.delete(`http://${IP_URL}:3000/favorites`, {
+      data: { userId, productId: id }, // Envia o ID do usuário e do produto
+      headers: {
+        Authorization: `Bearer ${savedToken}`,
+      },
+    });
+
+    console.log("Produto removido dos favoritos com sucesso");
+    setIsChecked(false); // Atualiza o estado do coração para vazio
+    await AsyncStorage.removeItem(`favorite_${id}`); // Remove do AsyncStorage
+    setModalFavoriteVisible(false); // Fecha o modal após a remoção
+  } catch (error) {
+    console.error("Erro ao remover o produto dos favoritos", error);
+  }
+};
+
+useEffect(() => {
+  const fetchDrinkData = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `http://${IP_URL}:3000/produtos/${id}`
+      );
+      setDrink(response.data);
+      await fetchReviews(); // Carrega as reviews associadas ao produto
+    } catch (error) {
+      console.error(
+        "Erro ao buscar dados da bebida:",
+        error.response?.data || error.message
+      );
+      setDrink(null); // Define drink como null em caso de erro
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const checkFavoriteStatus = async () => {
+    const savedToken = await AsyncStorage.getItem("userToken");
+    const decodedToken = jwtDecode(savedToken);
+    const userId = decodedToken.id; // Pega o ID do usuário do token
+
+    try {
+      const response = await axios.get(
+        `http://${IP_URL}:3000/favorites/${userId}/${id}`
+      );
+      setIsChecked(response.data.isFavorite); // Define o status de favorito
+      console.log(response.data.isFavorite)
+    } catch (error) {
+      console.error(
+        "Erro ao verificar o status de favorito:",
+        error.response?.data || error.message
+      );
+    }
+  };
+
+  // Executa o fetchDrinkData e checkFavoriteStatus quando o ID está presente
+  if (id) {
+    fetchDrinkData(); // Carrega os dados da bebida
+    checkFavoriteStatus(); // Verifica o status de favorito
+  }
+}, [id]);
+
+// Condicional de carregamento
+if (loading) {
+  return (
+    <View style={{ justifyContent: "center", alignItems: "center" }}>
+      <ActivityIndicator size="large" color="#0000ff" />
+      <Text>Carregando</Text>
+    </View>
+  );
+}
+
+// Condicional para erro de carregamento do produto
+if (!drink) {
+  return <Text>Erro ao carregar o produto</Text>;
+}
+const renderStars = () => {
+  const stars = [];
+  for (let i = 1; i <= 5; i++) {
+    stars.push(
+      <Pressable key={i} onPress={() => setRating(i)}>
+        <Ionicons
+          name={i <= rating ? "star" : "star-outline"}
+          size={30}
+          color="#FFD700"
+        />
+      </Pressable>
+    );
+  }
+  return stars;
+};
+
+const renderStarsReviews = () => {
+  const stars = [];
+  for (let i = 1; i <= 5; i++) {
+    stars.push(
+      <Ionicons
+        key={i}
+        name={i <= averageRating ? "star" : "star-outline"}
+        size={30}
+        color="#FFD700"
+      />
+    );
+  }
+  return stars;
+};
+
+  
+
   const { width } = Dimensions.get("window");
 
   const reviews = [
-    {
-      id: "1",
-      image: require("../assets/images/Persons/Person1.png"),
-      name: "Douglas Alencar",
-      rating: 3.5,
-      review:
-        "A caipirinha é refrescante e equilibrada, mas a qualidade da cachaça e a mistura dos ingredientes podem variar. Boa, mas pode melhorar.",
-    },
-    {
-      id: "2",
-      image: require("../assets/images/Persons/Person2.png"),
-      name: "Luísa Andrade",
-      rating: 4,
-      review:
-        "A sangria é uma opção saborosa e refrescante, mas pode ser um pouco doce para alguns paladares.",
-    },
+   
   ];
   
-  const preparationMethod = [
-    "Corte o limão em 4 pedaços e retire o miolo branco; se preferir, retire a casca também.",
-    "Coloque o limão em um copo juntamente com o açúcar.",
-    "Macere os ingredientes, adicione o gelo, e complete com a água gaseificada.",
-    "Misture delicadamente, decore com uma rodela de limão e sirva.",
-  ];
+  // const preparationMethod = [
+  //   "Corte o limão em 4 pedaços e retire o miolo branco; se preferir, retire a casca também.",
+  //   "Coloque o limão em um copo juntamente com o açúcar.",
+  //   "Macere os ingredientes, adicione o gelo, e complete com a água gaseificada.",
+  //   "Misture delicadamente, decore com uma rodela de limão e sirva.",
+  // ];
 
-  const [checkedSteps, setCheckedSteps] = useState(Array(preparationMethod.length).fill(false));
+ 
 
   const toggleCheckbox = (index) => {
     // console.log("Checkbox index:", index, "Current state:", checkedSteps[index]);
@@ -74,7 +312,7 @@ export default function DesignDetails() {
 
   return (
     <ImageBackground
-      source={require("../assets/images/Drinks/Caipirinha.png")}
+      source={image}
       style={styles.background}
       blurRadius={10}
     >
@@ -83,7 +321,7 @@ export default function DesignDetails() {
           <StatusBar style="light" translucent />
           <View style={styles.header}>
             <PressComponent
-              onPress={() => navigation.navigate("Perfil", { token })}
+              onPress={() => navigation.goBack()}
               source={require("../assets/images/Bars.png")}
               styleI={styles.headerTab}
             />
@@ -95,16 +333,16 @@ export default function DesignDetails() {
           </View>
 
           <View style={styles.informations}>
-            <Text style={styles.drink}>Caipirinha</Text>
+            <Text style={styles.drink}>{drink.name}</Text>
             <Text style={styles.description}>
-              Uma versão sem álcool da mais famosa bebida brasileira.
+              {drink.description}
             </Text>
             <Text style={styles.stars}>★★★☆☆</Text>
           </View>
         
           <View style={styles.imageView}>
             <Image
-              source={require("../assets/images/Drinks/Caipirinha.png")}
+              source={image}
               style={styles.image}
             />
           </View>
@@ -180,7 +418,7 @@ export default function DesignDetails() {
               contentContainerStyle={styles.scrollViewContainer}
             >
               <View style={[styles.settings, { width }]}>
-                <Text style={[styles.titleOne, {fontSize: 20,}]}>Modo de Preparo:</Text>
+                {/* <Text style={[styles.titleOne, {fontSize: 20,}]}>Modo de Preparo:</Text>
                 {preparationMethod.map((step, index) => (
                   <View key={index} style={styles.stepContainer}>
                     <Pressable
@@ -196,7 +434,7 @@ export default function DesignDetails() {
                       {`${index + 1}. ${step}`}
                     </Text>
                   </View>
-                ))}
+                ))} */}
               </View>
 
               <View style={[styles.feedbacks, { width }]}>

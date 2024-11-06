@@ -16,6 +16,7 @@ import DesignDetails from "./src/pages/DesignDetails";
 import FavoritesBack from "./src/pages/FavoriteBack";
 import EsqueciSenha from "./src/pages/EsqueciSenha";
 import ResetPasswordScreen from "./src/pages/ResetPasswordScreen";
+import DesignDetails2 from "./src/pages/DesignDetails copy";
 
 const Stack = createNativeStackNavigator();
 
@@ -91,6 +92,11 @@ export default function App() {
        <Stack.Screen
          name="DesignDetails"
          component={DesignDetails}
+         options={{ headerShown: false }}
+       />
+       <Stack.Screen
+         name="DesignDetails2"
+         component={DesignDetails2}
          options={{ headerShown: false }}
        />
        <Stack.Screen

@@ -169,7 +169,12 @@ export default function FavoritesBack() {
       {/* Título */}
       <Text style={[styles.choose]}>Favoritos</Text>
 
-      <View style={styles.topBar}>
+
+
+      
+
+
+       <View style={styles.topBar}>
         <TouchableOpacity
           style={[
             styles.button,
@@ -348,23 +353,23 @@ const styles = StyleSheet.create({
   },
 
   tabss: {
-    backgroundColor: "#00000090", // cor com transparência
-    width: "90%", // aumenta a largura para cobrir mais a tela
+    backgroundColor: "#00000090", 
+    width: "90%", 
     height: 70,
     position: "absolute",
-    bottom: "4%", // ajuste para garantir que fique no rodapé
-    left: "5%", // ajusta para centralizar a barra
+    bottom: "4%", 
+    left: "5%", 
     borderRadius: 20,
     alignItems: "center",
-    justifyContent: "space-around", // espaçamento igual entre os ícones
+    justifyContent: "space-around", 
     flexDirection: "row",
-    paddingHorizontal: 20, // adiciona padding interno
+    paddingHorizontal: 20, 
   },
 
   homeButton: {
-    width: 50, // ajusta o tamanho dos ícones
+    width: 50, 
     height: 50,
-    marginHorizontal: 20, // espaçamento entre botões
+    marginHorizontal: 20,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -385,6 +390,20 @@ const styles = StyleSheet.create({
 
   headerTab: {
     marginLeft: 15,
+  },
+
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 20,
+  },
+
+  emptyMessage: {
+    fontSize: 18,
+    color: "#333",
+    textAlign: "center",
+    marginTop: 20,
   },
 
   headerPerson: {

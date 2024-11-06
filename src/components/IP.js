@@ -1,3 +1,3 @@
-const IP_URL = "10.144.170.55";
+const IP_URL = "192.168.101.192";
 
 export default IP_URL
