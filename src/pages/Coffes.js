@@ -131,8 +131,8 @@ export default function Coffes() {
           }}
         />
 
-           {/* Cabeçalho com botões */}
-           <View style={styles.header}>
+        {/* Cabeçalho com botões */}
+        <View style={styles.header}>
           <PressComponent
             onPress={() => navigation.navigate("Perfil", { token })}
             source={require("../assets/images/Bars.png")}
@@ -140,7 +140,7 @@ export default function Coffes() {
           />
           <Animated.View style={iconeAnimated}>
             <PressComponent
-              onPress={() => navigation.navigate("Perfil2")}
+              onPress={() => navigation.navigate("Perfil")}
               source={require("../assets/images/Person.png")}
               styleI={styles.headerPerson}
             />
@@ -177,8 +177,8 @@ export default function Coffes() {
           fontFamily="Belleza"
         />
 
-         {/*Barra de navegação*/}
-         <View style={styles.tabss}>
+        {/*Barra de navegação*/}
+        <View style={styles.tabss}>
           <TouchableOpacity
             onPress={() => navigation.navigate("Drinks")}
             style={styles.homeButton}

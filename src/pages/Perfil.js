@@ -30,7 +30,7 @@ import Feather from "@expo/vector-icons/Feather";
 const Perfil = ({}) => {
   const [user, setUser] = useState(null);
   const [reviews, setReviews] = useState([]);
-  const [foto, setFoto] = useState(null); // Estado para a foto selecionada
+  const [foto, setFoto] = useState(""); // Estado para a foto selecionada
   const [modalVisible, setModalVisible] = useState(false); // Controle do modal
   const [emailModalVisible, setEmailModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
@@ -56,11 +56,6 @@ const Perfil = ({}) => {
   const handleAccountDeletion = () => {
     setDeleteModalVisible(false);
     navigation.goBack();
-  };
-
-  // Função para fechar o modal
-  const closeModal = () => {
-    setModalVisible(false);
   };
 
   // Função para solicitar permissões para acessar a galeria
@@ -89,21 +84,72 @@ const Perfil = ({}) => {
 
     if (!result.cancelled) {
       console.log("Imagem selecionada:", result.assets[0]);
-      setFoto(result.assets[0].uri); // Armazena a URI da imagem selecionada
+      setFoto(result.assets[0].uri); // Armazena a URI da imagem
       closeModal(); // Fecha o modal após a seleção
+
+      // Chama a função para enviar a imagem logo após a seleção
+      enviarImagem(result.assets[0].uri);
     } else {
       console.log("Usuário cancelou a seleção");
     }
   };
 
+  const enviarImagem = async (imageUri) => {
+    if (!imageUri) {
+      Alert.alert("Erro", "Por favor, selecione uma imagem.");
+      return;
+    }
+  
+    const formData = new FormData();
+  
+    // Obtenha o tipo do arquivo (extensão) a partir da URI da imagem
+    const uriParts = imageUri.split('.');
+    const fileType = uriParts[uriParts.length - 1]; // Obtém o tipo do arquivo da extensão
+  
+    // Cria um objeto para a imagem a ser enviada no FormData
+    formData.append("foto", {
+      uri: imageUri, // Agora usa a URI correta
+      name: `photo.${fileType}`,
+      type: `image/${fileType}`,
+    });
+  
+    try {
+      const savedToken = await AsyncStorage.getItem("userToken");
+      const response = await fetch(`http://${IP_URL}:3000/upload`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${savedToken}`, // Adiciona o token de autenticação, se necessário
+          // O 'Content-Type' será definido automaticamente pelo 'fetch' quando usar o FormData
+        },
+        body: formData, // Envia os dados como FormData
+      });
+  
+      const data = await response.json();
+      if (data.message) {
+        Alert.alert("Sucesso", data.message);
+      } else {
+        Alert.alert("Erro", "Erro ao enviar imagem");
+      }
+    } catch (error) {
+      console.log("Erro ao enviar imagem:", error);
+      Alert.alert("Erro", "Erro ao enviar a imagem.");
+    }
+  };
+  
+  
+  
+
+  // Função para fechar o modal
+  const closeModal = () => setModalVisible(false);
+
   useEffect(() => {
     const fetchUser = async () => {
       setLoading(true); // Inicia o carregamento
-  
+
       try {
         const savedToken = await AsyncStorage.getItem("userToken"); // Recupera o token
         console.log("Token recuperado:", savedToken);
-  
+
         if (!savedToken) {
           console.log("Acesso Negado");
           Alert.alert(
@@ -123,14 +169,14 @@ const Perfil = ({}) => {
           );
           return; // Sai da função sem alterar `loading`
         }
-  
+
         // Decodificar e usar o token
         const decodedToken = jwtDecode(savedToken);
         console.log("Token decodificado:", decodedToken);
-  
+
         const usernameFromToken = decodedToken.username;
         console.log("Nome de usuário do token:", usernameFromToken);
-  
+
         // Fetch dados do usuário
         const userResponse = await axios.get(
           `http://${IP_URL}:3000/perfil/${usernameFromToken}`,
@@ -138,13 +184,13 @@ const Perfil = ({}) => {
             headers: { Authorization: `Bearer ${savedToken}` },
           }
         );
-  
+
         if (userResponse.status === 200) {
           setUser(userResponse.data);
         } else {
           setError("Usuário não encontrado");
         }
-  
+
         // Fetch reviews do usuário
         const reviewsResponse = await axios.get(
           `http://${IP_URL}:3000/procurarReviews?autor=${usernameFromToken}`,
@@ -152,7 +198,7 @@ const Perfil = ({}) => {
             headers: { Authorization: `Bearer ${savedToken}` },
           }
         );
-  
+
         if (reviewsResponse.status === 200) {
           setReviews(reviewsResponse.data);
         } else {
@@ -160,7 +206,7 @@ const Perfil = ({}) => {
         }
       } catch (error) {
         if (__DEV__) console.error("Erro ao buscar o perfil:", error);
-  
+
         // Tratamento de erros de token
         if (error.response) {
           if (error.response.status === 403 || error.response.status === 401) {
@@ -184,10 +230,9 @@ const Perfil = ({}) => {
         setLoading(false); // Fim do carregamento após `try-catch`
       }
     };
-  
+
     fetchUser();
   }, []);
-  
 
   const handleLogout = async () => {
     try {
@@ -327,49 +372,50 @@ const Perfil = ({}) => {
         </ScrollView>
       </View>
 
-
-     {/* Modal para Alterar Email */}
-<Modal
-  visible={emailModalVisible}
-  transparent
-  onRequestClose={() => setEmailModalVisible(false)}
->
-  <View style={styles.modalContainer}>
-    <View style={styles.modalContent}>
-      <Text style={styles.modalTitle}>Alterar Email</Text>
-
-      <Text style={styles.modalLabel}>Seu email atual</Text>
-      
-      <Text style={styles.modalCurrentEmail}>ameinda.ferraez@gmail.com</Text>
-
-      <Text style={styles.modalLabel}>Novo endereço de email:</Text>
-      <TextInput
-        style={styles.inputField}
-        placeholder="Digite o novo email..."
-        placeholderTextColor="#afabab"
-        value={newEmail}
-        onChangeText={setNewEmail}
-      />
-
-      <Text style={styles.modalLabel}>Senha:</Text>
-      <TextInput
-        style={styles.inputField}
-        placeholder="Digite sua senha..."
-        placeholderTextColor="#afabab"
-        secureTextEntry
-        value={senha}
-        onChangeText={setSenha}
-      />
-
-      <TouchableOpacity
-        style={styles.modalButton}
-        onPress={handleEmailChange}
+      {/* Modal para Alterar Email */}
+      <Modal
+        visible={emailModalVisible}
+        transparent
+        onRequestClose={() => setEmailModalVisible(false)}
       >
-        <Text style={styles.modalButtonText}>Concluir</Text>
-      </TouchableOpacity>
-    </View>
-  </View>
-</Modal>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Alterar Email</Text>
+
+            <Text style={styles.modalLabel}>Seu email atual</Text>
+
+            <Text style={styles.modalCurrentEmail}>
+              ameinda.ferraez@gmail.com
+            </Text>
+
+            <Text style={styles.modalLabel}>Novo endereço de email:</Text>
+            <TextInput
+              style={styles.inputField}
+              placeholder="Digite o novo email..."
+              placeholderTextColor="#afabab"
+              value={newEmail}
+              onChangeText={setNewEmail}
+            />
+
+            <Text style={styles.modalLabel}>Senha:</Text>
+            <TextInput
+              style={styles.inputField}
+              placeholder="Digite sua senha..."
+              placeholderTextColor="#afabab"
+              secureTextEntry
+              value={senha}
+              onChangeText={setSenha}
+            />
+
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={handleEmailChange}
+            >
+              <Text style={styles.modalButtonText}>Concluir</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
 
       {/* Modal para selecionar a imagem */}
       <Modal

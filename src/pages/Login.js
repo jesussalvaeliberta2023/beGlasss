@@ -113,21 +113,21 @@ const LoginScreen = () => {
         <Text style={styles.title}>Entrar</Text>
 
         <TextInput
-          style={styles.input}
-          placeholder={isEmailInput ? "Email" : "Usuário"} // Muda conforme a opção selecionada
-          placeholderTextColor="#888"
-          value={isEmailInput ? email : username} // Exibe o valor de acordo com o tipo
-          onChangeText={(text) => {
-            // Se o texto parece ser um email, use o setEmail, senão use setUsername
-            if (text.includes("@")) {
-              setIsEmailInput(true); // Marca como email
-              setEmail(text); // Armazena como email
-            } else {
-              setIsEmailInput(false); // Marca como username
-              setUsername(text); // Armazena como username
-            }
-          }}
-        />
+  style={styles.input}
+  placeholder={"Email ou Usuário"} 
+  placeholderTextColor="#888"
+  value={isEmailInput ? email : username} // Exibe o valor de acordo com o tipo
+  onChangeText={(text) => {
+    if (text.includes("@")) {
+      setIsEmailInput(true); // Marca como email
+      setEmail(text); // Armazena como email
+    } else {
+      setIsEmailInput(false); // Marca como username
+      setUsername(text); // Armazena como username
+    }
+  }}
+/>
+
         <TextInput
           style={styles.input}
           placeholder="Senha"
