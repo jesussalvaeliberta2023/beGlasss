@@ -12,49 +12,60 @@ import {
   ImageBackground,
 } from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import Fontisto from '@expo/vector-icons/Fontisto';
-
+import Fontisto from "@expo/vector-icons/Fontisto";
 
 const LoginScreen = () => {
   const [usernameOrEmail, setUsernameOrEmail] = useState(""); // Alterado para usernameOrEmail
-    const [username, setUsername] = useState("")
-    const [email, setEmail] = useState("")
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
   const [password, setPassword] = useState("");
   const [isChecked, setIsChecked] = useState(false);
   const [isEmailInput, setIsEmailInput] = useState(true); // Para controlar o tipo de input
   const navigation = useNavigation();
 
-  // Login
+  //Login
   const handleLogin = async () => {
-    console.log("Dados enviados:", { email, username, password, rememberMe: isChecked });
-
+    // Verificar se o campo de entrada (email ou username) e a senha estão preenchidos
+    if ((!email && !username) || !password) {
+      setError("Por favor, preencha todos os campos.");
+      return; // Interrompe a execução da função se ambos os campos (email ou username) ou a senha estiverem vazios
+    }
+  
+    console.log("Dados enviados:", {
+      email,
+      username,
+      password,
+      rememberMe: isChecked,
+    });
+  
     try {
-
-      const response = await axios.post(`http://${IP_URL}:3000/login`, { 
-        email: email,
-        username: username,
+      // Condicionalmente envia username ou email baseado no que foi inserido
+      const response = await axios.post(`http://${IP_URL}:3000/login`, {
+        email: isEmailInput ? email : "", // Envia o email somente se for um email
+        username: !isEmailInput ? username : "", // Envia o username somente se não for um email
         password: password,
-        rememberMe: isChecked,
+        rememberMe: isChecked, // Envia a flag de manter-se conectado
       });
-      
-
+  
       if (response.status === 200) {
         const token = response.data.token;
-
+  
         if (!token) {
           alert("Token não recebido. Verifique as credenciais.");
           return;
         }
-
+  
         alert("Login bem-sucedido");
-
+  
         if (isChecked) {
           await AsyncStorage.setItem("userToken", token);
-          await AsyncStorage.setItem("usernameOrEmail", usernameOrEmail); // Alterado para usernameOrEmail
-          console.log("Token e usuário/email salvos:", token, usernameOrEmail);
+          await AsyncStorage.setItem("usernameOrEmail", email || username); // Salva o email ou username
+          console.log("Token e usuário/email salvos:", token, email || username);
         }
-
-        navigation.navigate("Perfil", { usernameOrEmail });
+  
+        // Navegar para a tela de perfil
+        navigation.navigate("Perfil", { usernameOrEmail: email || username });
       } else {
         alert("Usuário ou senha incorretos");
       }
@@ -62,8 +73,7 @@ const LoginScreen = () => {
       if (error.response && error.response.status === 401) {
         alert("Usuário ou senha incorretos");
       } else if (error.response) {
-        console.error("Erro ao fazer login:", error.response.data);
-        alert("Erro ao fazer login. Tente novamente mais tarde.");
+        setError("Usuário/Email ou senha incorretos");
       } else if (error.request) {
         console.error("Erro ao fazer login: Sem resposta do servidor", error.request);
         alert("Erro ao conectar ao servidor. Verifique sua conexão.");
@@ -90,13 +100,15 @@ const LoginScreen = () => {
   };
 
   return (
-    <ImageBackground 
-      source={require('../assets/images/Coffes/Coffe.png')} 
+    <ImageBackground
+      source={require("../assets/images/Coffes/Coffe.png")}
       style={styles.background}
     >
       <View style={styles.container}>
         <TouchableOpacity onPress={() => navigation.navigate("Drinks")}>
-          <View><Text style={{color: 'white'}}>Voltar</Text></View>
+          <View>
+            <Text style={{ color: "white" }}>Voltar</Text>
+          </View>
         </TouchableOpacity>
         <Text style={styles.title}>Entrar</Text>
 
@@ -104,10 +116,18 @@ const LoginScreen = () => {
           style={styles.input}
           placeholder={isEmailInput ? "Email" : "Usuário"} // Muda conforme a opção selecionada
           placeholderTextColor="#888"
-          value={isEmailInput ? email : username} // Alterado para usar usernameOrEmail
-          onChangeText={isEmailInput ? setEmail : setUsername} // Alterado para setUsernameOrEmail
+          value={isEmailInput ? email : username} // Exibe o valor de acordo com o tipo
+          onChangeText={(text) => {
+            // Se o texto parece ser um email, use o setEmail, senão use setUsername
+            if (text.includes("@")) {
+              setIsEmailInput(true); // Marca como email
+              setEmail(text); // Armazena como email
+            } else {
+              setIsEmailInput(false); // Marca como username
+              setUsername(text); // Armazena como username
+            }
+          }}
         />
-
         <TextInput
           style={styles.input}
           placeholder="Senha"
@@ -116,20 +136,30 @@ const LoginScreen = () => {
           onChangeText={setPassword}
           secureTextEntry
         />
-
+        <View style={styles.ContainerErro}>
+          <Text style={{ color: "red", fontSize: 15, textAlign: "center" }}>
+            {error}
+          </Text>
+        </View>
         <View style={styles.checkboxContainer}>
           <TouchableOpacity onPress={toggleCheckbox}>
-            <MaterialCommunityIcons name={isChecked ? 'checkbox-marked' : 'checkbox-blank-outline'} size={24} color="white" />
+            <MaterialCommunityIcons
+              name={isChecked ? "checkbox-marked" : "checkbox-blank-outline"}
+              size={24}
+              color="white"
+            />
           </TouchableOpacity>
           <Text style={styles.label}>Manter-se conectado</Text>
         </View>
-
 
         <TouchableOpacity onPress={handleLogin} style={styles.button}>
           <Text style={styles.buttonText}>Entrar</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => navigation.navigate("SignUp")} style={styles.btnCadastrar}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("SignUp")}
+          style={styles.btnCadastrar}
+        >
           <Text style={styles.registerText}>
             Não tenho uma conta! <Text style={styles.highlight}>Cadastrar</Text>
           </Text>
@@ -142,18 +172,26 @@ const LoginScreen = () => {
         <Text style={styles.orText}>Entrar com</Text>
 
         <TouchableOpacity onPress={toggleInputType} style={styles.emailButton}>
-          <Text style={styles.emailButtonText}>
-            Continuar com Google
-          </Text>
+          <Text style={styles.emailButtonText}>Continuar com Google</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={toggleInputType} style={[styles.emailButton2, { flexDirection: 'row', alignItems: 'center' }]}>
-  <Fontisto name="email" size={30} color="black" style={{ marginRight: 40 }} />
-  <Text style={styles.emailButtonText}>
-    Continuar com {isEmailInput ? "Usuário" : "Email"}
-  </Text>
-</TouchableOpacity>
-
+        {/* <TouchableOpacity
+          onPress={toggleInputType}
+          style={[
+            styles.emailButton2,
+            { flexDirection: "row", alignItems: "center" },
+          ]}
+        >
+          <Fontisto
+            name="email"
+            size={30}
+            color="black"
+            style={{ marginRight: 40 }}
+          />
+          <Text style={styles.emailButtonText}>
+            Continuar com {isEmailInput ? "Usuário" : "Email"}
+          </Text>
+        </TouchableOpacity> */}
       </View>
     </ImageBackground>
   );
@@ -168,10 +206,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    alignContent: 'center',
+    alignContent: "center",
     paddingHorizontal: 30,
-    backgroundColor: 'rgba(80, 48, 30, 0.3)'
-    
+    backgroundColor: "rgba(80, 48, 30, 0.3)",
   },
   title: {
     fontSize: 35,
@@ -262,11 +299,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 
-  btnCadastrar:{
-    justifyContent: 'center',
-    alignItems: 'center',
+  btnCadastrar: {
+    justifyContent: "center",
+    alignItems: "center",
     paddingBottom: 30,
-  }
+  },
+  ContainerErro: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
 
 export default LoginScreen;

@@ -6,11 +6,13 @@ import {
   StyleSheet,
   Text,
   ActivityIndicator,
+  TouchableOpacity,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { CircularCarousel } from "../components/CircularCarousel/CircularCarousel";
 import { useFonts } from "@expo-google-fonts/belleza";
 import styles from "../styles/DrinksStyles";
+import { FontAwesome } from "@expo/vector-icons";
 import PressComponent from "../components/PressableComponent";
 import Animated, {
   useAnimatedStyle,
@@ -129,17 +131,18 @@ export default function Coffes() {
           }}
         />
 
-        <View style={styles.headerD}>
+           {/* Cabeçalho com botões */}
+           <View style={styles.header}>
           <PressComponent
-            onPress={() => navigation.navigate("Login")}
+            onPress={() => navigation.navigate("Perfil", { token })}
             source={require("../assets/images/Bars.png")}
-            styleI={styles.headerOp}
+            styleI={styles.headerTab}
           />
           <Animated.View style={iconeAnimated}>
             <PressComponent
-              onPress={() => navigation.navigate("SignUp")}
+              onPress={() => navigation.navigate("Perfil2")}
               source={require("../assets/images/Person.png")}
-              styleI={styles.headerPe}
+              styleI={styles.headerPerson}
             />
           </Animated.View>
         </View>
@@ -174,22 +177,21 @@ export default function Coffes() {
           fontFamily="Belleza"
         />
 
-        <View style={styles.tabss}>
-          <PressComponent
-            onPress={() => navigation.navigate("Home")}
-            source={require("../assets/images/HomeFilled.png")}
-            styleI={[styles.literlyButton, { marginTop: -9 }]}
-            styleP={styles.homeButton}
-          />
-          <PressComponent
-            onPress={() => navigation.navigate("Favorites")}
-            source={require("../assets/images/HeartNaked.png")}
-            styleI={[
-              styles.literlyButton,
-              { marginTop: -11, tintColor: "#ffffff" },
-            ]}
-            styleP={styles.favsButton}
-          />
+         {/*Barra de navegação*/}
+         <View style={styles.tabss}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("Drinks")}
+            style={styles.homeButton}
+          >
+            <FontAwesome name="home" size={24} color="#FFD700" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => navigation.navigate("FavoritesBack")}
+            style={styles.favsButton}
+          >
+            <FontAwesome name="heart" size={24} color="#FFFFFF" />
+          </TouchableOpacity>
         </View>
       </ImageBackground>
     </View>

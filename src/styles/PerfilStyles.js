@@ -52,6 +52,8 @@ const styles = StyleSheet.create({
     color: "#808080",
     fontSize: 18,
   },
+
+  
   reviewCard: {
     width: "90%",
     marginHorizontal: "5%",
@@ -71,7 +73,7 @@ const styles = StyleSheet.create({
   drinkImage: {
     height: 150,
     width: 125,
-    borderRadius: 10
+    borderRadius: 10,
   },
   textReview: {
     color: "#AFABAB",
@@ -88,12 +90,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   ratingContainer: {
- flexDirection: "row"
+    flexDirection: "row",
   },
   modalOverlay: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "center",
+    
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContainer: {
@@ -107,6 +109,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginBottom: 20,
   },
+
   button: {
     backgroundColor: "#007bff",
     padding: 10,
@@ -123,7 +126,10 @@ const styles = StyleSheet.create({
     marginTop: 20,
     borderRadius: 10,
   },
+ 
 
+
+ 
 
   //Idioma
   containerIII: {
@@ -218,7 +224,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // fundo semitransparente para destacar o modal
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Fundo semitransparente
   },
   modalContent: {
     width: "80%",
@@ -227,38 +233,97 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
   },
-  modalText1: {
-    fontSize: 12,
-    color: "#cfcfcf",
-    right: 55,
-    margin: 10,
+  modalText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    textAlign: "center",
+    marginBottom: 20,
   },
-  modalText2: {
+  modalButtonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
+  },
+  modalButtonYes: {
+    backgroundColor: "#ff4d4d",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    alignItems: "center",
+    width: "40%",
+  },
+  modalButtonNo: {
+    backgroundColor: "#808080",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    alignItems: "center",
+    width: "40%",
+  },
+  modalButtonText: {
+    color: "#FFFFFF",
+    fontSize: 15,
+    fontWeight: "600",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Fundo semitransparente
+  },
+  modalContent: {
+    width: "85%",
+    padding: 20,
+    backgroundColor: "#4c4a64",
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  modalTitle: {
+    color: "#FFFFFF",
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 15,
+  },
+  modalLabel: {
     fontSize: 12,
     color: "#cfcfcf",
-    right: 110,
-    margin: 10,
+    alignSelf: "flex-start",
+    marginTop: 10,
+    marginBottom: 5,
+  },
+  modalCurrentEmail: {
+    color: "#FFFFFF",
+    fontSize: 14,
+    marginBottom: 20,
+    backgroundColor: "#39374e",
+    padding: 10,
+    borderRadius: 5,
+    textAlign: "center",
+    width: "100%",
   },
   inputField: {
     width: "100%",
-    padding: 2,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
     backgroundColor: "#39374e",
     borderRadius: 10,
-    marginBottom: 20,
-    paddingLeft: 15,
+    color: "#FFFFFF",
+    fontSize: 14,
+    marginBottom: 15,
   },
   modalButton: {
     backgroundColor: "#cfcfcf",
-    padding: 10,
-    width: "100%",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
     alignItems: "center",
+    justifyContent: "center",
     marginTop: 10,
-    borderTopLeftRadius: 15,
-    borderBottomRightRadius: 15,
+    borderRadius: 15,
+    width: "90%",
   },
   modalButtonText: {
     color: "#4c4a64",
-    fontSize: 13,
+    fontSize: 15,
     fontWeight: "600",
   },
 });

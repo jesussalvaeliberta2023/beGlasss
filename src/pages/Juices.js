@@ -12,6 +12,7 @@ import { CircularCarousel } from "../components/CircularCarousel/CircularCarouse
 import { useFonts } from "@expo-google-fonts/belleza";
 import styles from "../styles/DrinksStyles";
 import PressComponent from "../components/PressableComponent";
+import { FontAwesome } from "@expo/vector-icons";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -128,18 +129,18 @@ export default function Juices() {
             backgroundColor: "rgba(0, 0, 0, 0.60)",
           }}
         />
-
-        <View style={styles.headerD}>
+   {/* Cabeçalho com botões */}
+   <View style={styles.header}>
           <PressComponent
-            onPress={() => navigation.navigate("Login")}
+            onPress={() => navigation.navigate("Perfil", { token })}
             source={require("../assets/images/Bars.png")}
-            styleI={styles.headerOp}
+            styleI={styles.headerTab}
           />
           <Animated.View style={iconeAnimated}>
             <PressComponent
-              onPress={() => navigation.navigate("SignUp")}
+              onPress={() => navigation.navigate("Perfil2")}
               source={require("../assets/images/Person.png")}
-              styleI={styles.headerPe}
+              styleI={styles.headerPerson}
             />
           </Animated.View>
         </View>

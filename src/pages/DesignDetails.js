@@ -13,6 +13,7 @@ import {
   Alert,
 } from "react-native";
 import { useFonts, } from "@expo-google-fonts/belleza";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 import PressComponent from "../components/PressableComponent";
 import { useNavigation } from '@react-navigation/native';
@@ -83,7 +84,7 @@ export default function DesignDetails() {
           <StatusBar style="light" translucent />
           <View style={styles.header}>
             <PressComponent
-              onPress={() => navigation.navigate("Perfil", { token })}
+              onPress={() => navigation.navigate("Perfil")}
               source={require("../assets/images/Bars.png")}
               styleI={styles.headerTab}
             />
@@ -100,6 +101,13 @@ export default function DesignDetails() {
               Uma versão sem álcool da mais famosa bebida brasileira.
             </Text>
             <Text style={styles.stars}>★★★☆☆</Text>
+            <TouchableOpacity onPress={toggleFavorite}>
+          <AntDesign
+            name={isChecked ? "heart" : "hearto"}
+            size={24}
+            color="red"
+          />
+        </TouchableOpacity>
           </View>
         
           <View style={styles.imageView}>

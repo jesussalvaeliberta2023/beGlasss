@@ -145,7 +145,7 @@ export default function Drinks() {
           />
           <Animated.View style={iconeAnimated}>
             <PressComponent
-              onPress={() => navigation.navigate("Perfil2")}
+              onPress={() => navigation.navigate("Perfil")}
               source={require("../assets/images/Person.png")}
               styleI={styles.headerPerson}
             />
@@ -186,29 +186,21 @@ export default function Drinks() {
         />
 
         {/*Barra de navegação*/}
-      <View style={styles.tabss}>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("Drinks")}
-          style={styles.homeButton}
-        >
-          <FontAwesome
-            name="home"
-            size={24}
-            color="#FFD700"
-          />
-        </TouchableOpacity>
-        
-        <TouchableOpacity
-          onPress={() => navigation.navigate("FavoritesBack")}
-          style={styles.favsButton}
-        >
-          <FontAwesome
-            name="heart"
-            size={24}
-            color="#FFFFFF"
-          />
-      </TouchableOpacity>
-      </View>
+        <View style={styles.tabss}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("Drinks")}
+            style={styles.homeButton}
+          >
+            <FontAwesome name="home" size={24} color="#FFD700" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => navigation.navigate("FavoritesBack")}
+            style={styles.favsButton}
+          >
+            <FontAwesome name="heart" size={24} color="#FFFFFF" />
+          </TouchableOpacity>
+        </View>
       </ImageBackground>
     </View>
   );
