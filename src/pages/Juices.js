@@ -11,7 +11,7 @@ import {
 import { StatusBar } from "expo-status-bar";
 import { CircularCarousel } from "../components/CircularCarousel/CircularCarousel";
 import { useFonts } from "@expo-google-fonts/belleza";
-import styles from "../styles/DrinksStyles";
+import styles from "../styles/MainPages/DrinksStyles";
 import PressComponent from "../components/PressableComponent";
 import { FontAwesome } from "@expo/vector-icons";
 import Animated, {

@@ -2,18 +2,25 @@ import { jwtDecode } from "jwt-decode";
 import React, { useState, useEffect } from "react";
 import {
   View,
-  Text,
   StyleSheet,
+  StatusBar,
+  Text,
   ActivityIndicator,
-  ScrollView,
+  ImageBackground,
   Image,
+  ScrollView,
+  Dimensions,
   Pressable,
-  TextInput,
-  Button,
+  Alert,
   Modal,
+  Button,
   TouchableOpacity,
+  TextInput,
+  FlatList,
 } from "react-native";
+import { useFonts } from "@expo-google-fonts/belleza";
 
+import PressComponent from "../components/PressableComponent";
 // Navegação
 import { useNavigation } from "@react-navigation/native";
 import { useRoute } from "@react-navigation/native";
@@ -22,28 +29,41 @@ import { useRoute } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import IP_URL from "../components/IP";
 import axios from "axios";
+import DrinksData from "../components/DrinksData";
 
 // Ícones
 import { Ionicons } from "@expo/vector-icons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 
-// Começo
-export default function Drink() {
-  const navigation = useNavigation();
-  const route = useRoute();
-
-  // Chamada dos dados locais
-  const { id, image } = route.params || {};
-
+export default function DrinkDetails() {
   // Constantes de Estado
   const [drink, setDrink] = useState(null);
   const [loading, setLoading] = useState(true);
   const [modalCommentVisible, setModalCommentVisible] = useState(false);
   const [modalFavoriteVisible, setModalFavoriteVisible] = useState(false);
   const [comment, setComment] = useState("");
+  // const [reviews, setReviews] = useState(0);
   const [rating, setRating] = useState(0);
   const [isChecked, setIsChecked] = useState(false);
   const [averageRating, setAverageRating] = useState(0); // Média das avaliações
+  const [ingredients, setIngredients] = useState([]);
+
+  const preparationMethod = [
+    "Corte o limão em 4 pedaços e retire o miolo branco; se preferir, retire a casca também.",
+    "Coloque o limão em um copo juntamente com o açúcar.",
+    "Macere os ingredientes, adicione o gelo, e complete com a água gaseificada.",
+    "Misture delicadamente, decore com uma rodela de limão e sirva.",
+  ];
+  const [checkedSteps, setCheckedSteps] = useState(
+    Array(preparationMethod ? preparationMethod.length : 0).fill(false)
+  );
+
+  const route = useRoute();
+  const navigation = useNavigation();
+  const { id, image } = route.params || {};
+  const [fontsLoaded] = useFonts({
+    Belleza: require("@expo-google-fonts/belleza"),
+  });
 
   // Função para buscar notas do produto
   const fetchReviews = async () => {
@@ -57,29 +77,15 @@ export default function Drink() {
     }
   };
 
-  // Função para verificar se o produto está favoritado
-  const checkFavoriteStatus = async () => {
+  // Função para buscar os ingredientes
+  const fetchIngredients = async () => {
     try {
-      const savedToken = await AsyncStorage.getItem("userToken");
-      if (!savedToken) {
-        console.log(
-          "Nenhum token encontrado. Não é possível verificar favoritos."
-        );
-        setIsChecked(false);
-        return;
+      const response = await axios.get(`http://${IP_URL}:3000/recipes/${id}`);
+      if (response.data) {
+        setIngredients(response.data)
       }
-
-      const decodedToken = jwtDecode(savedToken);
-      const userId = decodedToken.id;
-
-      const response = await axios.get(
-        `http://${IP_URL}:3000/favorites/${userId}/${id}`
-      );
-      setIsChecked(response.data.isFavorite); // Atualiza o estado do coração
-      console.log(isChecked);
     } catch (error) {
-      console.error("Erro ao verificar o status de favorito", error);
-      console.log(id);
+      console.error("Erro ao buscar reviews", error);
     }
   };
 
@@ -187,6 +193,7 @@ export default function Drink() {
         );
         setDrink(response.data);
         await fetchReviews(); // Carrega as reviews associadas ao produto
+        await fetchIngredients(); // Carrega as reviews associadas ao produto
       } catch (error) {
         console.error(
           "Erro ao buscar dados da bebida:",
@@ -208,7 +215,7 @@ export default function Drink() {
           `http://${IP_URL}:3000/favorites/${userId}/${id}`
         );
         setIsChecked(response.data.isFavorite); // Define o status de favorito
-        console.log(response.data.isFavorite)
+        console.log(response.data.isFavorite);
       } catch (error) {
         console.error(
           "Erro ao verificar o status de favorito:",
@@ -254,6 +261,14 @@ export default function Drink() {
     return stars;
   };
 
+  const toggleCheckbox = (index) => {
+    setCheckedSteps((prevCheckedSteps) => {
+      const updatedCheckedSteps = [...prevCheckedSteps];
+      updatedCheckedSteps[index] = !updatedCheckedSteps[index]; // Alterna o valor (true/false)
+      return updatedCheckedSteps;
+    });
+  };
+
   const renderStarsReviews = () => {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
@@ -261,7 +276,7 @@ export default function Drink() {
         <Ionicons
           key={i}
           name={i <= averageRating ? "star" : "star-outline"}
-          size={30}
+          size={25}
           color="#FFD700"
         />
       );
@@ -269,203 +284,694 @@ export default function Drink() {
     return stars;
   };
 
-  return (
-    <ScrollView style={styles.ScrollView}>
-      <View style={styles.container}>
-        <Pressable
-          style={[styles.backButton, { paddingTop: 15 }]}
-          onPress={() => navigation.goBack()}
-        >
-          <Text style={styles.backButtonText}>Voltar</Text>
-        </Pressable>
-        <Image source={image} style={styles.image} />
-        <TouchableOpacity onPress={toggleFavorite}>
-          <AntDesign
-            name={isChecked ? "heart" : "hearto"}
-            size={24}
-            color="red"
+  const { width } = Dimensions.get("window");
+
+  if (!fontsLoaded) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#fff" />
+      </View>
+    );
+  }
+
+  const renderReview = ({ item }) => {
+    // Define a imagem diretamente
+    const drinkImage = DrinksData[item.produto - 1]?.image;
+
+    return (
+      <View style={styles.reviewCard}>
+        {drinkImage ? (
+          <Image source={{ uri: drinkImage }} style={styles.drinkImage} />
+        ) : (
+          <Text style={styles.drinkText}>Imagem não disponível</Text>
+        )}
+        <View style={styles.reviewText}>
+          <Text style={styles.drinkTitle}>{item.autor}</Text>
+          <View style={styles.ratingContainer}>
+            {renderStarsReviews(item.nota)}
+          </View>
+          <Text style={styles.drinkText}>{item.comentario}</Text>
+        </View>
+      </View>
+    );
+  };
+
+  const renderIngredient = ({ item }) => {
+   
+    return (
+      <View style={[{ marginStart: 25 }, styles.igredientsImages]}>
+        <View style={styles.darkPart}>
+        <Image
+            source={require(`../assets/images/Igredients/${item.image}`)}
+            style={{ width: 140, height: 140 }}
           />
-        </TouchableOpacity>
-
-        <Text style={styles.name}>{drink.name}</Text>
-        <Text style={styles.description}>{drink.description}</Text>
-
-        {/* Impressão das notas */}
-        <Text style={styles.reviewsTitle}>Avaliação:</Text>
-
-        <View style={styles.reviewContainer}>
-          {averageRating > 0 ? (
-            renderStarsReviews() // Renderiza as estrelas baseadas na média
-          ) : (
-            <Text>Ainda não há avaliações.</Text> // Mensagem quando não há avaliações
-          )}
         </View>
 
-        <Text style={styles.ingredientsTitle}>Ingredientes:</Text>
-        <Text style={styles.ingredients}>{drink.recipe}</Text>
-        <Text style={styles.howToMakeTitle}>Modo de Preparo:</Text>
-        <Text style={styles.howToMake}>{drink.comofazer}</Text>
+        <View style={styles.yellowPart}>
+          <Text style={styles.igredients}>{item.name}</Text>
+          <Text style={styles.amount}>{item.amount}</Text>
+        </View>
+      </View>
+    );
+  };
 
-        <Pressable
-          style={styles.commentButton}
-          onPress={() => setModalCommentVisible(true)}
-        >
-          <Text style={styles.commentButtonText}>Fazer Comentário</Text>
-        </Pressable>
+  const reviews = [
+    {
+      id: "1",
+      image: require("../assets/images/Person1.png"),
+      name: "Douglas Alencar",
+      rating: 3.5,
+      review:
+        "A caipirinha é refrescante e equilibrada, mas a qualidade da cachaça e a mistura dos ingredientes podem variar. Boa, mas pode melhorar.",
+    },
+    {
+      id: "2",
+      image: require("../assets/images/Person2.png"),
+      name: "Luísa Andrade",
+      rating: 4,
+      review:
+        "A sangria é uma opção saborosa e refrescante, mas pode ser um pouco doce para alguns paladares.",
+    },
+  ];
 
-        {/* Modal de Comentários */}
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalCommentVisible}
-          onRequestClose={() => setModalCommentVisible(false)}
-        >
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Deixe seu comentário</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Escreva seu comentário"
-                multiline
-                numberOfLines={4}
-                value={comment}
-                onChangeText={setComment}
-              />
-              <Text style={styles.ratingTitle}>Dê uma nota:</Text>
-              <View style={styles.starsContainer}>{renderStars()}</View>
-              <Button title="Enviar" onPress={submitReview} />
-              <Button
-                title="Cancelar"
-                onPress={() => setModalCommentVisible(false)}
-                color="red"
-              />
+  return (
+    <ImageBackground source={image} style={styles.background} blurRadius={10}>
+      <ScrollView>
+        <View style={styles.container}>
+          <StatusBar style="light" translucent />
+          <View style={styles.header}>
+            <PressComponent
+              onPress={() => navigation.goBack()}
+              source={require("../assets/images/Bars.png")}
+              styleI={styles.headerTab}
+            />
+            <PressComponent
+              onPress={() => navigation.navigate("Login")}
+              source={require("../assets/images/Person.png")}
+              styleI={styles.headerPerson}
+            />
+          </View>
+
+          <View style={styles.informations}>
+            <Text style={styles.drink}>{drink.name}</Text>
+            <Text style={styles.description}>{drink.description}</Text>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <TouchableOpacity onPress={() => setModalCommentVisible(true)}>
+                <View style={styles.reviewContainer}>
+                  {averageRating > 0 ? (
+                    renderStarsReviews() // Renderiza as estrelas baseadas na média
+                  ) : (
+                    <Text style={styles.stars}>☆☆☆☆☆</Text> // Mensagem quando não há avaliações
+                  )}
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={toggleFavorite}>
+                <AntDesign
+                  name={isChecked ? "heart" : "hearto"}
+                  size={24}
+                  color="red"
+                />
+              </TouchableOpacity>
             </View>
           </View>
-        </Modal>
 
-        {/* Modal de Favoritos */}
-        <Modal
-          visible={modalFavoriteVisible}
-          animationType="slide"
-          transparent={true}
-          onRequestClose={() => setModalFavoriteVisible(false)}
-        >
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalText}>
-                Tem certeza que deseja desfavoritar este produto?
-              </Text>
-              <View style={styles.modalButtons}>
-                <Button title="Sim" onPress={removeFavorite} />
-                <Button
-                  title="Cancelar"
-                  onPress={() => setModalFavoriteVisible(false)}
+          <View style={styles.imageView}>
+            <Image source={image} style={styles.image} />
+          </View>
+
+          <View>
+            <Text style={styles.titleOne}>Ingredientes:</Text>
+            <FlatList
+              data={ingredients} // Dados dos ingredientes
+              renderItem={renderIngredient} // Usando a função renderIngredient para renderizar cada item
+              keyExtractor={(item) => item.id.toString()} // Usando o ID como chave única
+              horizontal // Exibindo a lista horizontalmente
+              showsHorizontalScrollIndicator={false} // Ocultando a barra de rolagem horizontal
+            />
+          </View>
+
+          <View>
+            <ScrollView
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.scrollViewContainer}
+            >
+              <View style={[styles.settings, { width }]}>
+                <Text style={[styles.titleOne, { fontSize: 20 }]}>
+                  Modo de Preparo:
+                </Text>
+                {preparationMethod.map((step, index) => (
+                  <View key={index} style={styles.stepContainer}>
+                    <Pressable
+                      onPress={() => toggleCheckbox(index)}
+                      style={
+                        checkedSteps[index]
+                          ? styles.checkedBox
+                          : styles.uncheckedBox
+                      }
+                    />
+                    <Text
+                      style={[
+                        styles.textMethod,
+                        checkedSteps[index] && {
+                          textDecorationLine: "line-through",
+                          color: "#888",
+                        },
+                      ]}
+                    >
+                      {`${index + 1}. ${step}`}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+
+              <View style={[styles.feedbacks, { width }]}>
+                <Text style={[styles.titleOne, { fontSize: 20 }]}>
+                  Suas avaliações
+                </Text>
+                <ScrollView>
+                  {reviews.map((item) => (
+                    <View key={item.id} style={styles.reviewCard}>
+                      <View>
+                        <Image source={item.image} style={styles.drinkImage} />
+                      </View>
+
+                      <View style={styles.reviewTextContainer}>
+                        <View style={styles.titleAndRating}>
+                          <Text style={styles.drinkTitle}>
+                            {item.name.charAt(0).toUpperCase() +
+                              item.name.slice(1)}
+                          </Text>
+                          <View style={styles.ratingContainer}>
+                            {Array.from({ length: 5 }).map((_, index) => (
+                              <Text
+                                key={index}
+                                style={
+                                  index < item.rating
+                                    ? styles.starFilled
+                                    : styles.starEmpty
+                                }
+                              >
+                                ★
+                              </Text>
+                            ))}
+                          </View>
+                        </View>
+                        <Text style={styles.textReview}>{item.review}</Text>
+                      </View>
+                    </View>
+                  ))}
+                </ScrollView>
+              </View>
+            </ScrollView>
+          </View>
+
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalCommentVisible}
+            onRequestClose={() => setModalCommentVisible(false)}
+          >
+            <View style={styles.modalOverlay}>
+              <View style={styles.modalContainer}>
+                <Text style={styles.modalTitle}>Deixe seu comentário</Text>
+
+                <TextInput
+                  style={styles.input}
+                  placeholder="Escreva seu comentário"
+                  multiline
+                  numberOfLines={4}
+                  value={comment}
+                  onChangeText={setComment}
                 />
+
+                <Text style={styles.ratingTitle}>Dê uma nota:</Text>
+                <View style={styles.starsContainer}>{renderStars()}</View>
+
+                <View style={styles.buttonsContainer}>
+                  <TouchableOpacity
+                    onPress={submitReview}
+                    style={[styles.modalButton, styles.confirmButton]}
+                  >
+                    <Text style={styles.buttonText}>Enviar</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => setModalCommentVisible(false)}
+                    style={[styles.modalButton, styles.cancelButton]}
+                  >
+                    <Text style={styles.buttonText}>Cancelar</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
-          </View>
-        </Modal>
-      </View>
-    </ScrollView>
+          </Modal>
+
+          {/* Modal de Favoritos */}
+          <Modal
+            visible={modalFavoriteVisible}
+            animationType="slide"
+            transparent={true}
+            onRequestClose={() => setModalFavoriteVisible(false)}
+          >
+            <View style={styles.modalOverlay}>
+              <View style={styles.modalContainer}>
+                <Text style={styles.modalTitle}>
+                  Tem certeza que deseja desfavoritar este produto?
+                </Text>
+                <View style={styles.modalButtonsContainer}>
+                  <TouchableOpacity
+                    style={[styles.modalButton, styles.confirmButton]}
+                    onPress={removeFavorite}
+                  >
+                    <Text style={styles.buttonText}>Sim</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.modalButton, styles.cancelButton]}
+                    onPress={() => setModalFavoriteVisible(false)}
+                  >
+                    <Text style={styles.buttonText}>Cancelar</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Modal>
+        </View>
+      </ScrollView>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    display: "flex",
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.60)",
   },
-  image: {
+
+  background: {
     width: "100%",
-    height: 500,
-    borderRadius: 10,
-    marginBottom: 20,
+    height: "100%",
   },
-  name: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 10,
+
+  header: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 40,
   },
+
+  headerTab: {
+    marginLeft: 15,
+  },
+
+  headerPerson: {
+    width: 60,
+    height: 60,
+    marginRight: 15,
+  },
+
+  informations: {
+    paddingLeft: 15,
+    width: "85%",
+  },
+
+  drink: {
+    fontSize: 40,
+    fontFamily: "Belleza",
+    color: "#FFFFFF",
+  },
+
   description: {
-    fontSize: 16,
-    marginBottom: 20,
+    fontSize: 17,
+    color: "#FFFFFF",
   },
-  ingredientsTitle: {
-    fontSize: 18,
+
+  stars: {
+    fontSize: 22,
+    color: "#FFDD66",
+    paddingRight: 15,
+  },
+
+  imageView: {
+    alignSelf: "center",
+    margin: 25,
+  },
+
+  image: {
+    width: 350,
+    height: 350,
+    borderRadius: 20,
+  },
+
+  igredientsImages: {
+    width: 130,
+    height: 170,
+    margin: 6,
+    borderRadius: 20,
+  },
+
+  darkPart: {
+    flex: 2,
+    backgroundColor: "#20202C",
+    borderTopEndRadius: 20,
+    borderTopLeftRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  yellowPart: {
+    flex: 1,
+    backgroundColor: "#FFDD66",
+    borderBottomEndRadius: 20,
+    borderBottomLeftRadius: 20,
+  },
+
+  igredients: {
+    fontSize: 16,
     fontWeight: "bold",
-    marginBottom: 10,
+    marginStart: 7,
   },
-  ingredients: {
-    fontSize: 16,
+
+  amount: {
+    fontSize: 13,
+    marginStart: 7,
+  },
+
+  titleOne: {
+    color: "white",
+    fontSize: 25,
+    marginStart: 25,
+    marginBottom: 10,
+    fontFamily: "Belleza",
+  },
+
+  settings: {
+    padding: 25,
+    marginTop: 30,
+    borderTopLeftRadius: 30,
+    backgroundColor: "#2A2A3999",
+  },
+
+  feedbacks: {
+    justifyContent: "center",
+    marginTop: 30,
+    borderTopEndRadius: 30,
+    backgroundColor: "#2A2A3999",
+  },
+
+  sectionTitle: {
+    color: "#fff",
+    fontSize: 11,
+    marginTop: 20,
+    marginBottom: 10,
+    paddingRight: 250,
+    color: "#ccc",
+    padding: 11,
+  },
+
+  reviewCard: {
+    width: "90%",
+    marginHorizontal: "5%",
+    flexDirection: "row",
+    alignItems: "flex-start",
+    borderRadius: 20,
+    padding: 10,
     marginBottom: 20,
+    backgroundColor: "#20202C",
   },
-  howToMakeTitle: {
-    fontSize: 18,
+
+  drinkImage: {
+    width: 45,
+    height: 45,
+    borderRadius: 45,
+    marginRight: 15,
+  },
+
+  ratingContainer: {
+    flexDirection: "row",
+  },
+
+  starFilled: {
+    color: "#FFD700",
+    fontSize: 14,
+  },
+
+  starEmpty: {
+    color: "#555",
+    fontSize: 14,
+  },
+
+  reviewTextContainer: {
+    flex: 1,
+    flexDirection: "column",
+  },
+
+  titleAndRating: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+
+  drinkTitle: {
+    color: "#fff",
     fontWeight: "bold",
-    marginBottom: 10,
-  },
-  howToMake: {
     fontSize: 16,
-  },
-  ScrollView: {
     flex: 1,
   },
-  commentButton: {
-    backgroundColor: "#00ADEF",
-    padding: 15,
-    borderRadius: 10,
-    marginTop: 20,
+
+  textReview: {
+    color: "#AFABAB",
+    textAlign: "justify",
+    marginTop: 5,
   },
-  commentButtonText: {
-    color: "#fff",
-    fontSize: 18,
-    textAlign: "center",
+
+  stepContainer: {
+    marginTop: "20",
+    flexDirection: "row",
+    paddingHorizontal: 25,
+    marginVertical: 5,
   },
-  modalContainer: {
+
+  textMethod: {
+    fontSize: 14,
+    color: "#FFFFFF",
+
+    marginStart: 0,
+    margiN: 0,
+    textAlign: "justify",
+  },
+
+  uncheckedBox: {
+    width: 20,
+    height: 20,
+
+    borderColor: "#888888",
+    borderWidth: 2,
+    marginRight: 10,
+    marginTop: 6,
+  },
+
+  checkedBox: {
+    width: 20,
+    height: 20,
+    backgroundColor: "#888888",
+    borderColor: "#8888888",
+    borderWidth: 2,
+    marginRight: 10,
+    marginTop: 6,
+  },
+
+  modalOverlay: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Fundo transparente com opacidade
   },
-  modalContent: {
+  modalContainer: {
     width: 300,
-    backgroundColor: "white",
+    backgroundColor: "#fff",
     padding: 20,
     borderRadius: 10,
-    shadowColor: "#000",
+    alignItems: "center",
+    alignSelf: "center",
+
+    elevation: 10, // Sombra no Android
+    shadowColor: "#000", // Sombra no iOS
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.8,
-    shadowRadius: 2,
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
   },
   modalTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 20,
+    color: "#333",
+  },
+  modalButtonsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+  },
+  modalButton: {
+    width: 120,
+    paddingVertical: 10,
+    borderRadius: 5,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  confirmButton: {
+    backgroundColor: "#ff6347", // Cor de fundo para "Sim" (laranja avermelhado)
     marginBottom: 20,
   },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
-    padding: 10,
+  cancelButton: {
+    backgroundColor: "#ccc", // Cor de fundo para "Cancelar" (cinza claro)
+  },
+  buttonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  reviewContainer: {
+    flexDirection: "row",
     marginBottom: 20,
   },
   starsContainer: {
     flexDirection: "row",
     marginBottom: 20,
   },
-  reviewsTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginVertical: 10,
-  },
-  reviewContainer: {
-    flexDirection: "row",
+  feedbacks: {
+    padding: 20,
+    borderRadius: 10,
+    marginTop: 20,
     marginBottom: 20,
   },
-  backButton: {
-    marginVertical: 10,
+  titleOne: {
+    fontWeight: "bold",
+    color: "white",
+    marginBottom: 10,
   },
-  backButtonText: {
-    color: "#00ADEF",
+  reviewsContainer: {
+    marginTop: 10,
+  },
+  reviewCard: {
+    flexDirection: "row",
+    backgroundColor: "#20202C",
+    borderRadius: 12,
+    padding: 15,
+    marginBottom: 15,
+    elevation: 3, // Sombra suave para um efeito de profundidade
+    shadowColor: "#000", // Sombra no iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+  },
+  drinkImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 8,
+    marginRight: 15,
+    resizeMode: "cover",
+  },
+  drinkText: {
+    fontSize: 14,
+    color: "#555",
+  },
+  reviewText: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  drinkTitle: {
     fontSize: 16,
+    fontWeight: "bold",
+    color: "white",
+  },
+  ratingContainer: {
+    flexDirection: "row",
+    marginVertical: 5,
+  },
+  stars: {
+    fontSize: 18,
+    color: "#f1c40f", // Cor de ouro para as estrelas
+    marginRight: 3,
   },
 });
+
+// <View style={[styles.feedbacks, { width }]}>
+//   <Text style={styles.sectionTitle}>Suas avaliações</Text>
+//   <ScrollView>
+//     {reviews.map((item) => (
+//       <View key={item.id} style={styles.reviewCard}>
+//         <View>
+//           <Image source={item.image} style={styles.drinkImage} />
+//         </View>
+
+//         <View style={styles.reviewTextContainer}>
+//           <View style={styles.titleAndRating}>
+//             <Text style={styles.drinkTitle}>{item.name}</Text>
+//             <Text style={styles.rating}>{item.rating} ★★★☆☆</Text>
+//           </View>
+//           <Text style={styles.textReview}>{item.review}</Text>
+//         </View>
+//       </View>
+//     ))}
+//   </ScrollView>
+// </View>
+
+// feedbacks: {
+//   justifyContent: "center",
+//   borderRadius: 20,
+// },
+
+// sectionTitle: {
+//   color: "#fff",
+//   fontSize: 11,
+//   marginTop: 20,
+//   marginBottom: 10,
+//   paddingRight: 250,
+//   color: "#ccc",
+//   padding: 11,
+// },
+
+// reviewCard: {
+//   width: "90%",
+//   marginHorizontal: "5%",
+//   flexDirection: "row",
+//   alignItems: "flex-start",
+//   borderRadius: 20,
+//   padding: 10,
+//   marginBottom: 20,
+//   backgroundColor: "#252239",
+// },
+
+// drinkImage: {
+//   width: 90,
+//   height: 120,
+//   borderRadius: 10,
+//   marginRight: 15,
+// },
+
+// reviewTextContainer: {
+//   flex: 1,
+//   flexDirection: "column",
+// },
+
+// titleAndRating: {
+//   flexDirection: "row",
+//   justifyContent: "space-between",
+//   alignItems: "center",
+// },
+
+// drinkTitle: {
+//   color: "#fff",
+//   fontWeight: "bold",
+//   fontSize: 16,
+//   flex: 1,
+// },
+
+// textReview: {
+//   color: "#AFABAB",
+//   textAlign: "justify",
+//   marginTop: 5,
+// },

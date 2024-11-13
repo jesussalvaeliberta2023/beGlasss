@@ -8,6 +8,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f8f9fa", // fundo suave para todo o layout
     padding: 20,
   },
+
   languagesList: {
     flex: 1,
     backgroundColor: "#ffffff",
@@ -17,6 +18,7 @@ const styles = StyleSheet.create({
     borderColor: "#ddd",
     borderWidth: 1,
   },
+
   languageButton: {
     padding: 15,
     backgroundColor: "#e0e0e0",
@@ -24,16 +26,19 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     alignItems: "center",
   },
+
   lngName: {
     fontSize: 18,
     color: "#333333",
   },
+
   textModal: {
     fontSize: 24,
     fontWeight: "bold",
     color: "#333333",
     marginBottom: 20,
   },
+
   button: {
     backgroundColor: "#6200ee",
     padding: 15,
@@ -42,11 +47,13 @@ const styles = StyleSheet.create({
     width: "80%",
     alignItems: "center",
   },
+
   buttonText: {
     color: "#ffffff",
     fontSize: 18,
     fontWeight: "600",
   },
+
   tabs: {
     flexDirection: "row",
     justifyContent: "space-around",
@@ -56,15 +63,19 @@ const styles = StyleSheet.create({
     borderTopColor: "#cccccc",
     backgroundColor: "#f8f8f8",
   },
+
   homeButton: {
     padding: 10,
   },
+
   favsButton: {
     padding: 10,
   },
+
   profileButton: {
     padding: 10,
   },
+  
   literlyButton: {
     width: 30,
     height: 30,

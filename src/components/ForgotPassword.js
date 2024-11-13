@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import styles from "../styles/EsqueciStyles";
+import styles from "../styles/SecondaryPages/ForgetStyles";
 import { View, Text, TextInput, TouchableOpacity, ImageBackground } from "react-native";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";

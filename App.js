@@ -3,18 +3,16 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Drinks from "./src/pages/Drinks";
 import Coffes from "./src/pages/Coffes";
 import Juices from "./src/pages/Juices";
-import Favorites from "./src/pages/Favorites";
-import Language from "./src/pages/Language";
-import DrinkDetails from "./src/pages/DrinkDetails";
-import LoginPage from "./src/pages/Login";
+import Language from "./src/components/LanguageComponent";
+import LogIn from "./src/pages/LogIn";
 import Perfil from "./src/pages/Perfil";
-import configuracoesPerfil from "./src/pages/configuracoesPerfil";
 import SignUp from "./src/pages/SignUp";
-import Testes from "./src/pages/Testes";
-import FavoritesBack from "./src/pages/FavoriteBack";
-import EsqueciSenha from "./src/pages/EsqueciSenha";
-import ResetPasswordScreen from "./src/pages/ResetPasswordScreen";
-import DesignDetails2 from "./src/pages/DesignDetails copy";
+import Routes from "./src/pages/Routes";
+import Favorites from "./src/pages/Favorites";
+import EsqueciSenha from "./src/components/ForgotPassword";
+import ResetPasswordScreen from "./src/components/ResetPassword";
+import DrinkDetails from "./src/pages/DrinkDetails";
+
 
 const Stack = createNativeStackNavigator();
 
@@ -43,23 +41,13 @@ export default function App() {
           options={{ headerShown: false, unmountOnBlur: true }}
         />
         <Stack.Screen
-          name="Favorites"
-          component={Favorites}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
           name="Language"
           component={Language}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="DrinkDetails"
-          component={DrinkDetails}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
           name="Login"
-          component={LoginPage}
+          component={LogIn}
           options={{ headerShown: false }}
         />
         <Stack.Screen
@@ -73,24 +61,19 @@ export default function App() {
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="configuracoesPerfil"
-          component={configuracoesPerfil}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-         name="Testes"
-         component={Testes}
+         name="Routes"
+         component={Routes}
          options={{ headerShown: false }}
        />
     
        <Stack.Screen
-         name="DesignDetails2"
-         component={DesignDetails2}
+         name="DrinksDetails"
+         component={DrinkDetails}
          options={{ headerShown: false }}
        />
        <Stack.Screen
-         name="FavoritesBack"
-         component={FavoritesBack}
+         name="Favorites"
+         component={Favorites}
          options={{ headerShown: false }}
        />
        <Stack.Screen

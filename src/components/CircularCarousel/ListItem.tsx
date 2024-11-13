@@ -2,7 +2,7 @@ import { ImageProps, Image} from 'expo-image';
 import { Text, View } from 'react-native';
 import { Dimensions, Pressable } from 'react-native';
 import Animated, { Extrapolate, interpolate, useAnimatedStyle,} from 'react-native-reanimated';
-import styles from '../../styles/List&CarouselStyles';
+import styles from '../../styles/SecondaryPages/List&CarouselStyles';
 
 type CircularCarouselListItemProps = {
   imageSrc: ImageProps['source'];

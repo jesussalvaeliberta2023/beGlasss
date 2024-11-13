@@ -3,7 +3,7 @@ import { FlatList, ImageProps } from "react-native";
 import { CircularCarouselListItem, ListItemHeight } from "./ListItem";
 import { useSharedValue, useAnimatedReaction, runOnJS } from "react-native-reanimated";
 import { useNavigation } from "@react-navigation/native";
-import styles from "../../styles/List&CarouselStyles";
+import styles from "../../styles/SecondaryPages/List&CarouselStyles";
 
 type CircularCarouselProps = {
   data: {
@@ -48,7 +48,7 @@ const CircularCarousel: React.FC<CircularCarouselProps> = ({ data, onImageChange
       horizontal={false}
       renderItem={({ item, index }) => {
         const onPress = (id, image) => {
-          navigation.navigate('DesignDetails2', { index, id, image } as any);
+          navigation.navigate('DrinksDetails', { index, id, image } as any);
         };
         
         return (

@@ -11,7 +11,7 @@ import {
   Pressable,
   Image,
 } from "react-native";
-import styles from "../styles/LanguageStyles";
+import styles from "../styles/SecondaryPages/LanguageStyles";
 
 // O i18next serve para gerenciamento de internacionalização para acessar recursos de linguagem.
 import i18next, { languageResources } from "../services/i18next";
