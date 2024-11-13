@@ -11,7 +11,7 @@ import {
   SafeAreaView,
   Animated,
   TouchableOpacity,
-  Modal,
+  Pressable,
 } from "react-native";
 
 import { useNavigation } from "@react-navigation/native";
@@ -98,7 +98,6 @@ export default function Favorites() {
   const scrollX = React.useRef(new Animated.Value(0)).current;
   const navigation = useNavigation();
   const [favorites, setFavorites] = useState([]);
-  const [showModal, setShowModal] = useState(false); // Estado para o modal
   const [userId, setUserId] = useState(null);
   const [selectedButton, setSelectedButton] = React.useState("l");
 
@@ -113,13 +112,10 @@ export default function Favorites() {
           const userId = decodedToken.id;
           setUserId(userId);
 
+          // Passa o savedToken para fetchFavorites
           const userFavorites = await fetchFavorites(userId, savedToken);
           setFavorites(userFavorites);
-
-          // Exibir modal se a lista de favoritos estiver vazia
-          if (userFavorites.length === 0) {
-            setShowModal(true);
-          }
+          console.log("Eu sou o userFavorite:    ", userFavorites);
         }
       } catch (error) {
         console.error("Erro ao carregar favoritos:", error);
@@ -151,28 +147,8 @@ export default function Favorites() {
   };
 
   return (
-    <SafeAreaView style={favorites.length === 0 ? styles.emptyContainer : styles.container}>
+    <SafeAreaView style={styles.container}>
       <StatusBar hidden />
-
-      {/* Modal para mensagem de favoritos vazios */}
-      <Modal
-        transparent={true}
-        animationType="slide"
-        visible={showModal}
-        onRequestClose={() => setShowModal(false)}
-      >
-        <View style={styles.modalBackground}>
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalText}>Você ainda não tem bebidas favoritedas!</Text>
-            <TouchableOpacity
-              style={styles.modalButton}
-              onPress={() => setShowModal(false)}
-            >
-              <Text style={styles.modalButtonText}>Entendi</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
 
       {/* Cabeçalho com botões */}
       <View style={styles.header}>
@@ -190,9 +166,15 @@ export default function Favorites() {
         </View>
       </View>
 
+      {/* Título */}
       <Text style={[styles.choose]}>Favoritos</Text>
 
-      <View style={styles.topBar}>
+
+
+      
+
+
+       <View style={styles.topBar}>
         <TouchableOpacity
           style={[
             styles.button,
@@ -206,6 +188,7 @@ export default function Favorites() {
             color={selectedButton === "coffee" ? "#000" : "#FFFFFF"}
           />
         </TouchableOpacity>
+
         <TouchableOpacity
           style={[
             styles.button,
@@ -219,6 +202,7 @@ export default function Favorites() {
             color={selectedButton === "cocktail" ? "#000" : "#FFFFFF"}
           />
         </TouchableOpacity>
+
         <TouchableOpacity
           style={[
             styles.button,
@@ -311,22 +295,24 @@ export default function Favorites() {
 
       <View style={styles.tabss}>
         <TouchableOpacity
-          style={styles.tabButton}
-          onPress={() => navigation.navigate("Perfil")}
+          onPress={() => navigation.navigate("Drinks")}
+          style={styles.homeButton}
         >
-          <FontAwesome6 name="user" size={24} color="#FFFFFF" />
+          <FontAwesome name="home" size={24} color="#FFFFFF" />
         </TouchableOpacity>
+
         <TouchableOpacity
-          style={styles.tabButton}
           onPress={() => navigation.navigate("Favorites")}
+          style={styles.favsButton}
         >
-          <FontAwesome name="heart" size={24} color="#FFFFFF" />
+          <FontAwesome name="heart" size={24} color="#FFD700" />
         </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
 }
 
+// Estilos
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -334,53 +320,103 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 
+  posterImage: {
+    width: "100%",
+    height: CONTAINER_WIDTH * 1.2,
+    resizeMode: "cover",
+    borderRadius: 24,
+    margin: 0,
+    marginBottom: 10,
+  },
+
+  topBar: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "flex-start",
+    marginTop: 10,
+    paddingHorizontal: 20,
+    paddingTop: 25,
+    zIndex: 2,
+  },
+
+  button: {
+    width: 60,
+    height: 60,
+    backgroundColor: "#2E2E2E",
+    borderRadius: 15,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  selectedButton: {
+    backgroundColor: "#FFD700",
+  },
+
+  tabss: {
+    backgroundColor: "#00000090", 
+    width: "90%", 
+    height: 70,
+    position: "absolute",
+    bottom: "4%", 
+    left: "5%", 
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "space-around", 
+    flexDirection: "row",
+    paddingHorizontal: 20, 
+  },
+
+  homeButton: {
+    width: 50, 
+    height: 50,
+    marginHorizontal: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  favsButton: {
+    width: 50,
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  header: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: 15,
+    zIndex:2,
+  },
+
+  headerTab: {
+    marginLeft: 15,
+  },
+
   emptyContainer: {
     flex: 1,
-    backgroundColor: "#f0f0f0", // Cor neutra para o fundo
     justifyContent: "center",
     alignItems: "center",
-  },
-
-  // Estilos do modal
-  modalBackground: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  modalContainer: {
-    width: "80%",
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    padding: 20,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-
-  modalText: {
-    fontSize: 18,
-    color: "#333",
-    textAlign: "center",
-    marginBottom: 15,
-  },
-
-  modalButton: {
-    backgroundColor: "#FFD700",
-    borderRadius: 5,
-    paddingVertical: 10,
     paddingHorizontal: 20,
   },
 
-  modalButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
+  emptyMessage: {
+    fontSize: 18,
+    color: "#333",
+    textAlign: "center",
+    marginTop: 20,
   },
 
-  // ... Resto dos estilos já existentes
+  headerPerson: {
+    width: 60,
+    height: 60,
+  },
+
+  choose: {
+    color: "white",
+    width: "65%",
+    fontSize: 47,
+    //position: "absolute",
+    marginLeft: "4%",
+    zIndex: 2,
+  },
 });

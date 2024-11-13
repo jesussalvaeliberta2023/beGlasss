@@ -318,17 +318,19 @@ export default function DrinkDetails() {
 
   const renderIngredient = ({ item }) => {
    
+    const ingredienteImagemUrl = `http://localhost:3000/uploads/ingredients/${item.imagem}`;
+
     return (
       <View style={[{ marginStart: 25 }, styles.igredientsImages]}>
         <View style={styles.darkPart}>
         <Image
-            source={require(`../assets/images/Igredients/${item.image}`)}
+            source={{ uri: ingredienteImagemUrl }}
             style={{ width: 140, height: 140 }}
           />
         </View>
 
         <View style={styles.yellowPart}>
-          <Text style={styles.igredients}>{item.name}</Text>
+          <Text style={styles.igredients}>{item.ingredient}</Text>
           <Text style={styles.amount}>{item.amount}</Text>
         </View>
       </View>

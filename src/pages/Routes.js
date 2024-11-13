@@ -16,6 +16,7 @@ export default function Testes() {
           <TouchableOpacity style={{marginBottom: 15}} onPress={() => navigation.navigate("Language")}><Text>Ir para Language</Text></TouchableOpacity>
           <TouchableOpacity style={{marginBottom: 15}} onPress={() => navigation.navigate("FavoritesBack")}><Text>Ir para FavoritesBack</Text></TouchableOpacity>
           <TouchableOpacity style={{marginBottom: 15}} onPress={() => navigation.navigate("EsqueciSenha")}><Text>Ir para EsqueciSenha</Text></TouchableOpacity>
+          <TouchableOpacity style={{marginBottom: 15}} onPress={() => navigation.navigate("Checks")}><Text>Checks</Text></TouchableOpacity>
           <Button title="Voltar" onPress={() => navigation.goBack()}  />
       </View>
   );

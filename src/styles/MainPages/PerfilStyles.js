@@ -37,6 +37,15 @@ const styles = StyleSheet.create({
     marginTop: 59,
     fontSize: 16,
   },
+  linhaPage1:{
+    left: 190,
+    marginTop: -30,
+  },
+
+  linhaPage2:{
+    left: 160,
+    marginTop: 50,
+  },
 
   ImagemFundo: {
     height: 950,
@@ -302,7 +311,7 @@ const styles = StyleSheet.create({
   },
 
   modalButtonText: {
-    color: "#FFFFFF",
+    color: "#cfcfcf",
     fontSize: 15,
     fontWeight: "600",
   },

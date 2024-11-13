@@ -344,8 +344,8 @@ const Perfil = ({}) => {
             <Text style={styles.useremail}>
               {user ? user.email : "Carregando..."}
             </Text>
-            <MaterialIcons name="horizontal-rule" size={24} color="white" />
-            <MaterialIcons name="horizontal-rule" size={24} color="#afabab" />
+            <MaterialIcons name="horizontal-rule" size={28} color="white" style={styles.linhaPage2} />
+            <MaterialIcons name="horizontal-rule" size={30} color="#afabab" style={styles.linhaPage1} />
             <Text style={styles.textIdentificarPage}>Suas avaliações</Text>
           </View>
           <View style={styles.header}>

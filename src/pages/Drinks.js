@@ -171,7 +171,7 @@ export default function Drinks() {
             styleI={styles.hexagon}
           />
           <PressComponent
-            onPress={() => navigation.navigate("Testes")}
+            onPress={() => navigation.navigate("Routes")}
             source={require("../assets/images/ThirdTab.png")}
             styleI={styles.hexagon}
           />
@@ -195,7 +195,7 @@ export default function Drinks() {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => navigation.navigate("FavoritesBack")}
+            onPress={() => navigation.navigate("Favorites")}
             style={styles.favsButton}
           >
             <FontAwesome name="heart" size={24} color="#FFFFFF" />
