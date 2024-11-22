@@ -132,12 +132,25 @@ export default function Favorites() {
   console.log("Favorites:", favorites);
   console.log("Filtered Images:", filteredImages);
 
-  const [liked, setLiked] = React.useState(
-    imagenes.reduce((acc, item) => {
-      acc[item.product_id] = false;
+  //const [liked, setLiked] = React.useState(
+  //  imagenes.reduce((acc, item) => {
+  //    acc[item.product_id] = false;
+  //    return acc;
+  //  }, {})
+  //);
+
+  const [liked, setLiked] = React.useState({});
+
+useEffect(() => {
+  const updateLiked = () => {
+    const initialLiked = imagenes.reduce((acc, item) => {
+      acc[item.product_id] = favorites.some(fav => fav.product_id === item.product_id);
       return acc;
-    }, {})
-  );
+    }, {});
+    setLiked(initialLiked);
+  };
+  updateLiked();
+}, [favorites]);
 
   const toggleLike = (id) => {
     setLiked((prevLiked) => ({
@@ -220,6 +233,15 @@ export default function Favorites() {
 
       <Backdrop scrollX={scrollX} filteredImages={filteredImages} />
 
+      {/* Mensagem caso favoritos estejam vazios */}
+{filteredImages.length === 0 && (
+  <View style={styles.emptyContainer}>
+    <Text style={styles.emptyMessage}>
+      Você ainda não tem favoritos. Adicione alguns para vê-los aqui!
+    </Text>
+  </View>
+)}
+
       <Animated.FlatList
         data={filteredImages}
         keyExtractor={(item) => item.product_id.toString()}
@@ -235,7 +257,7 @@ export default function Favorites() {
           paddingHorizontal: SPACE_CONTAINER,
         }}
         snapToInterval={CONTAINER_WIDTH}
-        decelerationRate={0}
+        decelerationRate="fast"
         scrollEventThrottle={16}
         renderItem={({ item, index }) => {
           const inputRange = [
