@@ -2,6 +2,7 @@ import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
+import { Modal } from "react-native";
 import {
   StyleSheet,
   Text,
@@ -100,6 +101,31 @@ export default function Favorites() {
   const [favorites, setFavorites] = useState([]);
   const [userId, setUserId] = useState(null);
   const [selectedButton, setSelectedButton] = React.useState("l");
+  const [modalVisible, setModalVisible] = useState(false);
+  const [currentItem, setCurrentItem] = useState(null);
+
+  const removeFavorite = async (productId) => {
+    try {
+      await axios.delete(
+        `http://${IP_URL}:3000/favorites/${userId}/${productId}`
+      );
+      setFavorites((prev) =>
+        prev.filter((fav) => fav.product_id !== productId)
+      );
+    } catch (error) {
+      console.error("Erro ao remover favorito:", error);
+    }
+  };
+
+  const openModal = (item) => {
+    setCurrentItem(item);
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setCurrentItem(null);
+    setModalVisible(false);
+  };
 
   useEffect(() => {
     const getUserFavorites = async () => {
@@ -132,31 +158,36 @@ export default function Favorites() {
   console.log("Favorites:", favorites);
   console.log("Filtered Images:", filteredImages);
 
-  //const [liked, setLiked] = React.useState(
-  //  imagenes.reduce((acc, item) => {
-  //    acc[item.product_id] = false;
-  //    return acc;
-  //  }, {})
-  //);
-
-  const [liked, setLiked] = React.useState({});
-
-useEffect(() => {
-  const updateLiked = () => {
-    const initialLiked = imagenes.reduce((acc, item) => {
-      acc[item.product_id] = favorites.some(fav => fav.product_id === item.product_id);
+  const [liked, setLiked] = React.useState(
+    imagenes.reduce((acc, item) => {
+      acc[item.product_id] = false;
       return acc;
-    }, {});
-    setLiked(initialLiked);
-  };
-  updateLiked();
-}, [favorites]);
+    }, {})
+  );
+
+  useEffect(() => {
+    const updateLiked = () => {
+      const initialLiked = imagenes.reduce((acc, item) => {
+        acc[item.product_id] = favorites.some(
+          (fav) => fav.product_id === item.product_id
+        );
+        return acc;
+      }, {});
+      setLiked(initialLiked);
+    };
+    updateLiked();
+  }, [favorites]);
 
   const toggleLike = (id) => {
-    setLiked((prevLiked) => ({
-      ...prevLiked,
-      [id]: !prevLiked[id],
-    }));
+    if (liked[id]) {
+      const item = imagenes.find((img) => img.product_id === id);
+      openModal(item);
+    } else {
+      setLiked((prevLiked) => ({
+        ...prevLiked,
+        [id]: true,
+      }));
+    }
   };
 
   return (
@@ -182,12 +213,7 @@ useEffect(() => {
       {/* Título */}
       <Text style={[styles.choose]}>Favoritos</Text>
 
-
-
-      
-
-
-       <View style={styles.topBar}>
+      <View style={styles.topBar}>
         <TouchableOpacity
           style={[
             styles.button,
@@ -234,14 +260,13 @@ useEffect(() => {
       <Backdrop scrollX={scrollX} filteredImages={filteredImages} />
 
       {/* Mensagem caso favoritos estejam vazios */}
-{filteredImages.length === 0 && (
-  <View style={styles.emptyContainer}>
-    <Text style={styles.emptyMessage}>
-      Você ainda não tem favoritos. Adicione alguns para vê-los aqui!
-    </Text>
-  </View>
-)}
-
+      {filteredImages.length === 0 && (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyMessage}>
+            Você ainda não tem favoritos. Adicione alguns para vê-los aqui!
+          </Text>
+        </View>
+      )}
       <Animated.FlatList
         data={filteredImages}
         keyExtractor={(item) => item.product_id.toString()}
@@ -332,6 +357,43 @@ useEffect(() => {
       </View>
     </SafeAreaView>
   );
+  <Modal
+    animationType="slide"
+    transparent={true}
+    visible={modalVisible}
+    onRequestClose={closeModal}
+  >
+    <View style={styles.modalContainer}>
+      <View style={styles.modalContent}>
+        <Text style={styles.modalText}>
+          Tem certeza que deseja remover essa bebida da lista de favoritos?
+        </Text>
+        <View style={styles.modalButtons}>
+          <TouchableOpacity
+            style={styles.modalButtonYes}
+            onPress={() => {
+              if (currentItem) {
+                removeFavorite(currentItem.product_id);
+                setLiked((prevLiked) => ({
+                  ...prevLiked,
+                  [currentItem.product_id]: false,
+                }));
+              }
+              closeModal();
+            }}
+          >
+            <Text style={styles.modalButtonText}>Sim</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.modalButtonCancel}
+            onPress={closeModal}
+          >
+            <Text style={styles.modalButtonText}>Cancelar</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
+  </Modal>;
 }
 
 // Estilos
@@ -375,21 +437,21 @@ const styles = StyleSheet.create({
   },
 
   tabss: {
-    backgroundColor: "#00000090", 
-    width: "90%", 
+    backgroundColor: "#00000090",
+    width: "90%",
     height: 70,
     position: "absolute",
-    bottom: "4%", 
-    left: "5%", 
+    bottom: "4%",
+    left: "5%",
     borderRadius: 20,
     alignItems: "center",
-    justifyContent: "space-around", 
+    justifyContent: "space-around",
     flexDirection: "row",
-    paddingHorizontal: 20, 
+    paddingHorizontal: 20,
   },
 
   homeButton: {
-    width: 50, 
+    width: 50,
     height: 50,
     marginHorizontal: 20,
     justifyContent: "center",
@@ -407,7 +469,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     padding: 15,
-    zIndex:2,
+    zIndex: 2,
   },
 
   headerTab: {
@@ -440,5 +502,52 @@ const styles = StyleSheet.create({
     //position: "absolute",
     marginLeft: "4%",
     zIndex: 2,
+  },
+
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    width: "80%",
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 10,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+  },
+  modalText: {
+    fontSize: 18,
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  modalButtons: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
+  },
+  modalButtonYes: {
+    backgroundColor: "#FF0000",
+    padding: 10,
+    borderRadius: 5,
+    width: "40%",
+    alignItems: "center",
+  },
+  modalButtonCancel: {
+    backgroundColor: "#DDD",
+    padding: 10,
+    borderRadius: 5,
+    width: "40%",
+    alignItems: "center",
+  },
+  modalButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });

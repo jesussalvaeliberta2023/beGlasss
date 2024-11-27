@@ -18,23 +18,44 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
   },
 
+  imagemPerfil:{
+    width: 250,
+    height: 250,
+    borderRadius: 25,
+    left: 80,
+    margin: 30,
+  },
+
   ButtonQuadrados: {
     backgroundColor: "#1c1b29",
     borderRadius: 15,
     marginTop: 15,
-    width: 60,
-    height: 60,
+    width: 50,
+    height: 50,
     justifyContent: "center",
     alignItems: "center",
   },
 
-  containerCima: {},
+  ButtonQuadrados1: {
+    backgroundColor: "#1c1b29",
+    borderRadius: 15,
+    marginTop: 15,
+    width: 50,
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    left: -30,
+  },
+
+  containerCima: {
+    
+  },
 
   containerBaixo: {},
 
   textIdentificarPage: {
     color: "#afabab",
-    marginTop: 59,
+    marginTop: 20,
     fontSize: 16,
   },
   linhaPage1:{
@@ -44,7 +65,7 @@ const styles = StyleSheet.create({
 
   linhaPage2:{
     left: 160,
-    marginTop: 50,
+    marginTop: 10,
   },
 
   ImagemFundo: {
@@ -56,7 +77,7 @@ const styles = StyleSheet.create({
   },
 
   quadradocinza: {
-    height: 600,
+    height: 550,
     backgroundColor: "rgba(0, 0, 0, 0.5)", // Cor cinza com opacidade
     padding: 20,
     width: 430,
@@ -83,7 +104,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 10,
     marginBottom: 20,
-    backgroundColor: "#252239",
   },
 
   reviewList: {
@@ -293,7 +313,7 @@ const styles = StyleSheet.create({
   },
 
   modalButtonYes: {
-    backgroundColor: "#ff4d4d",
+    backgroundColor: "#39374e",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 10,
@@ -302,7 +322,7 @@ const styles = StyleSheet.create({
   },
 
   modalButtonNo: {
-    backgroundColor: "#808080",
+    backgroundColor: "#cfcfcf",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 10,
@@ -310,8 +330,14 @@ const styles = StyleSheet.create({
     width: "40%",
   },
 
-  modalButtonText: {
+  modalButtonTextYes: {
     color: "#cfcfcf",
+    fontSize: 15,
+    fontWeight: "600",
+  },
+
+  modalButtonTextNo: {
+    color: "#2a2a39",
     fontSize: 15,
     fontWeight: "600",
   },
@@ -369,6 +395,15 @@ const styles = StyleSheet.create({
   },
 
   modalButton: {
+    backgroundColor: "#2a2a39",
+    borderRadius: 15,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    marginTop: 10,
+    width: "90%",
+    right: 62,
+  },
+  modalButtonConcluir: {
     backgroundColor: "#cfcfcf",
     borderTopLeftRadius: 15,
     borderBottomRightRadius: 15,
@@ -385,6 +420,11 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "600",
   },
+
+  text:{
+    color: "white",
+    right: 14
+    },
 });
 
 export default styles;

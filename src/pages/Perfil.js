@@ -26,7 +26,7 @@ import * as ImagePicker from "expo-image-picker";
 // Importando icones
 import { Ionicons } from "@expo/vector-icons";
 import Feather from "@expo/vector-icons/Feather";
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 const Perfil = ({}) => {
   const [user, setUser] = useState(null);
@@ -331,12 +331,17 @@ const Perfil = ({}) => {
 
   return (
     <View style={styles.containerCima}>
-      <ScrollView>
         <ImageBackground
           source={require("../assets/images/Ameinda.png")}
           style={styles.ImagemFundo}
           blurRadius={30}
         >
+          <View>
+            <Image
+              source={require("../assets/images/Ameinda.png")} // Caminho da imagem local
+              style={styles.imagemPerfil} // Defina o tamanho da imagem
+            />
+          </View>
           <View style={styles.quadradocinza}>
             <Text style={styles.UserName}>
               {user ? user.username : "Carregando..."}
@@ -344,83 +349,100 @@ const Perfil = ({}) => {
             <Text style={styles.useremail}>
               {user ? user.email : "Carregando..."}
             </Text>
-            <MaterialIcons name="horizontal-rule" size={28} color="white" style={styles.linhaPage2} />
-            <MaterialIcons name="horizontal-rule" size={30} color="#afabab" style={styles.linhaPage1} />
+            <MaterialIcons
+              name="horizontal-rule"
+              size={28}
+              color="white"
+              style={styles.linhaPage2}
+            />
+            <MaterialIcons
+              name="horizontal-rule"
+              size={30}
+              color="#afabab"
+              style={styles.linhaPage1}
+            />
             <Text style={styles.textIdentificarPage}>Suas avaliações</Text>
-          </View>
+            <ScrollView
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              style={{ flex: 1 }}
+            >
+              {/* Primeira "página" com a lista de reviews */}
+              <View
+                style={{
+                  width: screenWidth,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <FlatList
+                  data={reviews2}
+                  renderItem={renderReview}
+                  keyExtractor={(item) => item.id.toString()}
+                  style={{ width: "100%" }}
+                  contentContainerStyle={{ paddingBottom: 20 }}
+                />
+              </View>
+
+              {/* Segunda "página" com os botões */}
+              <View
+                style={[
+                  {
+                    width: screenWidth,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  },
+                ]}
+              >
+                <TouchableOpacity
+                  style={styles.modalButton}
+                  onPress={() => Alert.alert("Botão Trocar senha pressionado!")}
+                >
+                  <Text style={styles.text}>Trocar conta</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.modalButton}
+                  onPress={() => setEmailModalVisible(true)}
+                >
+                  <Text style={styles.text}>Alterar email</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.modalButton}
+                  onPress={() =>
+                    Alert.alert(
+                      "Um codigo de verificação foi enviado no seu email atual"
+                    )
+                  }
+                >
+                  <Text style={styles.text}>Alterar senha</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.modalButton}
+                  onPress={() => setDeleteModalVisible(true)}
+                >
+                  <Text style={styles.text}>Sair da Conta</Text>
+                </TouchableOpacity>
+                {/* Adicione mais botões se necessário */}
+              </View>
+            </ScrollView>
+            </View>
           <View style={styles.header}>
             <TouchableOpacity
               style={styles.ButtonQuadrados}
               onPress={() => navigation.goBack()}
             >
-              <Feather name="chevrons-left" size={35} color="white" />
+              <Feather name="chevrons-left" size={30} color="white" />
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={styles.ButtonQuadrados}
+              style={styles.ButtonQuadrados1}
               onPress={openModal} // Abre o modal ao clicar na pena
             >
-              <Feather name="feather" size={35} color="white" />
+              <Feather name="feather" size={30} color="white" />
             </TouchableOpacity>
           </View>
         </ImageBackground>
-
-        <View style={styles.containerBaixo}>
-          <ScrollView
-            horizontal
-            pagingEnabled
-            showsHorizontalScrollIndicator={false}
-            style={{ flex: 1 }}
-          >
-            {/* Primeira "página" com a lista de reviews */}
-            <View
-              style={{
-                width: screenWidth,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <FlatList
-                data={reviews2}
-                renderItem={renderReview}
-                keyExtractor={(item) => item.id.toString()}
-                style={{ width: "100%" }}
-                contentContainerStyle={{ paddingBottom: 20 }}
-              />
-            </View>
-
-            {/* Segunda "página" com os botões */}
-            <View
-              style={[
-                {
-                  width: screenWidth,
-                  justifyContent: "center",
-                  alignItems: "center",
-                },
-              ]}
-            >
-              <TouchableOpacity
-                style={styles.modalButton}
-                onPress={() => setEmailModalVisible(true)}
-              >
-                <Text style={styles.text}>Alterar email</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.modalButton}
-                onPress={() => Alert.alert("Botão Trocar senha pressionado!")}
-              >
-                <Text style={styles.text}>Alterar senha</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.modalButton}
-                onPress={() => setDeleteModalVisible(true)}
-              >
-                <Text style={styles.text}>Sair da Conta</Text>
-              </TouchableOpacity>
-              {/* Adicione mais botões se necessário */}
-            </View>
-          </ScrollView>
-        </View>
 
         {/* Modal para Alterar Email */}
         <Modal
@@ -458,7 +480,7 @@ const Perfil = ({}) => {
               />
 
               <TouchableOpacity
-                style={styles.modalButton}
+                style={styles.modalButtonConcluir}
                 onPress={handleEmailChange}
               >
                 <Text style={styles.modalButtonText}>Concluir</Text>
@@ -508,20 +530,20 @@ const Perfil = ({}) => {
                   style={styles.modalButtonYes}
                   onPress={handleLogout}
                 >
-                  <Text style={styles.modalButtonText}>Sim</Text>
+                  <Text style={styles.modalButtonTextYes}>Sim</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                   style={styles.modalButtonNo}
                   onPress={() => setDeleteModalVisible(false)}
                 >
-                  <Text style={styles.modalButtonText}>Não</Text>
+                  <Text style={styles.modalButtonTextNo}>Não</Text>
                 </TouchableOpacity>
               </View>
             </View>
           </View>
         </Modal>
-      </ScrollView>
+      
     </View>
   );
 };
