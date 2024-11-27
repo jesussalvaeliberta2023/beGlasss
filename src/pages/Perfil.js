@@ -361,7 +361,7 @@ const Perfil = ({}) => {
               color="#afabab"
               style={styles.linhaPage1}
             />
-            <Text style={styles.textIdentificarPage}>Suas avaliações</Text>
+            
             <ScrollView
               horizontal
               pagingEnabled
@@ -369,6 +369,7 @@ const Perfil = ({}) => {
               style={{ flex: 1 }}
             >
               {/* Primeira "página" com a lista de reviews */}
+              
               <View
                 style={{
                   width: screenWidth,
@@ -376,6 +377,7 @@ const Perfil = ({}) => {
                   alignItems: "center",
                 }}
               >
+                <Text style={styles.textIdentificarPage}>Suas avaliações</Text>
                 <FlatList
                   data={reviews2}
                   renderItem={renderReview}
@@ -395,6 +397,7 @@ const Perfil = ({}) => {
                   },
                 ]}
               >
+                <Text style={styles.textIdentificarPage2}>Suas avaliações</Text>
                 <TouchableOpacity
                   style={styles.modalButton}
                   onPress={() => Alert.alert("Botão Trocar senha pressionado!")}

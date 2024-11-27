@@ -57,7 +57,18 @@ const styles = StyleSheet.create({
     color: "#afabab",
     marginTop: 20,
     fontSize: 16,
+    right: 149,
+    margin: 15,
   },
+
+  textIdentificarPage2: {
+    color: "#afabab",
+    marginTop: 70,
+    fontSize: 16,
+    right: 149,
+    margin: 15,
+  },
+
   linhaPage1:{
     left: 190,
     marginTop: -30,
@@ -399,7 +410,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     paddingVertical: 12,
     paddingHorizontal: 20,
-    marginTop: 10,
+    marginTop: 20,
     width: "90%",
     right: 62,
   },
