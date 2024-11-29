@@ -14,7 +14,7 @@ import {
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import Fontisto from "@expo/vector-icons/Fontisto";
 
-const LoginScreen = () => {
+const LogIn = () => {
   const [usernameOrEmail, setUsernameOrEmail] = useState(""); // Alterado para usernameOrEmail
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -310,4 +310,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen;
+export default LogIn;

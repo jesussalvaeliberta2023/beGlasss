@@ -318,7 +318,7 @@ export default function DrinkDetails() {
 
   const renderIngredient = ({ item }) => {
    
-    const ingredienteImagemUrl = `http://localhost:3000/uploads/ingredients/${item.imagem}`;
+    const ingredienteImagemUrl = `http://${IP_URL}:3000/uploads/ingredients/${item.imagem}`;
 
     return (
       <View style={[{ marginStart: 25 }, styles.igredientsImages]}>

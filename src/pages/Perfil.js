@@ -155,25 +155,25 @@ const Perfil = ({}) => {
         const savedToken = await AsyncStorage.getItem("userToken"); // Recupera o token
         console.log("Token recuperado:", savedToken);
 
-        // if (!savedToken) {
-        //   console.log("Acesso Negado");
-        //   Alert.alert(
-        //     "Acesso Negado",
-        //     "Você deve realizar o login para poder entrar.",
-        //     [
-        //       {
-        //         text: "Cancelar",
-        //         onPress: () => navigation.goBack(),
-        //         style: "cancel",
-        //       },
-        //       {
-        //         text: "OK",
-        //         onPress: () => navigation.navigate("Login"),
-        //       },
-        //     ]
-        //   );
-        //   return; // Sai da função sem alterar `loading`
-        // }
+        if (!savedToken) {
+          console.log("Acesso Negado");
+          Alert.alert(
+            "Acesso Negado",
+            "Você deve realizar o login para poder entrar.",
+            [
+              {
+                text: "Cancelar",
+                onPress: () => navigation.goBack(),
+                style: "cancel",
+              },
+              {
+                text: "OK",
+                onPress: () => navigation.navigate("Login"),
+              },
+            ]
+          );
+          return; // Sai da função sem alterar `loading`
+        }
 
         // Decodificar e usar o token
         const decodedToken = jwtDecode(savedToken);
