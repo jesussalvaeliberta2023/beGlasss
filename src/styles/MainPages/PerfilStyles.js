@@ -63,9 +63,9 @@ const styles = StyleSheet.create({
 
   textIdentificarPage2: {
     color: "#afabab",
-    marginTop: 70,
+    marginTop: -10,
     fontSize: 16,
-    right: 149,
+    right: 200,
     margin: 15,
   },
 
@@ -115,6 +115,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 10,
     marginBottom: 20,
+    right: 20,
   },
 
   reviewList: {
@@ -139,8 +140,8 @@ const styles = StyleSheet.create({
   },
 
   drinkText: {
-    color: "#fff",
-    fontSize: 10,
+    color: "#afabab",
+    fontSize: 13,
   },
 
   drinkTitle: {
@@ -173,20 +174,12 @@ const styles = StyleSheet.create({
   },
 
   modalTitle: {
-    fontSize: 20,
-    marginBottom: 20,
-  },
-
-  button: {
-    backgroundColor: "#2a2a39",
-    padding: 10,
-    marginVertical: 10,
-    borderRadius: 5,
+    fontSize: 15,
   },
 
   buttonText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: 96,
   },
 
   selectedImage: {
@@ -270,16 +263,16 @@ const styles = StyleSheet.create({
   },
 
   button: {
-    backgroundColor: "#6200ee",
+    backgroundColor: "#cfcfcf",
     padding: 15,
-    borderRadius: 8,
+    borderRadius: 15,
     marginVertical: 10,
     width: "80%",
     alignItems: "center",
   },
 
   buttonText: {
-    color: "#ffffff",
+    color: "#4c4a64",
     fontSize: 18,
     fontWeight: "600",
   },
@@ -408,9 +401,9 @@ const styles = StyleSheet.create({
   modalButton: {
     backgroundColor: "#2a2a39",
     borderRadius: 15,
-    paddingVertical: 12,
+    paddingVertical: 15,
     paddingHorizontal: 20,
-    marginTop: 20,
+    marginTop: 10,
     width: "90%",
     right: 62,
   },
@@ -434,8 +427,15 @@ const styles = StyleSheet.create({
 
   text:{
     color: "white",
-    right: 14
+    right: 2,
+    fontSize: 15,
     },
+
+    textIdenticicacao:{
+      color: "#afabab",
+      left: 250,
+      marginTop: -20,
+      },
 });
 
 export default styles;

@@ -13,6 +13,7 @@ import EsqueciSenha from "./src/components/ForgotPassword";
 import ResetPasswordScreen from "./src/components/ResetPassword";
 import DrinkDetails from "./src/pages/DrinkDetails";
 import Checks from "./src/pages/Checks"
+import DigitsPage from "./src/components/6DigitsPage";
 
 
 const Stack = createNativeStackNavigator();
@@ -93,6 +94,13 @@ export default function App() {
          component={Checks}
          options={{ headerShown: false }}
        />
+
+<Stack.Screen
+         name="DigitsPage"
+         component={DigitsPage}
+         options={{ headerShown: false }}
+       />
+       
       </Stack.Navigator>
     </NavigationContainer>
   );

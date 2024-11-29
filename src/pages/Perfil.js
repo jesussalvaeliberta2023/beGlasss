@@ -1,3 +1,4 @@
+// Importações de bibliotecas e componentes necessários
 import {
   View,
   Text,
@@ -12,13 +13,13 @@ import {
   TextInput,
 } from "react-native";
 import React, { useState, useEffect } from "react";
-import { useNavigation } from "@react-navigation/native";
-import { jwtDecode } from "jwt-decode";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native"; //Gerencia a navegação entre telas.
+import { jwtDecode } from "jwt-decode"; //Decodifica tokens JWT para acessar dados do usuário.
+import AsyncStorage from "@react-native-async-storage/async-storage"; //Gerencia armazenamento local, como tokens de autenticação.
 import IP_URL from "../components/IP";
-import axios from "axios";
-import styles from "../styles/MainPages/PerfilStyles"; // Certifique-se de que o caminho está correto
-import DrinksData from "../components/DrinksData";
+import axios from "axios"; //Realiza requisições HTTP para obter ou enviar dados ao backend.
+import styles from "../styles/MainPages/PerfilStyles"; // Estilos para os componentes
+import DrinksData from "../components/DrinksData"; // Dados sobre as bebidas
 
 // Importando o ImagePicker corretamente
 import * as ImagePicker from "expo-image-picker";
@@ -28,22 +29,26 @@ import { Ionicons } from "@expo/vector-icons";
 import Feather from "@expo/vector-icons/Feather";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
+// Componente principal da tela de perfil
 const Perfil = ({}) => {
-  const [user, setUser] = useState(null);
-  const [reviews, setReviews] = useState([]);
+  // Estados utilizados no componente
+  const [user, setUser] = useState(null); // Dados do usuário
+  const [reviews, setReviews] = useState([]); // Avaliações do usuário
   const [foto, setFoto] = useState(""); // Estado para a foto selecionada
   const [modalVisible, setModalVisible] = useState(false); // Controle do modal
-  const [emailModalVisible, setEmailModalVisible] = useState(false);
-  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [newEmail, setNewEmail] = useState("");
-  const [senha, setSenha] = useState("");
-  const navigation = useNavigation();
+  const [emailModalVisible, setEmailModalVisible] = useState(false); // Modal para alterar email
+  const [idiomaModalVisible, setIdiomaModalVisible] = useState(false); // Modal de idioma
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false); // Modal para sair da conta
+  const [loading, setLoading] = useState(true); // Estado de carregamento
+  const [error, setError] = useState(null); // Erros
+  const [newEmail, setNewEmail] = useState(""); // Novo email do usuário
+  const [senha, setSenha] = useState(""); // Senha do usuário
+  const navigation = useNavigation(); // Navegação entre telas
 
+   // Obtém a largura da tela
   const screenWidth = Dimensions.get("window").width;
 
-  // Função para abrir o modal
+  // Função para abrir o modal da imagem
   const openModal = () => {
     setModalVisible(true);
   };
@@ -54,6 +59,7 @@ const Perfil = ({}) => {
     Alert.alert("Sucesso", "Email alterado com sucesso!");
   };
 
+   // Função para sair da conta
   const handleAccountDeletion = () => {
     setDeleteModalVisible(false);
     navigation.goBack();
@@ -95,6 +101,7 @@ const Perfil = ({}) => {
     }
   };
 
+    // Função para enviar a imagem selecionada para o servidor
   const enviarImagem = async (imageUri) => {
     if (!imageUri) {
       Alert.alert("Erro", "Por favor, selecione uma imagem.");
@@ -265,7 +272,8 @@ const Perfil = ({}) => {
       id: 1,
       autor: "João Silva",
       nota: 4,
-      comentario: "Muito bom, gostei bastante!",
+      comentario:
+        "A caipirinha é refrescante e equilibrada, mas a qualidade da cachaça e a mistura dos ingredientes podem variar. Boa, mas pode melhorar.",
       produto: 1,
     },
     {
@@ -331,222 +339,226 @@ const Perfil = ({}) => {
 
   return (
     <View style={styles.containerCima}>
-        <ImageBackground
-          source={require("../assets/images/Ameinda.png")}
-          style={styles.ImagemFundo}
-          blurRadius={30}
-        >
-          <View>
-            <Image
-              source={require("../assets/images/Ameinda.png")} // Caminho da imagem local
-              style={styles.imagemPerfil} // Defina o tamanho da imagem
-            />
-          </View>
-          <View style={styles.quadradocinza}>
-            <Text style={styles.UserName}>
-              {user ? user.username : "Carregando..."}
-            </Text>
-            <Text style={styles.useremail}>
-              {user ? user.email : "Carregando..."}
-            </Text>
-            <MaterialIcons
-              name="horizontal-rule"
-              size={28}
-              color="white"
-              style={styles.linhaPage2}
-            />
-            <MaterialIcons
-              name="horizontal-rule"
-              size={30}
-              color="#afabab"
-              style={styles.linhaPage1}
-            />
-            
-            <ScrollView
-              horizontal
-              pagingEnabled
-              showsHorizontalScrollIndicator={false}
-              style={{ flex: 1 }}
+      <ImageBackground
+        source={require("../assets/images/Ameinda.png")}
+        style={styles.ImagemFundo}
+        blurRadius={30}
+      >
+        <View>
+          <Image
+            source={require("../assets/images/Ameinda.png")} // Caminho da imagem local
+            style={styles.imagemPerfil} // Defina o tamanho da imagem
+          />
+        </View>
+        <View style={styles.quadradocinza}>
+          <Text style={styles.UserName}>
+            {user ? user.username : "Carregando..."}
+          </Text>
+          <Text style={styles.useremail}>
+            {user ? user.email : "Carregando..."}
+          </Text>
+          <MaterialIcons
+            name="horizontal-rule"
+            size={28}
+            color="white"
+            style={styles.linhaPage2}
+          />
+          <MaterialIcons
+            name="horizontal-rule"
+            size={30}
+            color="#afabab"
+            style={styles.linhaPage1}
+          />
+
+          <ScrollView
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            style={{ flex: 1 }}
+          >
+            {/* Primeira "página" com a lista de reviews */}
+
+            <View
+              style={{
+                width: screenWidth,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
             >
-              {/* Primeira "página" com a lista de reviews */}
-              
-              <View
-                style={{
+              <Text style={styles.textIdentificarPage}>Suas avaliações</Text>
+              <FlatList
+                data={reviews2}
+                renderItem={renderReview}
+                keyExtractor={(item) => item.id.toString()}
+                style={{ width: "100%" }}
+                contentContainerStyle={{ paddingBottom: 20 }}
+              />
+            </View>
+
+            {/* Segunda "página" com os botões */}
+            <View
+              style={[
+                {
                   width: screenWidth,
                   justifyContent: "center",
                   alignItems: "center",
-                }}
-              >
-                <Text style={styles.textIdentificarPage}>Suas avaliações</Text>
-                <FlatList
-                  data={reviews2}
-                  renderItem={renderReview}
-                  keyExtractor={(item) => item.id.toString()}
-                  style={{ width: "100%" }}
-                  contentContainerStyle={{ paddingBottom: 20 }}
-                />
-              </View>
-
-              {/* Segunda "página" com os botões */}
-              <View
-                style={[
-                  {
-                    width: screenWidth,
-                    justifyContent: "center",
-                    alignItems: "center",
-                  },
-                ]}
-              >
-                <Text style={styles.textIdentificarPage2}>Suas avaliações</Text>
-                <TouchableOpacity
-                  style={styles.modalButton}
-                  onPress={() => Alert.alert("Botão Trocar senha pressionado!")}
-                >
-                  <Text style={styles.text}>Trocar conta</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.modalButton}
-                  onPress={() => setEmailModalVisible(true)}
-                >
-                  <Text style={styles.text}>Alterar email</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.modalButton}
-                  onPress={() =>
-                    Alert.alert(
-                      "Um codigo de verificação foi enviado no seu email atual"
-                    )
-                  }
-                >
-                  <Text style={styles.text}>Alterar senha</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.modalButton}
-                  onPress={() => setDeleteModalVisible(true)}
-                >
-                  <Text style={styles.text}>Sair da Conta</Text>
-                </TouchableOpacity>
-                {/* Adicione mais botões se necessário */}
-              </View>
-            </ScrollView>
-            </View>
-          <View style={styles.header}>
-            <TouchableOpacity
-              style={styles.ButtonQuadrados}
-              onPress={() => navigation.goBack()}
+                },
+              ]}
             >
-              <Feather name="chevrons-left" size={30} color="white" />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.ButtonQuadrados1}
-              onPress={openModal} // Abre o modal ao clicar na pena
-            >
-              <Feather name="feather" size={30} color="white" />
-            </TouchableOpacity>
-          </View>
-        </ImageBackground>
-
-        {/* Modal para Alterar Email */}
-        <Modal
-          visible={emailModalVisible}
-          transparent
-          onRequestClose={() => setEmailModalVisible(false)}
-        >
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Alterar Email</Text>
-
-              <Text style={styles.modalLabel}>Seu email atual</Text>
-
-              <Text style={styles.modalCurrentEmail}>
-                ameinda.ferraez@gmail.com
-              </Text>
-
-              <Text style={styles.modalLabel}>Novo endereço de email:</Text>
-              <TextInput
-                style={styles.inputField}
-                placeholder="Digite o novo email..."
-                placeholderTextColor="#afabab"
-                value={newEmail}
-                onChangeText={setNewEmail}
-              />
-
-              <Text style={styles.modalLabel}>Senha:</Text>
-              <TextInput
-                style={styles.inputField}
-                placeholder="Digite sua senha..."
-                placeholderTextColor="#afabab"
-                secureTextEntry
-                value={senha}
-                onChangeText={setSenha}
-              />
+              <Text style={styles.textIdentificarPage2}>Configurações</Text>
+              <TouchableOpacity
+                style={styles.modalButton}
+                onPress={() => setIdiomaModalVisible(true)}
+              >
+                <Text style={styles.text}>Idioma</Text>
+                <Text style={styles.textIdenticicacao}>Português (Br)</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.modalButton}
+                onPress={() => Alert.alert("Botão Alterar senha pressionado!")}
+              >
+                <Text style={styles.text}>Trocar conta</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.modalButton}
+                onPress={() => setEmailModalVisible(true)}
+              >
+                <Text style={styles.text}>Alterar email</Text>
+              </TouchableOpacity>
 
               <TouchableOpacity
-                style={styles.modalButtonConcluir}
-                onPress={handleEmailChange}
+                style={styles.modalButton}
+                onPress={() =>
+                  Alert.alert(
+                    "Um codigo de verificação foi enviado no seu email atual"
+                  )
+                }
               >
-                <Text style={styles.modalButtonText}>Concluir</Text>
+                <Text style={styles.text}>Alterar senha</Text>
               </TouchableOpacity>
-            </View>
-          </View>
-        </Modal>
-
-        {/* Modal para selecionar a imagem */}
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={closeModal}
-        >
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalContainer}>
-              <Text style={styles.modalTitle}>Escolher uma Imagem</Text>
               <TouchableOpacity
-                onPress={selecionarImagem}
-                style={styles.button}
+                style={styles.modalButton}
+                onPress={() => setDeleteModalVisible(true)}
               >
-                <Text style={styles.buttonText}>Escolher da Galeria</Text>
+                <Text style={styles.text}>Sair da Conta</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={closeModal} style={styles.button}>
-                <Text style={styles.buttonText}>Fechar</Text>
-              </TouchableOpacity>
-              {foto && (
-                <Image source={{ uri: foto }} style={styles.selectedImage} />
-              )}
+              {/* Adicione mais botões se necessário */}
             </View>
-          </View>
-        </Modal>
+          </ScrollView>
+        </View>
+        <View style={styles.header}>
+          <TouchableOpacity
+            style={styles.ButtonQuadrados}
+            onPress={() => navigation.goBack()}
+          >
+            <Feather name="chevrons-left" size={30} color="white" />
+          </TouchableOpacity>
 
-        {/* Modal para Deslogar */}
-        <Modal
-          visible={deleteModalVisible}
-          transparent
-          onRequestClose={() => setDeleteModalVisible(false)}
-        >
+          <TouchableOpacity
+            style={styles.ButtonQuadrados1}
+            onPress={openModal} // Abre o modal ao clicar na pena
+          >
+            <Feather name="feather" size={30} color="white" />
+          </TouchableOpacity>
+        </View>
+      </ImageBackground>
+
+      {/* Modal para Alterar Email */}
+      <Modal
+        visible={emailModalVisible}
+        transparent
+        onRequestClose={() => setEmailModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Alterar Email</Text>
+
+            <Text style={styles.modalLabel}>Seu email atual</Text>
+
+            <Text style={styles.modalCurrentEmail}>
+              ameinda.ferraez@gmail.com
+            </Text>
+
+            <Text style={styles.modalLabel}>Novo endereço de email:</Text>
+            <TextInput
+              style={styles.inputField}
+              placeholder="Digite o novo email..."
+              placeholderTextColor="#afabab"
+              value={newEmail}
+              onChangeText={setNewEmail}
+            />
+
+            <Text style={styles.modalLabel}>Senha:</Text>
+            <TextInput
+              style={styles.inputField}
+              placeholder="Digite sua senha..."
+              placeholderTextColor="#afabab"
+              secureTextEntry
+              value={senha}
+              onChangeText={setSenha}
+            />
+
+            <TouchableOpacity
+              style={styles.modalButtonConcluir}
+              onPress={handleEmailChange}
+            >
+              <Text style={styles.modalButtonText}>Concluir</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Modal para selecionar a imagem */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={closeModal}
+      >
+        <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Deseja mesmo sair da conta?</Text>
+            <Text style={styles.modalTitle}>Escolher uma Imagem</Text>
+            <TouchableOpacity onPress={selecionarImagem} style={styles.button}>
+              <Text style={styles.buttonText}>Escolher da Galeria</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={closeModal} style={styles.button}>
+              <Text style={styles.buttonText}>Fechar</Text>
+            </TouchableOpacity>
+            {foto && (
+              <Image source={{ uri: foto }} style={styles.selectedImage} />
+            )}
+          </View>
+        </View>
+      </Modal>
 
-              <View style={styles.modalButtonContainer}>
-                <TouchableOpacity
-                  style={styles.modalButtonYes}
-                  onPress={handleLogout}
-                >
-                  <Text style={styles.modalButtonTextYes}>Sim</Text>
-                </TouchableOpacity>
+      {/* Modal para Deslogar */}
+      <Modal
+        visible={deleteModalVisible}
+        transparent
+        onRequestClose={() => setDeleteModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Deseja mesmo sair da conta?</Text>
 
-                <TouchableOpacity
-                  style={styles.modalButtonNo}
-                  onPress={() => setDeleteModalVisible(false)}
-                >
-                  <Text style={styles.modalButtonTextNo}>Não</Text>
-                </TouchableOpacity>
-              </View>
+            <View style={styles.modalButtonContainer}>
+              <TouchableOpacity
+                style={styles.modalButtonYes}
+                onPress={handleLogout}
+              >
+                <Text style={styles.modalButtonTextYes}>Sim</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.modalButtonNo}
+                onPress={() => setDeleteModalVisible(false)}
+              >
+                <Text style={styles.modalButtonTextNo}>Não</Text>
+              </TouchableOpacity>
             </View>
           </View>
-        </Modal>
-      
+        </View>
+      </Modal>
     </View>
   );
 };
