@@ -153,7 +153,7 @@ const Perfil = ({}) => {
 
       try {
         const savedToken = await AsyncStorage.getItem("userToken"); // Recupera o token
-        console.log("Token recuperado:", savedToken);
+      
 
         if (!savedToken) {
           console.log("Acesso Negado");
@@ -177,10 +177,10 @@ const Perfil = ({}) => {
 
         // Decodificar e usar o token
         const decodedToken = jwtDecode(savedToken);
-        console.log("Token decodificado:", decodedToken);
+      
 
         const usernameFromToken = decodedToken.username;
-        console.log("Nome de usuário do token:", usernameFromToken);
+        
 
         // Fetch dados do usuário
         const userResponse = await axios.get(
@@ -237,7 +237,7 @@ const Perfil = ({}) => {
     };
 
     fetchUser();
-  }, []);
+  }, [user]);
 
   const handleLogout = async () => {
     try {
@@ -387,7 +387,7 @@ const Perfil = ({}) => {
             >
               <Text style={styles.textIdentificarPage}>Suas avaliações</Text>
               <FlatList
-                data={reviews2}
+                data={reviews}
                 renderItem={renderReview}
                 keyExtractor={(item) => item.id.toString()}
                 style={{ width: "100%" }}
