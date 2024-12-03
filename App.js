@@ -9,11 +9,11 @@ import Perfil from "./src/pages/Perfil";
 import SignUp from "./src/pages/SignUp";
 import Routes from "./src/pages/Routes";
 import Favorites from "./src/pages/Favorites";
-import EsqueciSenha from "./src/components/ForgotPassword";
 import ResetPasswordScreen from "./src/components/ResetPassword";
 import DrinkDetails from "./src/pages/DrinkDetails";
 import Checks from "./src/pages/Checks"
 import DigitsPage from "./src/components/6DigitsPage";
+import TrocarSenha from "./src/components/ForgotPassword";
 
 
 const Stack = createNativeStackNavigator();
@@ -79,8 +79,8 @@ export default function App() {
          options={{ headerShown: false }}
        />
        <Stack.Screen
-         name="EsqueciSenha"
-         component={EsqueciSenha}
+         name="TrocarSenha"
+         component={TrocarSenha}
          options={{ headerShown: false }}
        />
        <Stack.Screen

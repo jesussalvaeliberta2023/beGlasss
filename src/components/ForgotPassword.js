@@ -1,23 +1,33 @@
 import React, { useState } from "react";
 import styles from "../styles/SecondaryPages/ForgetStyles";
-import { View, Text, TextInput, TouchableOpacity, ImageBackground } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, ImageBackground, Alert } from "react-native";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
 import IP_URL from "../components/IP";
 
-export default function EsqueciSenha() {
-  const [email, setEmail] = useState("");
+export default function TrocarEmail() {
+  const [newEmail, setNewEmail] = useState("");
   const [message, setMessage] = useState("");
   const navigation = useNavigation();
 
-  const handlePasswordReset = async () => {
+  const handleEmailChange = async () => {
+    if (!newEmail) {
+      Alert.alert("Erro", "Por favor, insira um e-mail válido.");
+      return;
+    }
+
     try {
-      const response = await axios.post(`http://${IP_URL}:3000/forgot-password`, { email });
+      // Faz uma requisição ao backend para alterar o e-mail
+      const response = await axios.post(`http://${IP_URL}:3000/change-email`, { email: newEmail });
+
       if (response.status === 200) {
-        setMessage("E-mail de recuperação enviado! Verifique sua caixa de entrada.");
+        Alert.alert("Sucesso", "E-mail alterado com sucesso! Você será redirecionado para a página de login.");
+        // Redireciona o usuário para a página de login
+        navigation.navigate("Login");
       }
     } catch (error) {
-      setMessage("Erro ao enviar e-mail. Verifique o e-mail digitado.");
+      console.error("Erro ao alterar o e-mail:", error);
+      Alert.alert("Erro", "Não foi possível alterar o e-mail. Tente novamente.");
     }
   };
 
@@ -27,16 +37,17 @@ export default function EsqueciSenha() {
       style={styles.container}
     >
       <View>
-        <Text style={styles.title}>Esqueci a Senha</Text>
+        <Text style={styles.title}>Alterar E-mail</Text>
         <TextInput
           style={styles.input}
-          placeholder="Digite seu e-mail"
+          placeholder="Digite o novo e-mail"
           placeholderTextColor="#888"
-          value={email}
-          onChangeText={setEmail}
+          value={newEmail}
+          onChangeText={setNewEmail}
+          keyboardType="email-address"
         />
-        <TouchableOpacity onPress={handlePasswordReset} style={styles.button}>
-          <Text style={styles.buttonText}>Enviar E-mail de Recuperação</Text>
+        <TouchableOpacity onPress={handleEmailChange} style={styles.button}>
+          <Text style={styles.buttonText}>Alterar E-mail</Text>
         </TouchableOpacity>
         {message ? <Text style={styles.message}>{message}</Text> : null}
       </View>

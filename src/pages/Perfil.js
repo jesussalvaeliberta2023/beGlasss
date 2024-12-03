@@ -389,11 +389,7 @@ const Perfil = ({}) => {
 
               <TouchableOpacity
                 style={styles.modalButton}
-                onPress={() =>
-                  Alert.alert(
-                    "Um codigo de verificação foi enviado no seu email atual"
-                  )
-                }
+                onPress={() => navigation.navigate("DigitsPage")}
               >
                 <Text style={styles.text}>Alterar senha</Text>
               </TouchableOpacity>
