@@ -30,7 +30,7 @@ export default function DigitsPage() {
       });
       if (response.status === 200) {
         setMessage(
-          "E-mail de recuperação enviado! Verifique sua caixa de entrada."
+          "E-mail de recuperação enviado! Verifique sua caixa de entrada." 
         );
         setShowModal(true); // Exibe o modal após envio bem-sucedido
       }
