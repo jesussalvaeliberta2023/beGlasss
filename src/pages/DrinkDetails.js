@@ -47,16 +47,18 @@ export default function DrinkDetails() {
   const [isChecked, setIsChecked] = useState(false);
   const [averageRating, setAverageRating] = useState(0); // Média das avaliações
   const [ingredients, setIngredients] = useState([]);
+  const [preparationMethod, setPreparationMethod] = useState([]);
+  const [checkedSteps, setCheckedSteps] = useState([]);
 
-  const preparationMethod = [
-    "Corte o limão em 4 pedaços e retire o miolo branco; se preferir, retire a casca também.",
-    "Coloque o limão em um copo juntamente com o açúcar.",
-    "Macere os ingredientes, adicione o gelo, e complete com a água gaseificada.",
-    "Misture delicadamente, decore com uma rodela de limão e sirva.",
-  ];
-  const [checkedSteps, setCheckedSteps] = useState(
-    Array(preparationMethod ? preparationMethod.length : 0).fill(false)
-  );
+  // const preparationMethod = [
+  //   "Corte o limão em 4 pedaços e retire o miolo branco; se preferir, retire a casca também.",
+  //   "Coloque o limão em um copo juntamente com o açúcar.",
+  //   "Macere os ingredientes, adicione o gelo, e complete com a água gaseificada.",
+  //   "Misture delicadamente, decore com uma rodela de limão e sirva.",
+  // ];
+  // const [checkedSteps, setCheckedSteps] = useState(
+  //   Array(preparationMethod ? preparationMethod.length : 0).fill(false)
+  // );
 
   const route = useRoute();
   const navigation = useNavigation();
@@ -82,7 +84,7 @@ export default function DrinkDetails() {
     try {
       const response = await axios.get(`http://${IP_URL}:3000/recipes/${id}`);
       if (response.data) {
-        setIngredients(response.data)
+        setIngredients(response.data);
       }
     } catch (error) {
       console.error("Erro ao buscar reviews", error);
@@ -156,6 +158,27 @@ export default function DrinkDetails() {
     }
   };
 
+
+  const fetchPreparationMethod = async () => {
+    setLoading(true);
+    try {
+      // Requisição para buscar o campo comofazer do produto
+      const response = await axios.get(`http://${IP_URL}:3000/produtos/${id}`);
+      const comofazerText = response.data.comofazer;
+
+      // Divide o texto do comofazer em etapas, supondo que cada linha seja uma etapa
+      const steps = comofazerText.split("\n"); // Divide por nova linha
+      setPreparationMethod(steps);
+
+      // Cria o estado para controlar os passos
+      setCheckedSteps(Array(steps.length).fill(false));
+    } catch (error) {
+      console.error("Erro ao buscar o método de preparo:", error.response?.data || error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Função para remover o favorito
   const removeFavorite = async () => {
     try {
@@ -192,8 +215,10 @@ export default function DrinkDetails() {
           `http://${IP_URL}:3000/produtos/${id}`
         );
         setDrink(response.data);
+
         await fetchReviews(); // Carrega as reviews associadas ao produto
         await fetchIngredients(); // Carrega as reviews associadas ao produto
+        await fetchPreparationMethod();
       } catch (error) {
         console.error(
           "Erro ao buscar dados da bebida:",
@@ -317,13 +342,12 @@ export default function DrinkDetails() {
   };
 
   const renderIngredient = ({ item }) => {
-   
     const ingredienteImagemUrl = `http://${IP_URL}:3000/uploads/ingredients/${item.imagem}`;
 
     return (
       <View style={[{ marginStart: 25 }, styles.igredientsImages]}>
         <View style={styles.darkPart}>
-        <Image
+          <Image
             source={{ uri: ingredienteImagemUrl }}
             style={{ width: 140, height: 140 }}
           />
@@ -425,20 +449,22 @@ export default function DrinkDetails() {
                 </Text>
                 {preparationMethod.map((step, index) => (
                   <View key={index} style={styles.stepContainer}>
+                    {/* Checkbox para marcar/desmarcar o passo */}
                     <Pressable
                       onPress={() => toggleCheckbox(index)}
-                      style={
+                      style={[
                         checkedSteps[index]
                           ? styles.checkedBox
-                          : styles.uncheckedBox
-                      }
+                          : styles.uncheckedBox,
+                        // Adicionando uma condição para manter o layout conforme necessário
+                      ]}
                     />
                     <Text
                       style={[
                         styles.textMethod,
                         checkedSteps[index] && {
-                          textDecorationLine: "line-through",
-                          color: "#888",
+                          textDecorationLine: "line-through", // Risca o texto se marcado
+                          color: "#888", // Torna o texto mais suave se marcado
                         },
                       ]}
                     >

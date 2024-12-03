@@ -71,6 +71,7 @@ export default function CadastroScreen() {
       });
       if (response.status === 200) {
         // Redireciona para a página de login após o cadastro bem-sucedido
+        Alert.alert("Você Cadastrou com sucesso!")
         navigation.navigate("Login");
       }
     } catch (error) {

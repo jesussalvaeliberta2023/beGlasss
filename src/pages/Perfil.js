@@ -45,7 +45,7 @@ const Perfil = ({}) => {
   const [senha, setSenha] = useState(""); // Senha do usuário
   const navigation = useNavigation(); // Navegação entre telas
 
-   // Obtém a largura da tela
+  // Obtém a largura da tela
   const screenWidth = Dimensions.get("window").width;
 
   // Função para abrir o modal da imagem
@@ -53,16 +53,30 @@ const Perfil = ({}) => {
     setModalVisible(true);
   };
 
+
+  
+  
   const handleEmailChange = () => {
     // Função para salvar o novo email aqui
     setEmailModalVisible(false);
     Alert.alert("Sucesso", "Email alterado com sucesso!");
   };
 
-   // Função para sair da conta
-  const handleAccountDeletion = () => {
-    setDeleteModalVisible(false);
-    navigation.goBack();
+  const handleLogout = async () => {
+    try {
+      // Limpar o token e o username/email armazenados no AsyncStorage
+      await AsyncStorage.removeItem("userToken");
+      await AsyncStorage.removeItem("usernameOrEmail");
+
+      // Redirecionar o usuário para a tela de login
+      navigation.navigate("Login");
+
+      // Opcional: Exibir uma mensagem de confirmação
+      Alert.alert("Você saiu com sucesso!");
+    } catch (error) {
+      console.error("Erro ao tentar realizar logout:", error);
+      Alert.alert("Erro ao sair. Tente novamente.");
+    }
   };
 
   // Função para solicitar permissões para acessar a galeria
@@ -101,7 +115,7 @@ const Perfil = ({}) => {
     }
   };
 
-    // Função para enviar a imagem selecionada para o servidor
+  // Função para enviar a imagem selecionada para o servidor
   const enviarImagem = async (imageUri) => {
     if (!imageUri) {
       Alert.alert("Erro", "Por favor, selecione uma imagem.");
@@ -110,13 +124,11 @@ const Perfil = ({}) => {
 
     const formData = new FormData();
 
-    // Obtenha o tipo do arquivo (extensão) a partir da URI da imagem
     const uriParts = imageUri.split(".");
-    const fileType = uriParts[uriParts.length - 1]; // Obtém o tipo do arquivo da extensão
+    const fileType = uriParts[uriParts.length - 1];
 
-    // Cria um objeto para a imagem a ser enviada no FormData
     formData.append("foto", {
-      uri: imageUri, // Agora usa a URI correta
+      uri: imageUri,
       name: `photo.${fileType}`,
       type: `image/${fileType}`,
     });
@@ -126,17 +138,21 @@ const Perfil = ({}) => {
       const response = await fetch(`http://${IP_URL}:3000/upload`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${savedToken}`, // Adiciona o token de autenticação, se necessário
-          // O 'Content-Type' será definido automaticamente pelo 'fetch' quando usar o FormData
+          Authorization: `Bearer ${savedToken}`,
         },
-        body: formData, // Envia os dados como FormData
+        body: formData,
       });
 
       const data = await response.json();
-      if (data.message) {
+      if (response.ok && data.fotoUrl) {
+        // Atualiza a foto do usuário no estado
+        setUser((prevUser) => ({
+          ...prevUser,
+          foto: data.fotoUrl, // Atualiza a URL da foto no estado
+        }));
         Alert.alert("Sucesso", data.message);
       } else {
-        Alert.alert("Erro", "Erro ao enviar imagem");
+        Alert.alert("Erro", data.message || "Erro ao enviar a imagem");
       }
     } catch (error) {
       console.log("Erro ao enviar imagem:", error);
@@ -147,14 +163,15 @@ const Perfil = ({}) => {
   // Função para fechar o modal
   const closeModal = () => setModalVisible(false);
 
+  
+
   useEffect(() => {
     const fetchUser = async () => {
       setLoading(true); // Inicia o carregamento
-
+  
       try {
         const savedToken = await AsyncStorage.getItem("userToken"); // Recupera o token
-      
-
+  
         if (!savedToken) {
           console.log("Acesso Negado");
           Alert.alert(
@@ -174,14 +191,12 @@ const Perfil = ({}) => {
           );
           return; // Sai da função sem alterar `loading`
         }
-
+  
         // Decodificar e usar o token
         const decodedToken = jwtDecode(savedToken);
-      
-
+  
         const usernameFromToken = decodedToken.username;
-        
-
+  
         // Fetch dados do usuário
         const userResponse = await axios.get(
           `http://${IP_URL}:3000/perfil/${usernameFromToken}`,
@@ -189,13 +204,13 @@ const Perfil = ({}) => {
             headers: { Authorization: `Bearer ${savedToken}` },
           }
         );
-
+  
         if (userResponse.status === 200) {
           setUser(userResponse.data);
         } else {
           setError("Usuário não encontrado");
         }
-
+  
         // Fetch reviews do usuário
         const reviewsResponse = await axios.get(
           `http://${IP_URL}:3000/procurarReviews?autor=${usernameFromToken}`,
@@ -203,7 +218,7 @@ const Perfil = ({}) => {
             headers: { Authorization: `Bearer ${savedToken}` },
           }
         );
-
+  
         if (reviewsResponse.status === 200) {
           setReviews(reviewsResponse.data);
         } else {
@@ -211,7 +226,7 @@ const Perfil = ({}) => {
         }
       } catch (error) {
         if (__DEV__) console.error("Erro ao buscar o perfil:", error);
-
+  
         // Tratamento de erros de token
         if (error.response) {
           if (error.response.status === 403 || error.response.status === 401) {
@@ -235,20 +250,11 @@ const Perfil = ({}) => {
         setLoading(false); // Fim do carregamento após `try-catch`
       }
     };
-
+  
     fetchUser();
-  }, [user]);
-
-  const handleLogout = async () => {
-    try {
-      await AsyncStorage.removeItem("userToken");
-      Alert.alert("Logout", "Você foi desconectado com sucesso.");
-      navigation.navigate("Login");
-    } catch (error) {
-      console.error("Erro ao tentar fazer logout:", error);
-      Alert.alert("Erro", "Não foi possível desconectar.");
-    }
-  };
+  }, [user]); // O useEffect agora depende do `user`, então ele será executado toda vez que `user` for alterado
+  
+  
 
   const renderStarsReviews = (rating) => {
     const stars = [];
@@ -266,54 +272,6 @@ const Perfil = ({}) => {
     }
     return stars;
   };
-
-  const reviews2 = [
-    {
-      id: 1,
-      autor: "João Silva",
-      nota: 4,
-      comentario:
-        "A caipirinha é refrescante e equilibrada, mas a qualidade da cachaça e a mistura dos ingredientes podem variar. Boa, mas pode melhorar.",
-      produto: 1,
-    },
-    {
-      id: 2,
-      autor: "Maria Oliveira",
-      nota: 5,
-      comentario: "Excelente, super recomendo!",
-      produto: 2,
-    },
-    {
-      id: 3,
-      autor: "Carlos Pereira",
-      nota: 3,
-      comentario: "Bom, mas pode melhorar.",
-      produto: 3,
-    },
-    {
-      id: 4,
-      autor: "Ana Souza",
-      nota: 4,
-      comentario:
-        "Gostei muito do sabor, porém a apresentação poderia ser melhor.",
-      produto: 4,
-    },
-    {
-      id: 5,
-      autor: "Fernanda Lima",
-      nota: 2,
-      comentario: "Não gostei, estava muito doce para o meu gosto.",
-      produto: 5,
-    },
-    {
-      id: 6,
-      autor: "Lucas Costa",
-      nota: 5,
-      comentario:
-        "Perfeito! Amei demais, voltarei a fazer a receita mais vezes!",
-      produto: 6,
-    },
-  ];
 
   const renderReview = ({ item }) => {
     // Define a imagem diretamente
@@ -336,19 +294,22 @@ const Perfil = ({}) => {
       </View>
     );
   };
+ 
+
+  const userImageSource =
+    user && user.userImage
+      ? { uri: `http://${IP_URL}:3000/uploads/users/${user.userImage}` } // Caminho remoto, se disponível
+      : require("../assets/images/Ameinda.png"); // Caminho local, se indisponível
 
   return (
     <View style={styles.containerCima}>
       <ImageBackground
-        source={require("../assets/images/Ameinda.png")}
+        source={userImageSource}
         style={styles.ImagemFundo}
         blurRadius={30}
       >
         <View>
-          <Image
-            source={require("../assets/images/Ameinda.png")} // Caminho da imagem local
-            style={styles.imagemPerfil} // Defina o tamanho da imagem
-          />
+          <Image source={userImageSource} style={styles.imagemPerfil} />
         </View>
         <View style={styles.quadradocinza}>
           <Text style={styles.UserName}>
