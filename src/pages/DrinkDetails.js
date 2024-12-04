@@ -207,6 +207,9 @@ export default function DrinkDetails() {
     }
   };
 
+
+  
+
   useEffect(() => {
     const fetchDrinkData = async () => {
       setLoading(true);

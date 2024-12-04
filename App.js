@@ -4,7 +4,7 @@ import Drinks from "./src/pages/Drinks";
 import Coffes from "./src/pages/Coffes";
 import Juices from "./src/pages/Juices";
 import Language from "./src/components/LanguageComponent";
-import LogIn from "./src/pages/LogIn";
+import LogIn from "./src/pages/Login";
 import Perfil from "./src/pages/Perfil";
 import SignUp from "./src/pages/SignUp";
 import Routes from "./src/pages/Routes";
