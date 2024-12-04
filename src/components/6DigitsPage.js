@@ -80,9 +80,9 @@ export default function DigitsPage() {
   return (
     <ImageBackground
       source={require("../assets/images/Coffes/Coffe.png")}
-      style={styles.container}
+      style={styles.background}
     >
-      <View>
+      <View style={styles.container}>
         <Text style={styles.title}>Esqueci a Senha</Text>
         <TextInput
           style={styles.input}
@@ -95,7 +95,9 @@ export default function DigitsPage() {
         <TouchableOpacity onPress={handlePasswordReset} style={styles.button}>
           <Text style={styles.buttonText}>Enviar E-mail de Recuperação</Text>
         </TouchableOpacity>
+        
         {message ? <Text style={styles.message}>{message}</Text> : null}
+        <Text style={styles.highlight}>Enviaremos um código de segurança para o seu E-Mail</Text>
       </View>
 
       {/* Modal para entrada do código de verificação */}

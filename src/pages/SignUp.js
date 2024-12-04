@@ -23,15 +23,29 @@ export default function CadastroScreen() {
   const [isChecked, setIsChecked] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const navigation = useNavigation();
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false); // Estado para visibilidade da senha
+  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false); // Estado para visibilidade da confirmação
 
   // Função para alternar o estado do checkbox
   const toggleCheckbox = () => {
     setIsChecked(!isChecked); // Alterna entre true e false
   };
 
+  // Função para validar o nome de usuário
+  const validateUsername = (username) => {
+    // Limita o tamanho do nome de usuário a 12 caracteres
+    if (username.length > 12) {
+      return false;
+    }
+    // Verifica se o nome de usuário contém apenas letras e números
+    const regex = /^[a-zA-Z0-9]+$/;
+    return regex.test(username);
+  };
+
   const validateEmail = (email) => {
     // Expressão regular para verificar se o e-mail é válido
-    const emailPattern = /^[a-zA-Z0-9._%+-]+@(gmail\.com|hotmail\.com|gmx\.[a-z]{2,3})$/;
+    const emailPattern =
+      /^[a-zA-Z0-9._%+-]+@(gmail\.com|hotmail\.com|gmx\.[a-z]{2,3})$/;
     return emailPattern.test(email);
   };
 
@@ -41,6 +55,16 @@ export default function CadastroScreen() {
 
   const handleCadastro = async () => {
     console.log("Clicou.");
+
+
+    // Validação do nome de usuário
+    if (!validateUsername(username)) {
+      setErrorMessage("O nome de usuário deve ter no máximo 12 caracteres e sem caracteres especiais.");
+      console.log("O nome de usuário é inválido.");
+      return;
+    }
+
+
     if (!validateEmail(email)) {
       setErrorMessage("O email deve ser um @gmail.com.");
       console.log("O email deve conter @gmail.com ");
@@ -71,7 +95,7 @@ export default function CadastroScreen() {
       });
       if (response.status === 200) {
         // Redireciona para a página de login após o cadastro bem-sucedido
-        Alert.alert("Você Cadastrou com sucesso!")
+        Alert.alert("Você Cadastrou com sucesso!");
         navigation.navigate("Login");
       }
     } catch (error) {
@@ -83,8 +107,10 @@ export default function CadastroScreen() {
     // Usando ImageBackground para criar o fundo
     <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
       <View style={styles.container}>
-      <TouchableOpacity onPress={() => navigation.goBack()}>
-        <View><Text style={{color: 'white'}}>Voltar</Text></View>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <View>
+            <Text style={{ color: "white" }}>Voltar</Text>
+          </View>
         </TouchableOpacity>
         <Text style={styles.title}>Cadastro</Text>
 
@@ -93,9 +119,13 @@ export default function CadastroScreen() {
           placeholder="Nome de Usuário"
           placeholderTextColor="white"
           value={username}
-          onChangeText={setUsername}
+          onChangeText={(text) => {
+            // Atualiza o nome de usuário apenas se for válido
+            if (validateUsername(text)) {
+              setUsername(text);
+            }
+          }}
         />
-
         <TextInput
           style={styles.input}
           placeholder="Email"
@@ -135,7 +165,8 @@ export default function CadastroScreen() {
             />
           </TouchableOpacity>
           <Text style={styles.label}>
-            Concordo com os termos de <Text style={styles.link}>política</Text> e <Text style={styles.link}>privacidade</Text>
+            Concordo com os termos de <Text style={styles.link}>política</Text>{" "}
+            e <Text style={styles.link}>privacidade</Text>
           </Text>
         </View>
 
@@ -159,8 +190,7 @@ const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
     resizeMode: "cover", // Garante que a imagem se ajuste corretamente
-    justifyContent: 'center',
-
+    justifyContent: "center",
   },
   container: {
     flex: 1,
@@ -227,8 +257,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   errorText: {
-    color: 'red',
+    color: "red",
     fontSize: 15,
-    marginBottom: 10
-  }
+    marginBottom: 10,
+  },
 });

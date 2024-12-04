@@ -90,7 +90,7 @@ const LogIn = () => {
   };
 
   const handleForgotPassword = () => {
-    navigation.navigate("EsqueciSenha");
+    navigation.navigate("DigitsPage");
   };
 
   // Função para alternar entre Email e Usuário

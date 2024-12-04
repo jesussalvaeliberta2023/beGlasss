@@ -1,24 +1,30 @@
-import React, { useState } from "react";
+import { jwtDecode } from "jwt-decode";
+import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import {
   View,
   ImageBackground,
   StyleSheet,
-  Text,
+  Alert,
   ActivityIndicator,
-  TouchableOpacity
+  TouchableOpacity,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { CircularCarousel } from "../components/CircularCarousel/CircularCarousel";
 import { useFonts } from "@expo-google-fonts/belleza";
-import styles from "../styles/MainPages/DrinksStyles";
-import PressComponent from "../components/PressableComponent";
 import { FontAwesome } from "@expo/vector-icons";
+import PressComponent from "../components/PressableComponent";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import styles from "../styles/MainPages/DrinksStyles";
+import { useRoute } from "@react-navigation/native";
+import IP_URL from "../components/IP";
 
 const data = [
   {
@@ -85,9 +91,19 @@ const data = [
 ];
 
 export default function Juices() {
-  const [activeImage, setActiveImage] = useState(data[0].image);
+  const route = useRoute();
+  const { token } = route.params || {};
+
   const navigation = useNavigation();
+  const [user, setUser] = useState(null); // Armazena os dados do usuário decodificado
+  const [userImage, setUserImage] = useState(null);  // Para armazenar a imagem do usuário
+ 
   const translateX = useSharedValue(0);
+  
+  const [activeImage, setActiveImage] = useState(data[0].image);
+  const [fontsLoaded] = useFonts({
+    Belleza: require("../assets/fonts/Belleza/Belleza-Regular.ttf"),
+  });
 
   const textoAnimated = useAnimatedStyle(() => {
     return { transform: [{ translateX: withSpring(translateX.value) }] };
@@ -97,6 +113,53 @@ export default function Juices() {
     return { transform: [{ translateX: withSpring(-translateX.value) }] };
   });
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      
+      try {
+        const savedToken = await AsyncStorage.getItem("userToken");
+        if (!savedToken) {
+          console.log("Acesso Negado");
+          Alert.alert("Acesso Negado", "Você deve realizar o login para poder entrar.");
+          return;
+        }
+
+        // Decodificar o token JWT para obter o username
+        const decodedToken = jwtDecode(savedToken);
+        const usernameFromToken = decodedToken.username;
+
+        // Armazenar o usuário no estado
+        setUser(decodedToken);
+
+        // Buscar os dados do perfil do usuário no backend
+        const userResponse = await axios.get(`http://${IP_URL}:3000/perfil/${usernameFromToken}`, {
+          headers: { Authorization: `Bearer ${savedToken}` },
+        });
+
+        if (userResponse.status === 200) {
+          const user = userResponse.data;
+          if (user.userImage) {
+            setUserImage({ uri: `http://${IP_URL}:3000/uploads/users/${user.userImage}` });
+          } else {
+            setUserImage(require("../assets/images/Person.png")); // Imagem padrão caso o usuário não tenha imagem
+          }
+        } else {
+          setUserImage(require("../assets/images/Person.png"));
+        }
+      } catch (error) {
+        console.error("Erro ao buscar os dados do usuário", error);
+        setUserImage(require("../assets/images/Person.png"));
+      } finally {
+        
+      }
+    };
+
+    fetchUser();
+  }, [user]); // Rodar apenas ao montar o componente
+
+
+
+
   const changeRoleta = (image, direction) => {
     setActiveImage(image);
     if (direction === "up") {
@@ -104,43 +167,37 @@ export default function Juices() {
     }
   };
 
+
+  
   const resetRoleta = () => {
     translateX.value = 0;
   };
 
-  const [fontsLoaded] = useFonts({
-    Belleza: require("../assets/fonts/Belleza/Belleza-Regular.ttf"),
-  });
-
-  if (!fontsLoaded) {
-    return <ActivityIndicator size="large" color="#fff" />;
-  }
-
   return (
     <View style={styles.container}>
-      <StatusBar style="light" translucent />
+      <StatusBar style="light" backgroundColor="transparent" />
       <ImageBackground
         source={activeImage}
         style={StyleSheet.absoluteFillObject}
         blurRadius={20}
       >
-        <View
+ <View
           style={{
             ...StyleSheet.absoluteFillObject,
             backgroundColor: "rgba(0, 0, 0, 0.60)",
           }}
         />
-   {/* Cabeçalho com botões */}
-   <View style={styles.header}>
+
+        <View style={styles.header}>
           <PressComponent
-            onPress={() => navigation.navigate("Perfil", { token })}
+            onPress={() => navigation.navigate("Perfil")}
             source={require("../assets/images/Bars.png")}
             styleI={styles.headerTab}
           />
           <Animated.View style={iconeAnimated}>
             <PressComponent
               onPress={() => navigation.navigate("Perfil")}
-              source={require("../assets/images/Person.png")}
+              source={userImage || require("../assets/images/Ameinda.png")}
               styleI={styles.headerPerson}
             />
           </Animated.View>
@@ -149,12 +206,13 @@ export default function Juices() {
         <Animated.Text
           style={[styles.choose, textoAnimated, { fontFamily: "Belleza" }]}
         >
-          Escolha seu Suco
+          Escolha seu Drink
         </Animated.Text>
 
-        <View style={styles.drinkSelection}>
+      {/* Seção de seleção de bebidas */}
+      <View style={styles.drinkSelection}>
           <PressComponent
-            onPress={() => navigation.navigate("Drinks")}
+          onPress={() => navigation.navigate("Drinks")}
             source={require("../assets/images/FirstTab.png")}
             styleI={styles.hexagon}
           />
@@ -164,11 +222,11 @@ export default function Juices() {
             styleI={styles.hexagon}
           />
           <PressComponent
+            onPress={() => navigation.navigate("Juices")}
             source={require("../assets/images/ThirdTabSec.png")}
             styleI={styles.hexagon}
           />
         </View>
-
         <CircularCarousel
           data={data}
           onImageChange={changeRoleta}
@@ -176,7 +234,6 @@ export default function Juices() {
           fontFamily="Belleza"
         />
 
-        {/*Barra de navegação*/}
         <View style={styles.tabss}>
           <TouchableOpacity
             onPress={() => navigation.navigate("Drinks")}
@@ -186,7 +243,7 @@ export default function Juices() {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => navigation.navigate("FavoritesBack")}
+            onPress={() => navigation.navigate("Favorites")}
             style={styles.favsButton}
           >
             <FontAwesome name="heart" size={24} color="#FFFFFF" />

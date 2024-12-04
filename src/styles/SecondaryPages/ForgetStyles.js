@@ -1,11 +1,16 @@
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    resizeMode: "cover", // Ajusta a imagem de fundo
+    justifyContent: "center",
+  },
   container: {
     flex: 1,
     justifyContent: "center",
     padding: 20,
-    backgroundColor: "black",
+    backgroundColor: "rgba(80, 48, 30, 0.3)",
   },
 
   title: {
@@ -13,6 +18,12 @@ const styles = StyleSheet.create({
     color: "#FFF",
     textAlign: "center",
     marginBottom: 20,
+  },
+
+  highlight: {
+    color: "#FFC700",
+    textAlign: "center",
+    marginTop: 15,
   },
 
   input: {

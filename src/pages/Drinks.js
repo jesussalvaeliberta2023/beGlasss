@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { jwtDecode } from "jwt-decode";
+import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import {
   View,
@@ -11,7 +12,6 @@ import {
 import { StatusBar } from "expo-status-bar";
 import { CircularCarousel } from "../components/CircularCarousel/CircularCarousel";
 import { useFonts } from "@expo-google-fonts/belleza";
-import styles from "../styles/MainPages/DrinksStyles";
 import { FontAwesome } from "@expo/vector-icons";
 import PressComponent from "../components/PressableComponent";
 import Animated, {
@@ -19,7 +19,12 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import styles from "../styles/MainPages/DrinksStyles";
 import { useRoute } from "@react-navigation/native";
+import IP_URL from "../components/IP";
 
 const data = [
   {
@@ -89,9 +94,16 @@ export default function Drinks() {
   const route = useRoute();
   const { token } = route.params || {};
 
-  const [activeImage, setActiveImage] = useState(data[0].image);
   const navigation = useNavigation();
+  const [user, setUser] = useState(null); // Armazena os dados do usuário decodificado
+  const [userImage, setUserImage] = useState(null);  // Para armazenar a imagem do usuário
+ 
   const translateX = useSharedValue(0);
+  
+  const [activeImage, setActiveImage] = useState(data[0].image);
+  const [fontsLoaded] = useFonts({
+    Belleza: require("../assets/fonts/Belleza/Belleza-Regular.ttf"),
+  });
 
   const textoAnimated = useAnimatedStyle(() => {
     return { transform: [{ translateX: withSpring(translateX.value) }] };
@@ -101,6 +113,53 @@ export default function Drinks() {
     return { transform: [{ translateX: withSpring(-translateX.value) }] };
   });
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      
+      try {
+        const savedToken = await AsyncStorage.getItem("userToken");
+        if (!savedToken) {
+          console.log("Acesso Negado");
+          Alert.alert("Acesso Negado", "Você deve realizar o login para poder entrar.");
+          return;
+        }
+
+        // Decodificar o token JWT para obter o username
+        const decodedToken = jwtDecode(savedToken);
+        const usernameFromToken = decodedToken.username;
+
+        // Armazenar o usuário no estado
+        setUser(decodedToken);
+
+        // Buscar os dados do perfil do usuário no backend
+        const userResponse = await axios.get(`http://${IP_URL}:3000/perfil/${usernameFromToken}`, {
+          headers: { Authorization: `Bearer ${savedToken}` },
+        });
+
+        if (userResponse.status === 200) {
+          const user = userResponse.data;
+          if (user.userImage) {
+            setUserImage({ uri: `http://${IP_URL}:3000/uploads/users/${user.userImage}` });
+          } else {
+            setUserImage(require("../assets/images/Person.png")); // Imagem padrão caso o usuário não tenha imagem
+          }
+        } else {
+          setUserImage(require("../assets/images/Person.png"));
+        }
+      } catch (error) {
+        console.error("Erro ao buscar os dados do usuário", error);
+        setUserImage(require("../assets/images/Person.png"));
+      } finally {
+        
+      }
+    };
+
+    fetchUser();
+  }, [userImage]); // Rodar apenas ao montar o componente
+
+
+
+
   const changeRoleta = (image, direction) => {
     setActiveImage(image);
     if (direction === "up") {
@@ -108,17 +167,11 @@ export default function Drinks() {
     }
   };
 
+
+  
   const resetRoleta = () => {
     translateX.value = 0;
   };
-
-  const [fontsLoaded] = useFonts({
-    Belleza: require("../assets/fonts/Belleza/Belleza-Regular.ttf"),
-  });
-
-  if (!fontsLoaded) {
-    return <ActivityIndicator size="large" color="#fff" />;
-  }
 
   return (
     <View style={styles.container}>
@@ -128,39 +181,36 @@ export default function Drinks() {
         style={StyleSheet.absoluteFillObject}
         blurRadius={20}
       >
-        {/* Overlay para dar efeito escuro no fundo */}
-        <View
+ <View
           style={{
             ...StyleSheet.absoluteFillObject,
             backgroundColor: "rgba(0, 0, 0, 0.60)",
           }}
         />
 
-        {/* Cabeçalho com botões */}
         <View style={styles.header}>
           <PressComponent
-            onPress={() => navigation.navigate("Perfil", { token })}
+            onPress={() => navigation.navigate("Perfil")}
             source={require("../assets/images/Bars.png")}
             styleI={styles.headerTab}
           />
           <Animated.View style={iconeAnimated}>
             <PressComponent
               onPress={() => navigation.navigate("Perfil")}
-              source={require("../assets/images/Person.png")}
+              source={userImage || require("../assets/images/Ameinda.png")}
               styleI={styles.headerPerson}
             />
           </Animated.View>
         </View>
 
-        {/* Título */}
         <Animated.Text
           style={[styles.choose, textoAnimated, { fontFamily: "Belleza" }]}
         >
           Escolha seu Drink
         </Animated.Text>
 
-        {/* Seção de seleção de bebidas */}
-        <View style={styles.drinkSelection}>
+      {/* Seção de seleção de bebidas */}
+      <View style={styles.drinkSelection}>
           <PressComponent
             source={require("../assets/images/FirstTabSec.png")}
             styleI={styles.hexagon}
@@ -171,13 +221,11 @@ export default function Drinks() {
             styleI={styles.hexagon}
           />
           <PressComponent
-            onPress={() => navigation.navigate("Routes")}
+            onPress={() => navigation.navigate("Juices")}
             source={require("../assets/images/ThirdTab.png")}
             styleI={styles.hexagon}
           />
         </View>
-
-        {/* Carrossel Circular */}
         <CircularCarousel
           data={data}
           onImageChange={changeRoleta}
@@ -185,7 +233,6 @@ export default function Drinks() {
           fontFamily="Belleza"
         />
 
-        {/*Barra de navegação*/}
         <View style={styles.tabss}>
           <TouchableOpacity
             onPress={() => navigation.navigate("Drinks")}
